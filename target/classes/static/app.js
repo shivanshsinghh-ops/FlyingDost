@@ -1,3 +1,65 @@
+// --- Global Data Lists ---
+const globalLanguages = [
+    "English (UK)", "English (US)", "English (India)", "Español", "Français", 
+    "Deutsch", "Italiano", "日本語 (Japan)", "हिन्दी (India)", "العربية"
+];
+
+const globalCountries = [
+    "India", "United Kingdom", "United States", "United Arab Emirates", 
+    "Canada", "Germany", "France", "Japan", "Australia", "Singapore"
+];
+
+const globalCurrencies = [
+    "INR - ₹", "USD - $", "GBP - £", "EUR - €", "AED - د.إ", "JPY - ¥"
+];
+
+// This function "injects" the lists into your HTML IDs
+function populateRegionalSettings() {
+    const langSelect = document.getElementById('languageSelect');
+    const countrySelect = document.getElementById('countrySelect');
+    const currencySelect = document.getElementById('currencySelect');
+
+    // Create the options for each dropdown
+    globalLanguages.forEach(item => {
+        langSelect.innerHTML += `<option value="${item}">${item}</option>`;
+    });
+
+    globalCountries.forEach(item => {
+        countrySelect.innerHTML += `<option value="${item}">${item}</option>`;
+    });
+
+    globalCurrencies.forEach(item => {
+        currencySelect.innerHTML += `<option value="${item}">${item}</option>`;
+    });
+}
+
+
+// This function "injects" the lists into your HTML IDs
+function populateRegionalSettings() {
+    const langSelect = document.getElementById('languageSelect');
+    const countrySelect = document.getElementById('countrySelect');
+    const currencySelect = document.getElementById('currencySelect');
+
+    // Create the options for each dropdown
+    globalLanguages.forEach(item => {
+        langSelect.innerHTML += `<option value="${item}">${item}</option>`;
+    });
+
+    globalCountries.forEach(item => {
+        countrySelect.innerHTML += `<option value="${item}">${item}</option>`;
+    });
+
+    globalCurrencies.forEach(item => {
+        currencySelect.innerHTML += `<option value="${item}">${item}</option>`;
+    });
+}
+// Function to handle the smooth scroll button
+function scrollToForm() {
+    document.getElementById('booking-form').scrollIntoView({ 
+        behavior: 'smooth' 
+    });
+}
+
 async function calculateDeal() {
     const basePrice = document.getElementById('basePrice').value;
     const cardSelection = document.getElementById('cardSelect').value;
@@ -61,3 +123,39 @@ async function calculateDeal() {
         alert("Oops! Make sure your Spring Boot server is running.");
     }
 }
+// --- Modal Animation Logic ---
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'flex';
+    setTimeout(() => modal.classList.add('active'), 10);
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.classList.remove('active');
+    setTimeout(() => modal.style.display = 'none', 300);
+}
+
+
+// This is the "Engine Starter"
+window.onload = async function() {
+    
+    // 1. This fills the Globe icon menu with countries
+    populateRegionalSettings();
+
+    // 2. This talks to your Java backend to get bank offers
+    try {
+        const response = await fetch('http://localhost:8080/api/pricing/offers');
+        const offers = await response.json();
+        const select = document.getElementById('cardSelect');
+
+        offers.forEach(offer => {
+            const opt = document.createElement('option');
+            opt.value = JSON.stringify(offer);
+            opt.innerHTML = `${offer.bankName} ${offer.cardName} (${offer.discountRate * 100}% off)`;
+            select.appendChild(opt);
+        });
+    } catch (error) {
+        console.error("Backend not running yet? No problem, we will fix that later.", error);
+    }
+};
