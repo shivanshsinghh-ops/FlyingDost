@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlyingDost | Best Flight Deals</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 350px; text-align: center; }
+        h2 { color: #2c3e50; }
+        input, select, button { width: 100%; margin-top: 15px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { background-color: #3498db; color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background-color: #2980b9; }
+        #result-box { margin-top: 20px; padding: 15px; background-color: #e8f6f3; border-radius: 5px; display: none; }
+        #final-price { font-size: 24px; color: #27ae60; font-weight: bold; margin: 0; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>✈️ FlyingDost Finder</h2>
+        <p>Find your actual cheapest price.</p>
+
+        <input type="number" id="basePrice" placeholder="Enter Base Flight Price (₹)" required>
+        
+        <select id="cardSelect">
+            <option value="none">-- Select Your Credit Card --</option>
+            <option value="infinia">HDFC Infinia (15% off, max ₹1500)</option>
+            <option value="sbi">SBI Cashback (5% off, max ₹1000)</option>
+        </select>
+
+        <button onclick="calculateDeal()">Find Best Deal</button>
+
+        <div id="result-box">
+            <p>Your Final Out-of-Pocket Price:</p>
+            <p id="final-price">₹0.00</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+
+</body>
+</html>
