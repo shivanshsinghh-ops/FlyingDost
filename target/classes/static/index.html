@@ -1,31 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlyingDost | Flying Made Simple</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden; /* Prevents scrollbars from messing up the video look */
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* The Background Video Container */
+        
+      #video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover; /* Keeps it full screen on any monitor */
+    object-position: center; /* Since the plane is already centered in this video */
+    z-index: -100;
+    filter: brightness(45%); /* Keeps that luxury dark feel */
+}
+
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 40px;
+            z-index: 1;
+            color: white;
+        }
+        
+        .hero-section h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            font-weight: 400;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        .hero-section p {
+            font-size: 14px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 15px;
+            color: #d1d5db;
+        }
+
+        .booking-panel {
+            background: rgba(10, 10, 10, 0.7); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 450px;
+            z-index: 1;
+            color: white;
+        }
+
+        .input-group { margin-bottom: 20px; }
+        .input-group label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #9ca3af;
+            margin-bottom: 8px;
+        }
+
+        input[type="number"], select { 
+            width: 100%; 
+            padding: 12px 0; 
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #6b7280;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+        }
+
+        option { background: #1a1a1a; color: white; }
+
+        .toggle-container { margin-top: 25px; display: flex; align-items: center; }
+        .toggle-container label { font-size: 12px; color: #d1d5db; }
+        .toggle-container input { margin-right: 12px; accent-color: #8b0000; }
+
+        button { 
+            width: 100%;
+            background-color: #8b0000; 
+            color: white; 
+            border: none; 
+            padding: 16px;
+            margin-top: 30px;
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer; 
+        }
+
+        #result-box { 
+            margin-top: 30px; 
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            display: none; 
+            text-align: center;
+        }
+        #final-price { font-family: 'Playfair Display', serif; font-size: 38px; color: #ffffff;}
+    </style>
+</head>
 <body>
 
-    <div class="card">
-        <h2>✈️ FlyingDost Finder</h2>
-        <p>Find your actual cheapest price.</p>
+   <video autoplay muted loop id="video-background">
+  <source src="bg a380.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
-        <input type="number" id="basePrice" placeholder="Enter Base Flight Price (₹)" required>
-        
-        <select id="cardSelect">
-            <option value="none">-- Select Your Credit Card --</option>
-            <option value="infinia">HDFC Infinia (15% off, max ₹1500)</option>
-            <option value="sbi">SBI Cashback (5% off, max ₹1000)</option>
-        </select>
 
-        <div style="margin-top: 15px; text-align: left; font-size: 14px; color: #555;">
-            <input type="checkbox" id="exhaustedToggle" style="width: auto; margin-right: 8px;">
-            <label for="exhaustedToggle">I have already used this card's offer this month</label>
+    <div class="hero-section">
+        <h1>Flying made simple</h1>
+        <p>Best Fares. No Hidden Fees.</p>
+    </div>
+
+    <div class="booking-panel">
+        <div class="input-group">
+            <label>Base Fare (₹)</label>
+            <input type="number" id="basePrice" placeholder="Enter flight amount..." required>
         </div>
-
-        <button onclick="calculateDeal()">Find Best Deal</button>
-
+        <div class="input-group">
+            <label>Select Membership / Card</label>
+            <select id="cardSelect">
+                <option value="none">-- Select to apply benefits --</option>
+                <option value="infinia">HDFC Infinia Privileges (15% off)</option>
+                <option value="sbi">SBI Cashback Tier (5% off)</option>
+            </select>
+        </div>
+        <div class="toggle-container">
+            <input type="checkbox" id="exhaustedToggle">
+            <label for="exhaustedToggle">I have already utilized this offer this month</label>
+        </div>
+        <button onclick="calculateDeal()">Calculate Best Fare</button>
         <div id="result-box">
-            <p id="status-message" style="font-size: 14px; color: #e74c3c; margin-bottom: 5px;"></p>
-            <p>Your Final Out-of-Pocket Price:</p>
+            <p id="status-message"></p>
             <p id="final-price">₹0.00</p>
         </div>
     </div>
 
     <script src="app.js"></script>
-
 </body>
+</html>
