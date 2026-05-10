@@ -239,6 +239,50 @@
         .modal-header h3 { margin: 0; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; font-size: 16px; }
         .close-btn { background: transparent; border: none; color: #9ca3af; font-size: 20px; cursor: pointer; }
         .close-btn:hover { color: white; }
+        /* Styling for the City Autocomplete Dropdown */
+.suggestions-box {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #ffffff; /* Clean white contrast against the dark form */
+    color: #1a1a1a;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    display: none; 
+    z-index: 2000;
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+}
+
+.suggestion-item {
+    padding: 12px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.suggestion-item:hover {
+    background-color: #f7f9fb;
+}
+
+.suggestion-item .city-name {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.suggestion-item .city-code {
+    color: #0071c2; /* Professional aviation blue */
+    font-weight: bold;
+    font-size: 12px;
+    background: #eef6ff;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
     </style>
 </head>
 <body>
@@ -281,6 +325,22 @@
                     <label>From (Airport)</label>
                     <input type="text" placeholder="e.g. Delhi (DEL)">
                 </div>
+                <div class="input-group" style="position: relative;">
+    <label>From</label>
+    <input type="text" id="fromInput" placeholder="Country, city or airport" oninput="showSuggestions('from')" autocomplete="off">
+    <div id="fromSuggestions" class="suggestions-box"></div>
+</div>
+
+<div class="input-group" style="position: relative;">
+    <label>To</label>
+    <input type="text" id="toInput" placeholder="Country, city or airport" oninput="showSuggestions('to')" autocomplete="off">
+    <div id="toSuggestions" class="suggestions-box"></div>
+</div>
+
+<div class="input-group" style="position: relative;">
+    <label>To</label>
+    <input type="text" id="toInput" placeholder="Country, city or airport" oninput="showSuggestions('to')">
+    <div id="toSuggestions" class="suggestions-box"></div> </div>
                 <div class="input-group">
                     <label>To (Destination)</label>
                     <input type="text" placeholder="e.g. Mumbai (BOM)">
