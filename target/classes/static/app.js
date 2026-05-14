@@ -1,20 +1,9 @@
-function openWideCalendar() {
-    document.getElementById('calendarOverlay').classList.add('active');
-}
-
-function closeWideCalendar() {
-    const dateVal = document.getElementById('ai-date-picker').value;
-    if(dateVal) {
-        document.getElementById('departVal').innerText = dateVal;
-    }
-    document.getElementById('calendarOverlay').classList.remove('active');
-}
-
-// Ensure "Plan a Flight" works
-function scrollToForm() {
-    document.getElementById('booking-section').scrollIntoView({behavior: 'smooth'});
-}
-
+// ==========================================
+// 1. GLOBAL DATA (Airports & Settings)
+// ==========================================
+// ==========================================
+// 1. GLOBAL DATA (Airports & Settings)
+// ==========================================
 const airports = [
     // --- INDIA: EVERY STATE & UT INCLUDED ---
     { city: "Delhi", country: "India", code: "DEL" }, // Delhi
@@ -153,35 +142,86 @@ const airports = [
     { city: "Male", country: "Maldives", code: "MLE" },
     { city: "Colombo", country: "Sri Lanka", code: "CMB" }
 ];
+
+
+const globalLanguages = ["English (UK)", "English (US)", "English (India)", "Español", "Français", "Deutsch", "Italiano", "日本語", "हिन्दी", "العربية"];
+const globalCountries = ["India", "United Kingdom", "United States", "United Arab Emirates", "Canada", "Germany", "France", "Japan", "Australia", "Singapore"];
+const globalCurrencies = ["INR - ₹", "USD - $", "GBP - £", "EUR - €", "AED - د.إ", "JPY - ¥"];
+
+
+// ==========================================
+// 2. UI INTERACTIONS & ANIMATIONS
+// ==========================================
+
+// Smooth Scroll & Reveal Greeting
+function scrollToForm() {
+    const section = document.getElementById('booking-section');
+    const greeting = document.querySelector('.greeting-container');
+
+    section.scrollIntoView({ behavior: 'smooth' });
+
+    setTimeout(() => {
+        if (greeting) {
+            greeting.classList.add('visible');
+        }
+    }, 600);
+}
+
+// Wide Calendar Logic
+function openWideCalendar() {
+    document.getElementById('calendarOverlay').classList.add('active');
+}
+
+function closeWideCalendar() {
+    const dateVal = document.getElementById('ai-date-picker').value;
+    if(dateVal) {
+        // Format date to look nicer (e.g., 2026-05-15 -> 15 May 2026)
+        const dateObj = new Date(dateVal);
+        const options = { day: 'numeric', month: 'short', year: 'numeric' };
+        document.getElementById('departVal').innerText = dateObj.toLocaleDateString('en-GB', options);
+    }
+    document.getElementById('calendarOverlay').classList.remove('active');
+}
+
+// Swap Locations (The missing function)
+function swapLocations() {
+    const fromInput = document.getElementById('fromInput');
+    const toInput = document.getElementById('toInput');
+    
+    const temp = fromInput.value;
+    fromInput.value = toInput.value;
+    toInput.value = temp;
+}
+
+// Autocomplete Suggestions
 function showSuggestions(type) {
     const input = document.getElementById(`${type}Input`);
-    const box = document.getElementById(`${type}Suggestions`);
+    let box = document.getElementById(`${type}Suggestions`);
     const query = input.value.toLowerCase();
 
-    box.innerHTML = ''; // Clear old results
+    // Create the box dynamically if it doesn't exist in HTML yet
+    if (!box) {
+        box = document.createElement('div');
+        box.id = `${type}Suggestions`;
+        box.className = 'suggestions-box';
+        input.parentNode.appendChild(box);
+    }
 
-    // Don't show anything if the box is empty
+    box.innerHTML = ''; 
+
     if (query.length < 1) {
         box.style.display = 'none';
         return;
     }
 
-    // Filter the 130+ airports
-    const filtered = airports.filter(a => 
-        a.city.toLowerCase().includes(query) || 
-        a.code.toLowerCase().includes(query)
-    );
+    const filtered = airports.filter(a => a.city.toLowerCase().includes(query) || a.code.toLowerCase().includes(query));
 
     if (filtered.length > 0) {
         box.style.display = 'block';
         filtered.forEach(airport => {
             const div = document.createElement('div');
             div.className = 'suggestion-item';
-            div.innerHTML = `
-                <span class="city-name">${airport.city}, ${airport.country}</span>
-                <span class="city-code">${airport.code}</span>
-            `;
-            // When user clicks a suggestion
+            div.innerHTML = `<span class="city-name">${airport.city}, ${airport.country}</span> <span class="city-code">${airport.code}</span>`;
             div.onclick = () => {
                 input.value = `${airport.city} (${airport.code})`;
                 box.style.display = 'none';
@@ -193,132 +233,10 @@ function showSuggestions(type) {
     }
 }
 
-// --- Global Data Lists ---
-const globalLanguages = [
-    "English (UK)", "English (US)", "English (India)", "Español", "Français", 
-    "Deutsch", "Italiano", "日本語 (Japan)", "हिन्दी (India)", "العربية"
-];
 
-const globalCountries = [
-    "India", "United Kingdom", "United States", "United Arab Emirates", 
-    "Canada", "Germany", "France", "Japan", "Australia", "Singapore"
-];
-
-const globalCurrencies = [
-    "INR - ₹", "USD - $", "GBP - £", "EUR - €", "AED - د.إ", "JPY - ¥"
-];
-
-// This function "injects" the lists into your HTML IDs
-function populateRegionalSettings() {
-    const langSelect = document.getElementById('languageSelect');
-    const countrySelect = document.getElementById('countrySelect');
-    const currencySelect = document.getElementById('currencySelect');
-
-    // Create the options for each dropdown
-    globalLanguages.forEach(item => {
-        langSelect.innerHTML += `<option value="${item}">${item}</option>`;
-    });
-
-    globalCountries.forEach(item => {
-        countrySelect.innerHTML += `<option value="${item}">${item}</option>`;
-    });
-
-    globalCurrencies.forEach(item => {
-        currencySelect.innerHTML += `<option value="${item}">${item}</option>`;
-    });
-}
-
-
-// This function "injects" the lists into your HTML IDs
-function populateRegionalSettings() {
-    const langSelect = document.getElementById('languageSelect');
-    const countrySelect = document.getElementById('countrySelect');
-    const currencySelect = document.getElementById('currencySelect');
-
-    // Create the options for each dropdown
-    globalLanguages.forEach(item => {
-        langSelect.innerHTML += `<option value="${item}">${item}</option>`;
-    });
-
-    globalCountries.forEach(item => {
-        countrySelect.innerHTML += `<option value="${item}">${item}</option>`;
-    });
-
-    globalCurrencies.forEach(item => {
-        currencySelect.innerHTML += `<option value="${item}">${item}</option>`;
-    });
-}
-// Function to handle the smooth scroll button
-function scrollToForm() {
-    document.getElementById('booking-form').scrollIntoView({ 
-        behavior: 'smooth' 
-    });
-}
-
-async function calculateDeal() {
-    const basePrice = document.getElementById('basePrice').value;
-    const cardSelection = document.getElementById('cardSelect').value;
-    const isExhausted = document.getElementById('exhaustedToggle').checked; // Check the toggle!
-
-    if (!basePrice || cardSelection === 'none') {
-        alert("Please enter a price and select a card!");
-        return;
-    }
-
-    let offerData = {};
-    let statusMessage = "";
-
-    // Base card data
-    if (cardSelection === 'infinia') {
-        offerData = { bankName: "HDFC", cardName: "Infinia", discountRate: 0.15, maxCap: 1500.0, convenienceFee: 350.0 };
-    } else if (cardSelection === 'sbi') {
-        offerData = { bankName: "SBI", cardName: "Cashback", discountRate: 0.05, maxCap: 1000.0, convenienceFee: 300.0 };
-    }
-
-    // THE NEW LOGIC: If the offer is exhausted, wipe out the discount!
-    if (isExhausted) {
-        offerData.discountRate = 0.0;
-        offerData.maxCap = 0.0;
-        statusMessage = "⚠️ Offer already used! You are paying full price + convenience fee.";
-    } else {
-        statusMessage = "✅ Discount applied successfully!";
-    }
-
-    const requestBody = {
-        basePrice: parseFloat(basePrice),
-        offer: offerData
-    };
-
-    try {
-        const response = await fetch('http://localhost:8080/api/pricing/calculate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody)
-        });
-
-        const finalPrice = await response.json();
-
-        // Update the UI
-        document.getElementById('status-message').innerText = statusMessage;
-        
-        // Change text color based on whether they got a discount
-        if (isExhausted) {
-            document.getElementById('status-message').style.color = "#e74c3c"; // Red
-            document.getElementById('final-price').style.color = "#c0392b";
-        } else {
-            document.getElementById('status-message').style.color = "#27ae60"; // Green
-            document.getElementById('final-price').style.color = "#27ae60";
-        }
-
-        document.getElementById('final-price').innerText = "₹" + finalPrice.toFixed(2);
-        document.getElementById('result-box').style.display = "block";
-
-    } catch (error) {
-        console.error("Error:", error);
-        alert("Oops! Make sure your Spring Boot server is running.");
-    }
-}
-// --- Modal Animation Logic ---
+// ==========================================
+// 3. MODAL LOGIC
+// ==========================================
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.style.display = 'flex';
@@ -331,14 +249,134 @@ function closeModal(modalId) {
     setTimeout(() => modal.style.display = 'none', 300);
 }
 
+// Close modals when clicking outside the box
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal-overlay')) {
+        closeModal(event.target.id);
+    }
+};
 
-// This is the "Engine Starter"
+
+// ==========================================
+// 4. API & CORE LOGIC
+// ==========================================
+
+// Flight Search Integration
+async function performFlightSearch() {
+    const fromLocation = document.getElementById('fromInput').value;
+    const toLocation = document.getElementById('toInput').value;
+    const travelDate = document.getElementById('departVal').innerText;
+    const btn = document.querySelector('.ai-final-search');
+
+    if (!fromLocation || !toLocation || travelDate === "Select Date") {
+        alert("Please enter Origin, Destination, and Date before searching.");
+        return;
+    }
+
+    // UI Loading State
+    const originalText = btn.innerText;
+    btn.innerHTML = '<i class="fa-solid fa-plane fa-spin"></i>';
+    btn.style.opacity = '0.7';
+
+    try {
+        const response = await fetch(`http://localhost:8080/api/flights/search?from=${fromLocation}&to=${toLocation}&date=${travelDate}`);
+        
+        if (!response.ok) throw new Error("Server response not OK");
+        
+        const results = await response.json();
+        console.log("Flights found:", results);
+        alert(`Success! Found flights from ${fromLocation} to ${toLocation}. (Check console for data)`);
+        
+    } catch (error) {
+        console.error("Backend connection failed:", error);
+        alert(`Searching for flights from ${fromLocation} to ${toLocation}...\n(Backend disconnected, showing mockup)`);
+    } finally {
+        // Reset Button
+        btn.innerHTML = originalText;
+        btn.style.opacity = '1';
+    }
+}
+
+// Fare Calculator
+async function calculateDeal() {
+    const basePrice = document.getElementById('basePrice').value;
+    const cardSelection = document.getElementById('cardSelect').value;
+    const isExhausted = document.getElementById('exhaustedToggle').checked; 
+
+    if (!basePrice || cardSelection === 'none') {
+        alert("Please enter a price and select a card!");
+        return;
+    }
+
+    let offerData = {};
+    let statusMessage = "";
+
+    try {
+        offerData = JSON.parse(cardSelection);
+    } catch (e) {
+        // Fallback hardcoded values if backend didn't supply JSON
+        offerData = { bankName: "Unknown", discountRate: 0.10, maxCap: 1000.0, convenienceFee: 300.0 };
+    }
+
+    if (isExhausted) {
+        offerData.discountRate = 0.0;
+        offerData.maxCap = 0.0;
+        statusMessage = "⚠️ Offer already used! You are paying full price + convenience fee.";
+    } else {
+        statusMessage = "✅ Discount applied successfully!";
+    }
+
+    const requestBody = { basePrice: parseFloat(basePrice), offer: offerData };
+
+    try {
+        const response = await fetch('http://localhost:8080/api/pricing/calculate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+        });
+
+        const finalPrice = await response.json();
+
+        // Update UI
+        document.getElementById('status-message').innerText = statusMessage;
+        document.getElementById('status-message').style.color = isExhausted ? "#e74c3c" : "#27ae60";
+        document.getElementById('final-price').style.color = isExhausted ? "#c0392b" : "#27ae60";
+        document.getElementById('final-price').innerText = "₹" + finalPrice.toFixed(2);
+        document.getElementById('result-box').style.display = "block";
+
+    } catch (error) {
+        console.error("Error:", error);
+        
+        // Fallback UI math if server is dead
+        const discount = Math.min(parseFloat(basePrice) * offerData.discountRate, offerData.maxCap);
+        const fallbackPrice = parseFloat(basePrice) - discount + offerData.convenienceFee;
+        
+        document.getElementById('status-message').innerText = statusMessage + " (Offline Mode)";
+        document.getElementById('final-price').innerText = "₹" + fallbackPrice.toFixed(2);
+        document.getElementById('result-box').style.display = "block";
+    }
+}
+
+// Populate Regional Settings
+function populateRegionalSettings() {
+    const langSelect = document.getElementById('languageSelect');
+    const countrySelect = document.getElementById('countrySelect');
+    const currencySelect = document.getElementById('currencySelect');
+
+    if(langSelect && countrySelect && currencySelect) {
+        globalLanguages.forEach(item => langSelect.innerHTML += `<option value="${item}">${item}</option>`);
+        globalCountries.forEach(item => countrySelect.innerHTML += `<option value="${item}">${item}</option>`);
+        globalCurrencies.forEach(item => currencySelect.innerHTML += `<option value="${item}">${item}</option>`);
+    }
+}
+
+
+// ==========================================
+// 5. INITIALIZATION
+// ==========================================
 window.onload = async function() {
-    
-    // 1. This fills the Globe icon menu with countries
     populateRegionalSettings();
 
-    // 2. This talks to your Java backend to get bank offers
     try {
         const response = await fetch('http://localhost:8080/api/pricing/offers');
         const offers = await response.json();
@@ -351,65 +389,265 @@ window.onload = async function() {
             select.appendChild(opt);
         });
     } catch (error) {
-        console.error("Backend not running yet? No problem, we will fix that later.", error);
+        console.log("Backend not running. Populating fake offers for UI testing.");
+        const select = document.getElementById('cardSelect');
+        if(select) {
+            select.innerHTML += `<option value='{"bankName":"HDFC","cardName":"Infinia","discountRate":0.15,"maxCap":1500,"convenienceFee":350}'>HDFC Infinia (15% off)</option>`;
+            select.innerHTML += `<option value='{"bankName":"SBI","cardName":"Cashback","discountRate":0.05,"maxCap":1000,"convenienceFee":300}'>SBI Cashback (5% off)</option>`;
+        }
     }
 };
-async function performFlightSearch() {
-    const source = document.getElementById('fromInput').value;
-    const destination = document.getElementById('toInput').value;
-    const date = document.getElementById('ai-date-picker').value; // Using our wide calendar value
 
-    // 1. Basic Validation
-    if (!source || !destination || !date) {
-        alert("Please fill in Origin, Destination, and Date");
+const globalLanguages = ["English (UK)", "English (US)", "English (India)", "Español", "Français", "Deutsch", "Italiano", "日本語", "हिन्दी", "العربية"];
+const globalCountries = ["India", "United Kingdom", "United States", "United Arab Emirates", "Canada", "Germany", "France", "Japan", "Australia", "Singapore"];
+const globalCurrencies = ["INR - ₹", "USD - $", "GBP - £", "EUR - €", "AED - د.إ", "JPY - ¥"];
+
+
+// ==========================================
+// 2. UI INTERACTIONS & ANIMATIONS
+// ==========================================
+
+// Smooth Scroll & Reveal Greeting
+function scrollToForm() {
+    const section = document.getElementById('booking-section');
+    const greeting = document.querySelector('.greeting-container');
+
+    section.scrollIntoView({ behavior: 'smooth' });
+
+    setTimeout(() => {
+        if (greeting) {
+            greeting.classList.add('visible');
+        }
+    }, 600);
+}
+
+// Wide Calendar Logic
+function openWideCalendar() {
+    document.getElementById('calendarOverlay').classList.add('active');
+}
+
+function closeWideCalendar() {
+    const dateVal = document.getElementById('ai-date-picker').value;
+    if(dateVal) {
+        // Format date to look nicer (e.g., 2026-05-15 -> 15 May 2026)
+        const dateObj = new Date(dateVal);
+        const options = { day: 'numeric', month: 'short', year: 'numeric' };
+        document.getElementById('departVal').innerText = dateObj.toLocaleDateString('en-GB', options);
+    }
+    document.getElementById('calendarOverlay').classList.remove('active');
+}
+
+// Swap Locations (The missing function)
+function swapLocations() {
+    const fromInput = document.getElementById('fromInput');
+    const toInput = document.getElementById('toInput');
+    
+    const temp = fromInput.value;
+    fromInput.value = toInput.value;
+    toInput.value = temp;
+}
+
+// Autocomplete Suggestions
+function showSuggestions(type) {
+    const input = document.getElementById(`${type}Input`);
+    let box = document.getElementById(`${type}Suggestions`);
+    const query = input.value.toLowerCase();
+
+    // Create the box dynamically if it doesn't exist in HTML yet
+    if (!box) {
+        box = document.createElement('div');
+        box.id = `${type}Suggestions`;
+        box.className = 'suggestions-box';
+        input.parentNode.appendChild(box);
+    }
+
+    box.innerHTML = ''; 
+
+    if (query.length < 1) {
+        box.style.display = 'none';
         return;
     }
 
-    console.log(`Searching for flights from ${source} to ${destination} on ${date}...`);
+    const filtered = airports.filter(a => a.city.toLowerCase().includes(query) || a.code.toLowerCase().includes(query));
 
-    try {
-        // 2. The Handshake: Sending data to Spring Boot (localhost:8080)
-        const response = await fetch(`http://localhost:8080/api/flights/search?from=${source}&to=${destination}&date=${date}`);
-        const results = await response.json();
-
-        // 3. Handle the results (We will build the Results UI in the next step)
-        console.log("Flights found:", results);
-        displayFlightResults(results);
-
-    } catch (error) {
-        console.error("Backend connection failed:", error);
-        alert("Could not connect to the flight server. Is your Spring Boot app running?");
+    if (filtered.length > 0) {
+        box.style.display = 'block';
+        filtered.forEach(airport => {
+            const div = document.createElement('div');
+            div.className = 'suggestion-item';
+            div.innerHTML = `<span class="city-name">${airport.city}, ${airport.country}</span> <span class="city-code">${airport.code}</span>`;
+            div.onclick = () => {
+                input.value = `${airport.city} (${airport.code})`;
+                box.style.display = 'none';
+            };
+            box.appendChild(div);
+        });
+    } else {
+        box.style.display = 'none';
     }
 }
-function performFlightSearch() {
-    // 1. Get the data from our new Air India UI
+
+
+// ==========================================
+// 3. MODAL LOGIC
+// ==========================================
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'flex';
+    setTimeout(() => modal.classList.add('active'), 10);
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.classList.remove('active');
+    setTimeout(() => modal.style.display = 'none', 300);
+}
+
+// Close modals when clicking outside the box
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal-overlay')) {
+        closeModal(event.target.id);
+    }
+};
+
+
+// ==========================================
+// 4. API & CORE LOGIC
+// ==========================================
+
+// Flight Search Integration
+async function performFlightSearch() {
     const fromLocation = document.getElementById('fromInput').value;
     const toLocation = document.getElementById('toInput').value;
     const travelDate = document.getElementById('departVal').innerText;
+    const btn = document.querySelector('.ai-final-search');
 
-    // 2. Validation
     if (!fromLocation || !toLocation || travelDate === "Select Date") {
-        Swal.fire({ // If you have SweetAlert, otherwise use alert()
-            icon: 'error',
-            title: 'Missing Details',
-            text: 'Please enter Origin, Destination, and Date!',
-            background: '#fff',
-            confirmButtonColor: '#ed1c24'
-        });
+        alert("Please enter Origin, Destination, and Date before searching.");
         return;
     }
 
-    // 3. Logic: Show a loading state on the button
-    const btn = document.querySelector('.ai-search-btn');
-    btn.innerHTML = '<i class="fa-solid fa-plane fa-spin"></i> SEARCHING...';
+    // UI Loading State
+    const originalText = btn.innerText;
+    btn.innerHTML = '<i class="fa-solid fa-plane fa-spin"></i>';
     btn.style.opacity = '0.7';
 
-    console.log("Fetching flights for:", fromLocation, "to", toLocation);
-
-    // 4. Temporary: Show the results section (We will build this UI next)
-    setTimeout(() => {
-        btn.innerHTML = 'SEARCH';
+    try {
+        const response = await fetch(`http://localhost:8080/api/flights/search?from=${fromLocation}&to=${toLocation}&date=${travelDate}`);
+        
+        if (!response.ok) throw new Error("Server response not OK");
+        
+        const results = await response.json();
+        console.log("Flights found:", results);
+        alert(`Success! Found flights from ${fromLocation} to ${toLocation}. (Check console for data)`);
+        
+    } catch (error) {
+        console.error("Backend connection failed:", error);
+        alert(`Searching for flights from ${fromLocation} to ${toLocation}...\n(Backend disconnected, showing mockup)`);
+    } finally {
+        // Reset Button
+        btn.innerHTML = originalText;
         btn.style.opacity = '1';
-        alert(`Searching for flights from ${fromLocation} to ${toLocation}...`);
-    }, 1500);
+    }
 }
+
+// Fare Calculator
+async function calculateDeal() {
+    const basePrice = document.getElementById('basePrice').value;
+    const cardSelection = document.getElementById('cardSelect').value;
+    const isExhausted = document.getElementById('exhaustedToggle').checked; 
+
+    if (!basePrice || cardSelection === 'none') {
+        alert("Please enter a price and select a card!");
+        return;
+    }
+
+    let offerData = {};
+    let statusMessage = "";
+
+    try {
+        offerData = JSON.parse(cardSelection);
+    } catch (e) {
+        // Fallback hardcoded values if backend didn't supply JSON
+        offerData = { bankName: "Unknown", discountRate: 0.10, maxCap: 1000.0, convenienceFee: 300.0 };
+    }
+
+    if (isExhausted) {
+        offerData.discountRate = 0.0;
+        offerData.maxCap = 0.0;
+        statusMessage = "⚠️ Offer already used! You are paying full price + convenience fee.";
+    } else {
+        statusMessage = "✅ Discount applied successfully!";
+    }
+
+    const requestBody = { basePrice: parseFloat(basePrice), offer: offerData };
+
+    try {
+        const response = await fetch('http://localhost:8080/api/pricing/calculate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+        });
+
+        const finalPrice = await response.json();
+
+        // Update UI
+        document.getElementById('status-message').innerText = statusMessage;
+        document.getElementById('status-message').style.color = isExhausted ? "#e74c3c" : "#27ae60";
+        document.getElementById('final-price').style.color = isExhausted ? "#c0392b" : "#27ae60";
+        document.getElementById('final-price').innerText = "₹" + finalPrice.toFixed(2);
+        document.getElementById('result-box').style.display = "block";
+
+    } catch (error) {
+        console.error("Error:", error);
+        
+        // Fallback UI math if server is dead
+        const discount = Math.min(parseFloat(basePrice) * offerData.discountRate, offerData.maxCap);
+        const fallbackPrice = parseFloat(basePrice) - discount + offerData.convenienceFee;
+        
+        document.getElementById('status-message').innerText = statusMessage + " (Offline Mode)";
+        document.getElementById('final-price').innerText = "₹" + fallbackPrice.toFixed(2);
+        document.getElementById('result-box').style.display = "block";
+    }
+}
+
+// Populate Regional Settings
+function populateRegionalSettings() {
+    const langSelect = document.getElementById('languageSelect');
+    const countrySelect = document.getElementById('countrySelect');
+    const currencySelect = document.getElementById('currencySelect');
+
+    if(langSelect && countrySelect && currencySelect) {
+        globalLanguages.forEach(item => langSelect.innerHTML += `<option value="${item}">${item}</option>`);
+        globalCountries.forEach(item => countrySelect.innerHTML += `<option value="${item}">${item}</option>`);
+        globalCurrencies.forEach(item => currencySelect.innerHTML += `<option value="${item}">${item}</option>`);
+    }
+}
+
+
+// ==========================================
+// 5. INITIALIZATION
+// ==========================================
+window.onload = async function() {
+    populateRegionalSettings();
+
+    try {
+        const response = await fetch('http://localhost:8080/api/pricing/offers');
+        const offers = await response.json();
+        const select = document.getElementById('cardSelect');
+
+        offers.forEach(offer => {
+            const opt = document.createElement('option');
+            opt.value = JSON.stringify(offer);
+            opt.innerHTML = `${offer.bankName} ${offer.cardName} (${offer.discountRate * 100}% off)`;
+            select.appendChild(opt);
+        });
+    } catch (error) {
+        console.log("Backend not running. Populating fake offers for UI testing.");
+        const select = document.getElementById('cardSelect');
+        if(select) {
+            select.innerHTML += `<option value='{"bankName":"HDFC","cardName":"Infinia","discountRate":0.15,"maxCap":1500,"convenienceFee":350}'>HDFC Infinia (15% off)</option>`;
+            select.innerHTML += `<option value='{"bankName":"SBI","cardName":"Cashback","discountRate":0.05,"maxCap":1000,"convenienceFee":300}'>SBI Cashback (5% off)</option>`;
+        }
+    }
+};

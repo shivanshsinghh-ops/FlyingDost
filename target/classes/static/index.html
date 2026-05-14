@@ -4,568 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FlyingDost | Hey Traveller</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        /* Enable smooth scrolling for the button click */
+        /* --- 1. GLOBAL RESET --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-        
-        body { 
-            margin: 0; 
-            font-family: 'Montserrat', sans-serif;
-            background-color: #000; /* Fallback */
-        }
+        body { font-family: 'Montserrat', sans-serif; background-color: #000; overflow-x: hidden; }
 
-        /* Fixed Video Background */
+        /* --- 2. FIXED BACKGROUND VIDEO --- */
         #video-background {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            object-fit: cover;
-            object-position: center;
-            z-index: -1; /* Locked in the very back */
-            filter: brightness(45%);
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            object-fit: cover; object-position: center;
+            z-index: -1; filter: brightness(45%);
         }
 
-        /* Section 1: The Hero (Takes up exactly one screen) */
+        /* --- 3. LUXURY TOP NAVIGATION --- */
+        .top-nav {
+            position: fixed; top: 0; left: 0; width: 100%;
+            padding: 25px 50px; display: flex; justify-content: flex-end;
+            z-index: 1000; background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%); 
+        }
+        .nav-icons { display: flex; gap: 30px; align-items: center; }
+        .nav-icon-btn { background: transparent; border: none; color: #ffffff; font-size: 20px; cursor: pointer; transition: all 0.3s ease; opacity: 0.8; }
+        .nav-icon-btn:hover { opacity: 1; transform: scale(1.1); }
+        .login-btn { display: flex; align-items: center; gap: 10px; font-family: 'Montserrat', sans-serif; font-size: 14px; }
+
+        /* --- 4. HERO SECTION --- */
         .hero-section {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: white;
+            height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center; color: white;
+            position: relative; z-index: 10;
         }
+        .hero-section h1 { font-family: 'Playfair Display', serif; font-size: 52px; font-weight: 400; margin: 0 0 10px 0; letter-spacing: 1px; }
+        .hero-section p { font-size: 16px; letter-spacing: 2px; text-transform: uppercase; margin: 0; color: #e5e7eb; }
+        .hero-btn { background-color: transparent; color: white; border: 1px solid white; padding: 15px 40px; margin-top: 40px; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.3s; border-radius: 30px; }
+        .hero-btn:hover { background-color: white; color: black; }
 
-        .hero-section h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 52px;
-            font-weight: 400;
-            margin: 0 0 10px 0;
-            letter-spacing: 1px;
-        }
-
-        .hero-section p {
-            font-size: 16px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin: 0;
-            color: #e5e7eb;
-        }
-
-        .hero-btn {
-            background-color: transparent;
-            color: white;
-            border: 1px solid white;
-            padding: 15px 40px;
-            margin-top: 40px;
-            font-size: 13px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s;
-            border-radius: 30px;
-        }
-
-        .hero-btn:hover {
-            background-color: white;
-            color: black;
-        }
-
-        /* Section 2: The Booking Form (Slides up over the video) */
+        /* --- 5. SEARCH BAR SECTION (Cleaned & Unified) --- */
         .booking-section {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-top: -60px; /* Overlap effect */
-    position: relative;
-    z-index: 100;
-    scroll-margin-top: 100px;
-}
-
-.ai-premium-container {
-    background: #ffffff;
-    width: 95%;
-    max-width: 1300px;
-    border-radius: 12px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-    /* Reduced bottom padding since the banner is gone */
-    padding: 0 0 25px 0; 
-    overflow: hidden;
-}
-
-/* Ensure the radio buttons look clean in the sub-row */
-.trip-selection label {
-    margin-right: 20px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-/* Tabs Header */
-.ai-tabs {
-    display: flex;
-    background: #f9f9f9;
-    border-bottom: 1px solid #eee;
-    padding: 10px 20px;
-    align-items: center;
-}
-
-.tab {
-    padding: 10px 20px;
-    font-size: 13px;
-    font-weight: 700;
-    color: #555;
-    cursor: pointer;
-}
-
-.tab.active {
-    color: #d11920;
-    border-bottom: 2px solid #d11920;
-}
-
-.offer-tag {
-    margin-left: auto;
-    background: #fff5f5;
-    color: #d11920;
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
-    border: 1px solid #fed7d7;
-}
-
-/* Sub-row Options */
-.ai-sub-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px 25px;
-    font-size: 13px;
-    color: #444;
-}
-
-.multi-city { color: #0071c2; text-decoration: none; margin-left: 15px; }
-
-/* Main Search Layout */
-.ai-main-search {
-    display: flex;
-    margin: 0 20px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    align-items: center;
-}
-
-.search-unit {
-    flex: 1;
-    padding: 12px 15px;
-    border-right: 1px solid #eee;
-    height: 70px;
-}
-
-.search-unit:last-of-type { border-right: none; }
-
-.unit-label {
-    font-size: 11px;
-    color: #777;
-    margin-bottom: 5px;
-}
-
-.search-unit input, .search-unit select, .search-unit .val {
-    width: 100%;
-    border: none;
-    outline: none;
-    font-size: 18px;
-    font-weight: 700;
-    color: #333;
-    background: transparent;
-}
-
-.ai-swap-btn {
-    background: none;
-    border: none;
-    color: #d11920;
-    cursor: pointer;
-    font-size: 18px;
-    padding: 0 10px;
-}
-
-.ai-final-search {
-    background: #d66d75; /* Air India muted red to match luxury vibe */
-    color: white;
-    border: none;
-    padding: 0 40px;
-    height: 70px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-/* UPI Banner */
-.upi-banner {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 15px 25px 0;
-    background: #fdfdfd;
-    padding: 10px 15px;
-    border-radius: 30px;
-    border: 1px solid #eee;
-    font-size: 13px;
-}
-
-        .form-container {
-            width: 100%;
-            max-width: 900px; /* Wide, clean layout like VistaJet */
+            position: relative; z-index: 100;
+            display: flex; flex-direction: column; align-items: center;
+            padding-top: 50px; padding-bottom: 50px;
+            background: transparent; border: none; outline: none;
         }
 
-        .form-container h2 {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 300;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: #1a1a1a;
-            margin-bottom: 40px;
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 15px;
+        /* The Greeting Text */
+        .greeting-container {
+            width: 95%; max-width: 1200px; margin-bottom: 25px;
+            opacity: 0; transform: translateY(20px); transition: all 0.8s ease;
+        }
+        .greeting-container.visible { opacity: 1; transform: translateY(0); }
+        .aesthetic-greeting { font-family: 'Playfair Display', serif; color: #ffffff; font-size: 34px; font-style: italic; text-shadow: 2px 4px 10px rgba(0,0,0,0.8); }
+
+        /* The Solid White Container */
+        .ai-premium-container {
+            background-color: #ffffff !important; width: 95%; max-width: 1200px;
+            border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            padding: 0 0 15px 0; overflow: hidden;
         }
 
-        /* Form Grid Layout */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 40px;
+        .ai-tabs { display: flex; background: #f9f9f9; border-bottom: 1px solid #eee; padding: 10px 20px; align-items: center; }
+        .tab { padding: 10px 20px; font-size: 13px; font-weight: 700; color: #555; cursor: pointer; }
+        .tab.active { color: #d11920; border-bottom: 2px solid #d11920; }
+
+        .ai-sub-row { display: flex; padding: 15px 25px; font-size: 13px; color: #444; gap: 30px; }
+        .trip-selection label { margin-right: 20px; cursor: pointer; font-weight: 600; }
+        .multi-city { color: #0071c2; text-decoration: none; }
+        .pay-options span { margin-right: 20px; }
+
+        .ai-main-search { display: flex; margin: 0 20px; border: 1px solid #e0e0e0; border-radius: 8px; align-items: center; }
+        .search-unit { flex: 1; padding: 12px 15px; border-right: 1px solid #eee; height: 75px; cursor: pointer; }
+        .search-unit:last-of-type { border-right: none; }
+        .unit-label { font-size: 11px; color: #ed1c24; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; }
+        .search-unit input, .search-unit select, .search-unit .val { width: 100%; border: none; outline: none; font-size: 16px; font-weight: 700; color: #333; background: transparent; cursor: pointer; }
+        .ai-swap-btn { background: none; border: none; color: #d11920; cursor: pointer; font-size: 18px; padding: 0 15px; }
+        .ai-final-search { background: #ed1c24; color: white; border: none; padding: 0 40px; height: 75px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .ai-final-search:hover { background: #d11920; }
+
+        /* --- 6. LOWER CONTENT WRAPPER (Fixes floating fare calculator) --- */
+        .lower-content-wrapper {
+            background-color: #f4f5f7; width: 100%; padding: 80px 20px;
+            display: flex; flex-direction: column; align-items: center;
+            position: relative; z-index: 10; border-top: 1px solid #ddd;
         }
 
-        .input-group label {
-            display: block;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #6b7280;
-            margin-bottom: 8px;
-        }
-
-        .input-group input, .input-group select {
-            width: 100%;
-            padding: 15px;
-            background: #f9fafb;
-            border: 1px solid #d1d5db;
-            border-radius: 4px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 14px;
-            color: #111827;
-            box-sizing: border-box;
-            transition: border-color 0.3s;
-        }
-
-        .input-group input:focus, .input-group select:focus {
-            outline: none;
-            border-color: #8b0000;
-        }
-
-        /* Our specific pricing tools */
         .pricing-tools {
-            background-color: #f3f4f6;
-            padding: 30px;
-            border-radius: 8px;
-            margin-top: 20px;
+            background-color: #ffffff; width: 100%; max-width: 900px;
+            padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);
         }
-
-        .toggle-container {
-            margin-top: 15px;
-            display: flex;
-            align-items: center;
-        }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #6b7280; margin-bottom: 8px; }
+        .input-group input, .input-group select { width: 100%; padding: 15px; background: #f9fafb; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px; color: #111827; }
+        .toggle-container { margin-top: 15px; display: flex; align-items: center; }
+        .toggle-container label { font-size: 13px; color: #4b5563; cursor: pointer; margin-left: 10px; }
+        .submit-btn { background-color: #8b0000; color: white; border: none; padding: 18px 40px; font-size: 13px; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 20px; border-radius: 4px; }
         
-        .toggle-container label { font-size: 13px; color: #4b5563; cursor: pointer; }
-        .toggle-container input { margin-right: 10px; cursor: pointer; accent-color: #8b0000; }
-
-        .submit-btn {
-            background-color: #8b0000;
-            color: white;
-            border: none;
-            padding: 18px 40px;
-            font-size: 13px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 20px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .submit-btn:hover { background-color: #600000; }
-
-        /* Results */
-        #result-box {
-            margin-top: 30px;
-            padding: 20px;
-            border: 1px solid #e5e7eb;
-            background: white;
-            display: none;
-            text-align: center;
-        }
-
-        #status-message { font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+        #result-box { margin-top: 30px; padding: 20px; border: 1px solid #e5e7eb; background: white; display: none; text-align: center; }
         #final-price { font-family: 'Playfair Display', serif; font-size: 42px; margin: 0; color: #111827; }
-        /* The Luxury Navigation Bar */
-.top-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 25px 50px;
-    display: flex;
-    justify-content: flex-end;
-    box-sizing: border-box;
-    z-index: 100; 
-    background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%); 
-}
 
-.nav-icons { display: flex; gap: 30px; align-items: center; }
-
-.nav-icon-btn {
-    background: transparent;
-    border: none;
-    color: #ffffff;
-    font-size: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    opacity: 0.8;
-}
-
-.nav-icon-btn:hover { opacity: 1; transform: scale(1.1); }
-
-.login-btn {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 14px;
-}
-/* --- MODAL STYLING --- */
+        /* --- 7. MODALS (Fixed Visibility) --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px);
             display: none; justify-content: center; align-items: center;
-            z-index: 1000; opacity: 0; transition: opacity 0.3s ease;
+            z-index: 3000; opacity: 0; transition: opacity 0.3s ease;
         }
         .modal-overlay.active { display: flex; opacity: 1; }
-        
-        .modal-content {
-            background: rgba(15, 15, 15, 0.85); backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px;
-            width: 400px; border-radius: 8px; color: white;
-            transform: translateY(20px); transition: transform 0.3s ease;
-        }
+        .modal-content { background: rgba(15, 15, 15, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px; border-radius: 8px; color: white; transform: translateY(20px); transition: transform 0.3s ease; }
         .modal-overlay.active .modal-content { transform: translateY(0); }
-        
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .modal-header h3 { margin: 0; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; font-size: 16px; }
         .close-btn { background: transparent; border: none; color: #9ca3af; font-size: 20px; cursor: pointer; }
         .close-btn:hover { color: white; }
-        /* Styling for the City Autocomplete Dropdown */
-.suggestions-box {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background: #ffffff; /* Clean white contrast against the dark form */
-    color: #1a1a1a;
-    border-radius: 0 0 8px 8px;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-    display: none; 
-    z-index: 2000;
-    max-height: 250px;
-    overflow-y: auto;
-    border: 1px solid #ddd;
-}
 
-.suggestion-item {
-    padding: 12px 20px;
-    cursor: pointer;
-    border-bottom: 1px solid #f0f0f0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background 0.2s;
-}
-
-.suggestion-item:hover {
-    background-color: #f7f9fb;
-}
-
-.suggestion-item .city-name {
-    font-weight: 500;
-    font-size: 14px;
-}
-
-.suggestion-item .city-code {
-    color: #0071c2; /* Professional aviation blue */
-    font-weight: bold;
-    font-size: 12px;
-    background: #eef6ff;
-    padding: 2px 6px;
-    border-radius: 4px;
-}
-.booking-section {
-    padding: 40px 20px;
-    display: flex;
-    justify-content: center; /* Centers the bar on the screen */
-}
-
-.booking-section {
-    margin-top: -50px; /* Pulls the bar up onto the video */
-    position: relative;
-    z-index: 100;
-    display: flex;
-    justify-content: center;
-    background: transparent;
-}
-
-.air-india-bar {
-    background: white;
-    width: 95%;
-    max-width: 1200px;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-}
-
-.trip-options {
-    margin-bottom: 15px;
-    font-weight: bold;
-    color: #333;
-}
-
-.search-main-row {
-    display: flex;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    align-items: center;
-}
-
-.input-unit {
-    flex: 1;
-    padding: 10px 15px;
-    border-right: 1px solid #eee;
-    cursor: pointer;
-}
-
-.input-unit:last-child { border-right: none; }
-
-.input-unit label {
-    display: block;
-    font-size: 11px;
-    color: #ed1c24; /* Air India Red */
-    font-weight: 700;
-    margin-bottom: 2px;
-}
-
-.input-unit input, .input-unit div {
-    border: none;
-    outline: none;
-    font-size: 15px;
-    font-weight: 600;
-    color: #000;
-    width: 100%;
-}
-
-.ai-swap {
-    background: #f4f4f4;
-    border: 1px solid #ddd;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    margin: 0 -15px;
-    z-index: 2;
-    cursor: pointer;
-}
-
-.ai-search-btn {
-    background: #ed1c24; /* Air India Red */
-    color: white;
-    border: none;
-    padding: 22px 40px;
-    font-weight: bold;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 0 4px 4px 0;
-}
-.calendar-full-overlay {
-    position: fixed;
-    top: -100%; /* Hidden at start */
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background: white;
-    z-index: 2000;
-    transition: 0.5s ease-in-out;
-    padding: 50px;
-}
-
-.calendar-full-overlay.active {
-    top: 0; /* Slides down */
-}
-
-.wide-picker {
-    width: 100%;
-    font-size: 40px;
-    border: none;
-    text-align: center;
-    margin-top: 100px;
-}
-
-.ai-search-btn {
-    background: #ed1c24; 
-    color: white;
-    border: none;
-    padding: 20px 45px;
-    font-weight: 800;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 0 4px 4px 0;
-    white-space: nowrap;
-    transition: all 0.3s ease;
-}
-
-.ai-search-btn:hover {
-    background: #d11920;
-    padding: 20px 50px; /* Slight expansion effect */
-}
-/* 1. Global Reset to remove default white margins */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    background-color: #000; /* Ensures if something moves, it's black, not white */
-    overflow-x: hidden;
-}
-
-/* 2. Target the top navigation area */
-.top-nav, header, nav {
-    background: transparent !important; /* Forces the white away */
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000;
-    border: none !important;
-    box-shadow: none !important;
-}
-
-/* 3. Ensure the Hero Section doesn't have a top margin */
-.hero-section {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
+        /* Calendar Overlay */
+        .calendar-full-overlay { position: fixed; top: -100%; left: 0; width: 100%; height: 100vh; background: white; z-index: 2000; transition: 0.5s ease-in-out; padding: 50px; }
+        .calendar-full-overlay.active { top: 0; }
+        .wide-picker { width: 100%; font-size: 40px; border: none; text-align: center; margin-top: 100px; }
     </style>
 </head>
 <body>
@@ -573,217 +131,174 @@ body {
     <video autoplay muted loop id="video-background">
       <source src="bg a380.mp4" type="video/mp4">
     </video>
-    <nav class="top-nav">
-    <div class="nav-icons">
-        <button class="nav-icon-btn" onclick="openModal('regionalModal')"><i class="fa-solid fa-globe"></i></button>
-        <button class="nav-icon-btn" title="Saved Flights" onclick="openModal('savedModal')">
-    <i class="fa-regular fa-heart"></i>
-</button>
 
-        <button class="nav-icon-btn login-btn" onclick="openModal('loginModal')">
-    <i class="fa-regular fa-circle-user"></i>
-    <span>Log in</span>
-</button>
-    </div>
-</nav> 
+    <nav class="top-nav">
+        <div class="nav-icons">
+            <button class="nav-icon-btn" onclick="openModal('regionalModal')"><i class="fa-solid fa-globe"></i></button>
+            <button class="nav-icon-btn" title="Saved Flights" onclick="openModal('savedModal')"><i class="fa-regular fa-heart"></i></button>
+            <button class="nav-icon-btn login-btn" onclick="openModal('loginModal')"><i class="fa-regular fa-circle-user"></i><span>Log in</span></button>
+        </div>
+    </nav> 
 
     <div class="hero-section">
-    <h1>Flying made simple</h1>
-    <p>Best Fares. No Hidden Fees.</p>
-    <button class="hero-btn" onclick="document.getElementById('booking-section').scrollIntoView({behavior: 'smooth'})">Plan a Flight</button>
-</div>
+        <h1>Flying made simple</h1>
+        <p>Best Fares. No Hidden Fees.</p>
+        <button class="hero-btn" onclick="scrollToForm()">Plan a Flight</button>
+    </div>
 
-<div id="booking-section" class="booking-section">
-    <div class="ai-premium-container">
-        <div class="ai-tabs">
-            <div class="tab active">SEARCH FLIGHTS</div>
-            <div class="tab">MANAGE BOOKING</div>
-            <div class="tab">FLIGHT STATUS</div>
+    <div id="booking-section" class="booking-section">
+        
+        <div class="greeting-container">
+            <h2 class="aesthetic-greeting">Hey Traveller, where are we flying today?</h2>
         </div>
 
-        <div class="ai-sub-row">
-            <div class="trip-selection">
-                <label><input type="radio" name="trip" checked> <span></span> Round Trip</label>
-                <label><input type="radio" name="trip"> <span></span> One Way</label>
-                <a href="#" class="multi-city">Multi City</a>
-            </div>
-            <div class="pay-options">
-                <span>Pay By <strong>Cash</strong></span>
-                <span>Add Promo Code</span>
-            </div>
-        </div>
-
-        <div class="ai-main-search">
-            <div class="search-unit from">
-                <div class="unit-label">FROM</div>
-                <input type="text" id="fromInput" placeholder="Origin" oninput="showSuggestions('from')" autocomplete="off">
+        <div class="ai-premium-container">
+            <div class="ai-tabs">
+                <div class="tab active">SEARCH FLIGHTS</div>
+                <div class="tab">MANAGE BOOKING</div>
+                <div class="tab">FLIGHT STATUS</div>
             </div>
 
-            <button class="ai-swap-btn" onclick="swapLocations()">
-                <i class="fa-solid fa-right-left"></i>
-            </button>
-
-            <div class="search-unit to">
-                <div class="unit-label">TO</div>
-                <input type="text" id="toInput" placeholder="Destination" oninput="showSuggestions('to')" autocomplete="off">
+            <div class="ai-sub-row">
+                <div class="trip-selection">
+                    <label><input type="radio" name="trip" checked> Round Trip</label>
+                    <label><input type="radio" name="trip"> One Way</label>
+                    <a href="#" class="multi-city">Multi City</a>
+                </div>
+                <div class="pay-options">
+                    <span>Pay By <strong>Cash</strong></span>
+                    <span>Add Promo Code</span>
+                </div>
             </div>
 
-            <div class="search-unit date" onclick="openWideCalendar()">
-                <div class="unit-label">Depart</div>
-                <div id="departVal" class="val">Select Date</div>
+            <div class="ai-main-search">
+                <div class="search-unit from">
+                    <div class="unit-label">FROM</div>
+                    <input type="text" id="fromInput" placeholder="Origin" autocomplete="off">
+                </div>
+                <button class="ai-swap-btn"><i class="fa-solid fa-right-left"></i></button>
+                <div class="search-unit to">
+                    <div class="unit-label">TO</div>
+                    <input type="text" id="toInput" placeholder="Destination" autocomplete="off">
+                </div>
+                <div class="search-unit date" onclick="openWideCalendar()">
+                    <div class="unit-label">Depart</div>
+                    <div id="departVal" class="val">Select Date</div>
+                </div>
+                <div class="search-unit date" onclick="openWideCalendar()">
+                    <div class="unit-label">Return</div>
+                    <div id="returnVal" class="val">Select Date</div>
+                </div>
+                <div class="search-unit pax" onclick="openModal('travellerModal')">
+                    <div class="unit-label">Passenger(s)</div>
+                    <div id="paxVal" class="val">1 Adult</div>
+                </div>
+                <div class="search-unit class">
+                    <div class="unit-label">Class</div>
+                    <select id="classSelect">
+                        <option>Economy</option>
+                        <option>Premium Economy</option>
+                        <option>Business</option>
+                        <option>First Class</option>
+                    </select>
+                </div>
+                <button class="ai-final-search" onclick="performFlightSearch()">Search</button>
             </div>
-
-            <div class="search-unit date" onclick="openWideCalendar()">
-                <div class="unit-label">Return</div>
-                <div id="returnVal" class="val">Select Date</div>
-            </div>
-
-            <div class="search-unit pax" onclick="openModal('travellerModal')">
-                <div class="unit-label">Passenger(s)</div>
-                <div id="paxVal" class="val">1 Adult</div>
-            </div>
-
-            <div class="search-unit class">
-                <div class="unit-label">Class</div>
-                <select id="classSelect">
-                    <option>Economy</option>
-                    <option>Premium Economy</option>
-                    <option>Business</option>
-                    <option>First Class</option>
-                </select>
-            </div>
-
-            <button class="ai-final-search" onclick="performFlightSearch()">Search</button>
         </div>
     </div>
-</div>
     
-
-                  
-
-            <div class="pricing-tools">
-                <h3 style="margin-top:0; font-weight: 500; letter-spacing: 1px;">Smart Fare Calculator</h3>
-                <div class="form-grid" style="margin-bottom: 0;">
-                    <div class="input-group">
-                        <label>Expected Base Fare (₹)</label>
-                        <input type="number" id="basePrice" placeholder="Enter flight amount..." required>
-                    </div>
-                    <div class="input-group">
-                        <label>Select Membership / Card</label>
-                        <select id="cardSelect">
-                            <option value="none">-- Select to apply benefits --</option>
-                            </select>
-                    </div>
+    <div class="lower-content-wrapper">
+        <div class="pricing-tools">
+            <h3 style="margin-top:0; font-weight: 500; letter-spacing: 1px;">Smart Fare Calculator</h3>
+            <div class="form-grid" style="margin-bottom: 0;">
+                <div class="input-group">
+                    <label>Expected Base Fare (₹)</label>
+                    <input type="number" id="basePrice" placeholder="Enter flight amount..." required>
                 </div>
-
-                <div class="toggle-container">
-                    <input type="checkbox" id="exhaustedToggle">
-                    <label for="exhaustedToggle">I have already utilized this offer this month</label>
+                <div class="input-group">
+                    <label>Select Membership / Card</label>
+                    <select id="cardSelect">
+                        <option value="none">-- Select to apply benefits --</option>
+                    </select>
                 </div>
-
-                <button class="submit-btn" onclick="calculateDeal()">Calculate Final Price</button>
             </div>
-
-            <div id="result-box">
-                <p id="status-message"></p>
-                <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6b7280;">Final Out-Of-Pocket Cost</p>
-                <p id="final-price">₹0.00</p>
+            <div class="toggle-container">
+                <input type="checkbox" id="exhaustedToggle">
+                <label for="exhaustedToggle">I have already utilized this offer this month</label>
             </div>
+            <button class="submit-btn" onclick="calculateDeal()">Calculate Final Price</button>
+        </div>
 
+        <div id="result-box">
+            <p id="status-message"></p>
+            <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6b7280;">Final Out-Of-Pocket Cost</p>
+            <p id="final-price">₹0.00</p>
         </div>
     </div>
+
     <div id="regionalModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Regional Settings</h3>
                 <button class="close-btn" onclick="closeModal('regionalModal')"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            
-            <div class="input-group">
-    <label>Language</label>
-    <select id="languageSelect"></select> </div>
-
-<div class="input-group">
-    <label>Country / Region</label>
-    <select id="countrySelect"></select> </div>
-
-<div class="input-group">
-    <label>Currency</label>
-    <select id="currencySelect"></select> </div>
-
+            <div class="input-group"><label>Language</label><select></select></div>
+            <div class="input-group"><label>Country / Region</label><select></select></div>
+            <div class="input-group"><label>Currency</label><select></select></div>
             <button class="submit-btn" style="margin-top: 30px;" onclick="closeModal('regionalModal')">Save</button>
         </div>
     </div>
+
     <div id="loginModal" class="modal-overlay">
-    <div class="modal-content" style="width: 450px;">
-        <div class="modal-header">
-            <h3 style="font-family: 'Playfair Display', serif; text-transform: none; font-size: 24px; color: white;">
-                It's no myth — <br>there's a best time to book.
-            </h3>
-            <button class="close-btn" onclick="closeModal('loginModal')">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-        
-        <p style="font-size: 13px; color: #9ca3af; margin-bottom: 25px;">Log in or create an account to track prices and save your flights.</p>
-
-        <div class="input-group">
-            <label>Email Address</label>
-            <input type="email" placeholder="Enter your email..." style="width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 4px;">
-        </div>
-
-        <button class="submit-btn" style="margin-top: 20px;">Continue</button>
-
-        <div style="text-align: center; margin-top: 25px;">
-            <p style="font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 1px;">Or continue with</p>
-            <div style="display: flex; justify-content: center; gap: 25px; margin-top: 15px; font-size: 24px; color: white;">
-                <i class="fa-brands fa-google" style="cursor:pointer;"></i>
-                <i class="fa-brands fa-apple" style="cursor:pointer;"></i>
-                <i class="fa-brands fa-facebook" style="cursor:pointer;"></i>
+        <div class="modal-content" style="width: 450px;">
+            <div class="modal-header">
+                <h3 style="font-family: 'Playfair Display', serif; text-transform: none; font-size: 24px; color: white;">It's no myth — <br>there's a best time to book.</h3>
+                <button class="close-btn" onclick="closeModal('loginModal')"><i class="fa-solid fa-xmark"></i></button>
             </div>
+            <p style="font-size: 13px; color: #9ca3af; margin-bottom: 25px;">Log in or create an account to track prices and save your flights.</p>
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" placeholder="Enter your email..." style="width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 4px;">
+            </div>
+            <button class="submit-btn" style="margin-top: 20px;">Continue</button>
         </div>
     </div>
-</div>
-<div id="savedModal" class="modal-overlay">
-    <div class="modal-content" style="width: 400px; text-align: center;">
-        <div class="modal-header" style="border-bottom: none; justify-content: flex-end;">
-            <button class="close-btn" onclick="closeModal('savedModal')">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-        
-        <div style="margin-bottom: 20px; color: #8b0000; font-size: 50px;">
-            <i class="fa-solid fa-heart-circle-plus"></i>
-        </div>
 
-        <h3 style="font-family: 'Playfair Display', serif; text-transform: none; font-size: 26px; margin-bottom: 10px; color: white;">
-            Your favorite journeys.
-        </h3>
-        
-        <p style="font-size: 14px; color: #9ca3af; line-height: 1.6; margin-bottom: 30px;">
-            Keep track of the flights you love. Sign in to sync your saved trips across all your devices.
-        </p>
+    <div id="savedModal" class="modal-overlay">
+        <div class="modal-content" style="width: 400px; text-align: center;">
+            <div class="modal-header" style="border-bottom: none; justify-content: flex-end;">
+                <button class="close-btn" onclick="closeModal('savedModal')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div style="margin-bottom: 20px; color: #8b0000; font-size: 50px;"><i class="fa-solid fa-heart-circle-plus"></i></div>
+            <h3 style="font-family: 'Playfair Display', serif; text-transform: none; font-size: 26px; margin-bottom: 10px; color: white;">Your favorite journeys.</h3>
+            <p style="font-size: 14px; color: #9ca3af; line-height: 1.6; margin-bottom: 30px;">Keep track of the flights you love. Sign in to sync your saved trips across all your devices.</p>
+            <button class="submit-btn" onclick="closeModal('savedModal'); openModal('loginModal')">Log in to view saved</button>
+        </div>
+    </div>
 
-        <button class="submit-btn" onclick="closeModal('savedModal'); openModal('loginModal')">
-            Log in to view saved
-        </button>
-        
-        <p style="margin-top: 20px; font-size: 12px; color: #6b7280; cursor: pointer;" onclick="closeModal('savedModal')">
-            Maybe later
-        </p>
+    <div id="calendarOverlay" class="calendar-full-overlay">
+        <div class="calendar-header">
+            <h2>Select Dates</h2>
+            <button onclick="closeWideCalendar()">CONFIRM</button>
+        </div>
+        <div class="calendar-flex">
+            <input type="date" id="ai-date-picker" class="wide-picker">
+        </div>
     </div>
-</div>
-<div id="calendarOverlay" class="calendar-full-overlay">
-    <div class="calendar-header">
-        <h2>Select Dates</h2>
-        <button onclick="closeWideCalendar()">CONFIRM</button>
-    </div>
-    <div class="calendar-flex">
-        <input type="date" id="ai-date-picker" class="wide-picker">
-    </div>
-</div>
 
     <script src="app.js"></script>
-
+    <script>
+        // ADD THIS SCRIPT TO FIX THE BUTTON SCROLL & GREETING REVEAL
+        function scrollToForm() {
+            const section = document.getElementById('booking-section');
+            const greeting = document.querySelector('.greeting-container');
+            section.scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                if(greeting) greeting.classList.add('visible');
+            }, 600);
+        }
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    </script>
 </body>
 </html>
