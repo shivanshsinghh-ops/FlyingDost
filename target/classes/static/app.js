@@ -1,3 +1,20 @@
+function openWideCalendar() {
+    document.getElementById('calendarOverlay').classList.add('active');
+}
+
+function closeWideCalendar() {
+    const dateVal = document.getElementById('ai-date-picker').value;
+    if(dateVal) {
+        document.getElementById('departVal').innerText = dateVal;
+    }
+    document.getElementById('calendarOverlay').classList.remove('active');
+}
+
+// Ensure "Plan a Flight" works
+function scrollToForm() {
+    document.getElementById('booking-section').scrollIntoView({behavior: 'smooth'});
+}
+
 const airports = [
     // --- INDIA: EVERY STATE & UT INCLUDED ---
     { city: "Delhi", country: "India", code: "DEL" }, // Delhi
@@ -337,3 +354,62 @@ window.onload = async function() {
         console.error("Backend not running yet? No problem, we will fix that later.", error);
     }
 };
+async function performFlightSearch() {
+    const source = document.getElementById('fromInput').value;
+    const destination = document.getElementById('toInput').value;
+    const date = document.getElementById('ai-date-picker').value; // Using our wide calendar value
+
+    // 1. Basic Validation
+    if (!source || !destination || !date) {
+        alert("Please fill in Origin, Destination, and Date");
+        return;
+    }
+
+    console.log(`Searching for flights from ${source} to ${destination} on ${date}...`);
+
+    try {
+        // 2. The Handshake: Sending data to Spring Boot (localhost:8080)
+        const response = await fetch(`http://localhost:8080/api/flights/search?from=${source}&to=${destination}&date=${date}`);
+        const results = await response.json();
+
+        // 3. Handle the results (We will build the Results UI in the next step)
+        console.log("Flights found:", results);
+        displayFlightResults(results);
+
+    } catch (error) {
+        console.error("Backend connection failed:", error);
+        alert("Could not connect to the flight server. Is your Spring Boot app running?");
+    }
+}
+function performFlightSearch() {
+    // 1. Get the data from our new Air India UI
+    const fromLocation = document.getElementById('fromInput').value;
+    const toLocation = document.getElementById('toInput').value;
+    const travelDate = document.getElementById('departVal').innerText;
+
+    // 2. Validation
+    if (!fromLocation || !toLocation || travelDate === "Select Date") {
+        Swal.fire({ // If you have SweetAlert, otherwise use alert()
+            icon: 'error',
+            title: 'Missing Details',
+            text: 'Please enter Origin, Destination, and Date!',
+            background: '#fff',
+            confirmButtonColor: '#ed1c24'
+        });
+        return;
+    }
+
+    // 3. Logic: Show a loading state on the button
+    const btn = document.querySelector('.ai-search-btn');
+    btn.innerHTML = '<i class="fa-solid fa-plane fa-spin"></i> SEARCHING...';
+    btn.style.opacity = '0.7';
+
+    console.log("Fetching flights for:", fromLocation, "to", toLocation);
+
+    // 4. Temporary: Show the results section (We will build this UI next)
+    setTimeout(() => {
+        btn.innerHTML = 'SEARCH';
+        btn.style.opacity = '1';
+        alert(`Searching for flights from ${fromLocation} to ${toLocation}...`);
+    }, 1500);
+}

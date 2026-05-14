@@ -77,14 +77,135 @@
 
         /* Section 2: The Booking Form (Slides up over the video) */
         .booking-section {
-            min-height: 100vh;
-            background-color: #ffffff; /* Solid white background */
-            padding: 80px 20px;
-            display: flex;
-            justify-content: center;
-            position: relative;
-            z-index: 10; /* Ensures it sits above the video */
-        }
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: -60px; /* Overlap effect */
+    position: relative;
+    z-index: 100;
+    scroll-margin-top: 100px;
+}
+
+.ai-premium-container {
+    background: #ffffff;
+    width: 95%;
+    max-width: 1300px;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    padding: 0 0 15px 0;
+    overflow: hidden;
+}
+
+/* Tabs Header */
+.ai-tabs {
+    display: flex;
+    background: #f9f9f9;
+    border-bottom: 1px solid #eee;
+    padding: 10px 20px;
+    align-items: center;
+}
+
+.tab {
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #555;
+    cursor: pointer;
+}
+
+.tab.active {
+    color: #d11920;
+    border-bottom: 2px solid #d11920;
+}
+
+.offer-tag {
+    margin-left: auto;
+    background: #fff5f5;
+    color: #d11920;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    border: 1px solid #fed7d7;
+}
+
+/* Sub-row Options */
+.ai-sub-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 25px;
+    font-size: 13px;
+    color: #444;
+}
+
+.multi-city { color: #0071c2; text-decoration: none; margin-left: 15px; }
+
+/* Main Search Layout */
+.ai-main-search {
+    display: flex;
+    margin: 0 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    align-items: center;
+}
+
+.search-unit {
+    flex: 1;
+    padding: 12px 15px;
+    border-right: 1px solid #eee;
+    height: 70px;
+}
+
+.search-unit:last-of-type { border-right: none; }
+
+.unit-label {
+    font-size: 11px;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.search-unit input, .search-unit select, .search-unit .val {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    background: transparent;
+}
+
+.ai-swap-btn {
+    background: none;
+    border: none;
+    color: #d11920;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0 10px;
+}
+
+.ai-final-search {
+    background: #d66d75; /* Air India muted red to match luxury vibe */
+    color: white;
+    border: none;
+    padding: 0 40px;
+    height: 70px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* UPI Banner */
+.upi-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 15px 25px 0;
+    background: #fdfdfd;
+    padding: 10px 15px;
+    border-radius: 30px;
+    border: 1px solid #eee;
+    font-size: 13px;
+}
 
         .form-container {
             width: 100%;
@@ -283,6 +404,160 @@
     padding: 2px 6px;
     border-radius: 4px;
 }
+.booking-section {
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center; /* Centers the bar on the screen */
+}
+
+.booking-section {
+    margin-top: -50px; /* Pulls the bar up onto the video */
+    position: relative;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    background: transparent;
+}
+
+.air-india-bar {
+    background: white;
+    width: 95%;
+    max-width: 1200px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.trip-options {
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: #333;
+}
+
+.search-main-row {
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    align-items: center;
+}
+
+.input-unit {
+    flex: 1;
+    padding: 10px 15px;
+    border-right: 1px solid #eee;
+    cursor: pointer;
+}
+
+.input-unit:last-child { border-right: none; }
+
+.input-unit label {
+    display: block;
+    font-size: 11px;
+    color: #ed1c24; /* Air India Red */
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.input-unit input, .input-unit div {
+    border: none;
+    outline: none;
+    font-size: 15px;
+    font-weight: 600;
+    color: #000;
+    width: 100%;
+}
+
+.ai-swap {
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    margin: 0 -15px;
+    z-index: 2;
+    cursor: pointer;
+}
+
+.ai-search-btn {
+    background: #ed1c24; /* Air India Red */
+    color: white;
+    border: none;
+    padding: 22px 40px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 0 4px 4px 0;
+}
+.calendar-full-overlay {
+    position: fixed;
+    top: -100%; /* Hidden at start */
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: white;
+    z-index: 2000;
+    transition: 0.5s ease-in-out;
+    padding: 50px;
+}
+
+.calendar-full-overlay.active {
+    top: 0; /* Slides down */
+}
+
+.wide-picker {
+    width: 100%;
+    font-size: 40px;
+    border: none;
+    text-align: center;
+    margin-top: 100px;
+}
+
+.ai-search-btn {
+    background: #ed1c24; 
+    color: white;
+    border: none;
+    padding: 20px 45px;
+    font-weight: 800;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 0 4px 4px 0;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.ai-search-btn:hover {
+    background: #d11920;
+    padding: 20px 50px; /* Slight expansion effect */
+}
+/* 1. Global Reset to remove default white margins */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #000; /* Ensures if something moves, it's black, not white */
+    overflow-x: hidden;
+}
+
+/* 2. Target the top navigation area */
+.top-nav, header, nav {
+    background: transparent !important; /* Forces the white away */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* 3. Ensure the Hero Section doesn't have a top margin */
+.hero-section {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
     </style>
 </head>
 <body>
@@ -296,6 +571,7 @@
         <button class="nav-icon-btn" title="Saved Flights" onclick="openModal('savedModal')">
     <i class="fa-regular fa-heart"></i>
 </button>
+
         <button class="nav-icon-btn login-btn" onclick="openModal('loginModal')">
     <i class="fa-regular fa-circle-user"></i>
     <span>Log in</span>
@@ -304,60 +580,86 @@
 </nav> 
 
     <div class="hero-section">
-        <h1>Flying made simple</h1>
-        <p>Best Fares. No Hidden Fees.</p>
-        <button class="hero-btn" onclick="scrollToForm()">Plan a Flight</button>
-    </div>
-
-    <div id="booking-form" class="booking-section">
-        <div class="form-container">
-            <h2 style="text-transform: none; font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 600;">HEY TRAVELLER, WHERE ARE WE FLYING TODAY?</h2>
-            
-            <div class="form-grid">
-                <div class="input-group">
-
-    <div id="booking-form" class="booking-section">
-        <div class="form-container">
-            <h2>Plan a Flight</h2>
-            
-            <div class="form-grid">
-                <div class="input-group">
-                    <label>From (Airport)</label>
-                    <input type="text" placeholder="e.g. Delhi (DEL)">
-                </div>
-                <div class="input-group" style="position: relative;">
-    <label>From</label>
-    <input type="text" id="fromInput" placeholder="Country, city or airport" oninput="showSuggestions('from')" autocomplete="off">
-    <div id="fromSuggestions" class="suggestions-box"></div>
+    <h1>Flying made simple</h1>
+    <p>Best Fares. No Hidden Fees.</p>
+    <button class="hero-btn" onclick="document.getElementById('booking-section').scrollIntoView({behavior: 'smooth'})">Plan a Flight</button>
 </div>
 
-<div class="input-group" style="position: relative;">
-    <label>To</label>
-    <input type="text" id="toInput" placeholder="Country, city or airport" oninput="showSuggestions('to')" autocomplete="off">
-    <div id="toSuggestions" class="suggestions-box"></div>
-</div>
+<div id="booking-section" class="booking-section">
+    <div class="ai-premium-container">
+        <div class="ai-tabs">
+            <div class="tab active">SEARCH FLIGHTS</div>
+            <div class="tab">MANAGE BOOKING</div>
+            <div class="tab">CHECK-IN</div>
+            <div class="tab">FLIGHT STATUS</div>
+            <div class="tab">eZ Booking</div>
+            <div class="offer-tag">APAAR-ID OFFER</div>
+        </div>
 
-<div class="input-group" style="position: relative;">
-    <label>To</label>
-    <input type="text" id="toInput" placeholder="Country, city or airport" oninput="showSuggestions('to')">
-    <div id="toSuggestions" class="suggestions-box"></div> </div>
-                <div class="input-group">
-                    <label>To (Destination)</label>
-                    <input type="text" placeholder="e.g. Mumbai (BOM)">
-                </div>
-                <div class="input-group">
-                    <label>Date of Departure</label>
-                    <input type="date">
-                </div>
-                <div class="input-group">
-                    <label>Passengers</label>
-                    <select>
-                        <option>1 Passenger</option>
-                        <option>2 Passengers</option>
-                        <option>3+ Passengers</option>
-                    </select>
-                </div>
+        <div class="ai-sub-row">
+            <div class="trip-selection">
+                <label><input type="radio" name="trip" checked> <span></span> Round Trip</label>
+                <label><input type="radio" name="trip"> <span></span> One Way</label>
+                <a href="#" class="multi-city">Multi City</a>
             </div>
+            <div class="pay-options">
+                <span>Pay By <strong>Cash</strong></span>
+                <span>Add Promo Code</span>
+            </div>
+        </div>
+
+        <div class="ai-main-search">
+            <div class="search-unit from">
+                <div class="unit-label">FROM</div>
+                <input type="text" id="fromInput" placeholder="Origin" oninput="showSuggestions('from')" autocomplete="off">
+            </div>
+
+            <button class="ai-swap-btn" onclick="swapLocations()">
+                <i class="fa-solid fa-right-left"></i>
+            </button>
+
+            <div class="search-unit to">
+                <div class="unit-label">TO</div>
+                <input type="text" id="toInput" placeholder="Destination" oninput="showSuggestions('to')" autocomplete="off">
+            </div>
+
+            <div class="search-unit date" onclick="openWideCalendar()">
+                <div class="unit-label">Depart</div>
+                <div id="departVal" class="val">Select Date</div>
+            </div>
+
+            <div class="search-unit date" onclick="openWideCalendar()">
+                <div class="unit-label">Return</div>
+                <div id="returnVal" class="val">Select Date</div>
+            </div>
+
+            <div class="search-unit pax" onclick="openModal('travellerModal')">
+                <div class="unit-label">Passenger(s)</div>
+                <div id="paxVal" class="val">1 Adult</div>
+            </div>
+
+            <div class="search-unit class">
+                <div class="unit-label">Class</div>
+                <select id="classSelect">
+                    <option>Economy</option>
+                    <option>Premium Economy</option>
+                    <option>Business</option>
+                    <option>First Class</option>
+                </select>
+            </div>
+
+            <button class="ai-final-search" onclick="performFlightSearch()">Search</button>
+        </div>
+
+        <div class="upi-banner">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" alt="UPI" width="40">
+            <span>Pay via UPI & save up to ₹2,000 | Use code <strong>UPIPROMO</strong></span>
+        </div>
+    </div>
+</div>
+    
+
+                  
 
             <div class="pricing-tools">
                 <h3 style="margin-top:0; font-weight: 500; letter-spacing: 1px;">Smart Fare Calculator</h3>
@@ -469,6 +771,15 @@
         <p style="margin-top: 20px; font-size: 12px; color: #6b7280; cursor: pointer;" onclick="closeModal('savedModal')">
             Maybe later
         </p>
+    </div>
+</div>
+<div id="calendarOverlay" class="calendar-full-overlay">
+    <div class="calendar-header">
+        <h2>Select Dates</h2>
+        <button onclick="closeWideCalendar()">CONFIRM</button>
+    </div>
+    <div class="calendar-flex">
+        <input type="date" id="ai-date-picker" class="wide-picker">
     </div>
 </div>
 
