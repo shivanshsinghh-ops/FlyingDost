@@ -92,8 +92,16 @@
     max-width: 1300px;
     border-radius: 12px;
     box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-    padding: 0 0 15px 0;
+    /* Reduced bottom padding since the banner is gone */
+    padding: 0 0 25px 0; 
     overflow: hidden;
+}
+
+/* Ensure the radio buttons look clean in the sub-row */
+.trip-selection label {
+    margin-right: 20px;
+    cursor: pointer;
+    font-weight: 600;
 }
 
 /* Tabs Header */
@@ -590,10 +598,7 @@ body {
         <div class="ai-tabs">
             <div class="tab active">SEARCH FLIGHTS</div>
             <div class="tab">MANAGE BOOKING</div>
-            <div class="tab">CHECK-IN</div>
             <div class="tab">FLIGHT STATUS</div>
-            <div class="tab">eZ Booking</div>
-            <div class="offer-tag">APAAR-ID OFFER</div>
         </div>
 
         <div class="ai-sub-row">
@@ -649,11 +654,6 @@ body {
             </div>
 
             <button class="ai-final-search" onclick="performFlightSearch()">Search</button>
-        </div>
-
-        <div class="upi-banner">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" alt="UPI" width="40">
-            <span>Pay via UPI & save up to ₹2,000 | Use code <strong>UPIPROMO</strong></span>
         </div>
     </div>
 </div>
