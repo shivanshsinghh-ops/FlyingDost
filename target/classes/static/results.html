@@ -4,61 +4,174 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flight Results | FlyingDost</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600&family=Montserrat:wght@300;400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,600&family=Montserrat:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* --- 1. CORPORATE LUXURY RESET --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
-        body { background-color: #111; color: white; padding: 50px 20px; }
-        
-        .results-wrapper { width: 100%; max-width: 1000px; margin: 0 auto; }
-        
-        /* Loading & Header */
-        #loading-state { text-align: center; padding: 80px 0; }
-        #results-header { margin-bottom: 30px; display: none; border-bottom: 1px solid #333; padding-bottom: 20px; }
-        
-        /* Flight Cards */
-        .flight-card { background: #fff; border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #ed1c24; margin-bottom: 15px; }
-        .airline-info { display: flex; align-items: center; gap: 15px; width: 25%; }
-        .airline-logo { width: 40px; height: 40px; border-radius: 50%; background: #f0f0f0; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #ed1c24; font-size: 18px; font-family: 'Rajdhani', sans-serif; }
-        .flight-time { text-align: center; flex: 1; }
-        .time-large { font-size: 24px; font-weight: 700; color: #111; font-family: 'Rajdhani', sans-serif;}
-        .city-small { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-top: 5px; }
-        .duration-line { font-size: 11px; color: #999; margin: 5px 0; position: relative; font-weight: 600;}
-        .duration-line::before { content: ''; position: absolute; top: 50%; left: 10%; width: 30%; height: 1px; background: #ddd; }
-        .duration-line::after { content: ''; position: absolute; top: 50%; right: 10%; width: 30%; height: 1px; background: #ddd; }
-        .flight-price { width: 20%; text-align: right; }
-        .price-large { font-size: 26px; font-weight: 700; color: #111; margin-bottom: 10px; font-family: 'Rajdhani', sans-serif;}
-        .book-btn { background: #ed1c24; color: #fff; border: none; padding: 12px 30px; border-radius: 30px; font-weight: 600; cursor: pointer; transition: 0.3s; }
-        .book-btn:hover { background: #111; }
+        body { 
+            background: radial-gradient(circle at top center, #111622 0%, #07090e 100%); 
+            color: #f8fafc; 
+            padding: 60px 20px; 
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-        /* Loyalty Section */
-        .loyalty-section { background: #1a1a1a; border-radius: 12px; padding: 40px; margin-top: 50px; border: 1px solid #333; display: none; }
+        /* Subdued First-Class Cabin Lighting Effect */
+        .ambient-glow-container {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            z-index: -1; overflow: hidden; pointer-events: none;
+        }
+        .ambient-glow {
+            position: absolute; filter: blur(140px); opacity: 0.12; 
+            border-radius: 50%; animation: slowDrift 20s infinite alternate ease-in-out;
+        }
+        .glow-crimson { width: 700px; height: 700px; background: #a6192e; top: -250px; left: -150px; }
+        .glow-gold { width: 600px; height: 600px; background: #bfa15f; bottom: -200px; right: -100px; animation-delay: -7s; }
+        
+        @keyframes slowDrift { 
+            0% { transform: translate(0, 0) scale(1); } 
+            100% { transform: translate(40px, -30px) scale(1.08); } 
+        }
+        
+        .results-wrapper { width: 100%; max-width: 1050px; margin: 0 auto; position: relative; z-index: 10; }
+        
+        /* --- 2. PREMIUM LOADING STATE --- */
+        #loading-state { text-align: center; padding: 120px 0; }
+        #loading-state h2 { font-family: 'Playfair Display', serif; font-weight: 400; font-size: 26px; letter-spacing: 1px; color: #f8fafc; }
+        
+        /* --- 3. REFINED HEADERS --- */
+        #results-header { margin-bottom: 40px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 25px; display: none; }
+        #route-title { font-family: 'Playfair Display', serif; font-weight: 400; font-size: 36px; letter-spacing: 0.5px; color: #f8fafc; }
+        #route-title strong { font-weight: 600; font-style: italic; color: #bfa15f; }
+        #route-details { font-size: 13px; color: #94a3b8; letter-spacing: 1px; margin-top: 10px; font-weight: 500; text-transform: uppercase; }
+        
+        /* --- 4. THE EXECUTIVE OBSIDIAN FLIGHT CARD --- */
+        .flight-card { 
+            background: rgba(17, 22, 34, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px; 
+            padding: 24px 30px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 18px; 
+            transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        
+        .flight-card:hover { 
+            transform: translateY(-4px); 
+            background: rgba(22, 30, 47, 0.85);
+            border-color: rgba(191, 161, 95, 0.35);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        /* LIVE AIRLINE LOGO STYLING */
+        .airline-info { display: flex; align-items: center; gap: 18px; width: 25%; }
+        .airline-logo { 
+            width: 46px; height: 46px; border-radius: 8px; 
+            background: #ffffff; /* Crisp white for image visibility */
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex; justify-content: center; align-items: center; 
+            padding: 4px; overflow: hidden;
+        }
+        .airline-logo img { width: 100%; height: 100%; object-fit: contain; }
+
+        .airline-name-text { font-weight: 600; font-size: 15px; color: #ffffff; }
+        .flight-number-text { font-size: 12px; color: #64748b; font-weight: 500; margin-top: 2px; }
+
+        .flight-time { text-align: center; flex: 1; }
+        .time-large { font-size: 26px; font-weight: 600; color: #ffffff; font-family: 'Rajdhani', sans-serif; }
+        .city-small { font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-top: 6px; }
+        
+        .flight-path-container { flex: 0.7; text-align: center; padding: 0 15px; }
+        .duration-line { font-size: 12px; color: #cbd5e1; font-weight: 500; margin-bottom: 8px; }
+        .path-bar { height: 1px; background: rgba(255, 255, 255, 0.15); position: relative; width: 100%; margin: 0 auto; }
+        .path-bar::before, .path-bar::after {
+            content: ''; position: absolute; top: -3px; width: 7px; height: 7px; 
+            border-radius: 50%; background: #07090e; border: 1.5px solid #64748b;
+        }
+        .path-bar::before { left: 0; } .path-bar::after { right: 0; }
+        
+        .flight-card:hover .path-bar { background: rgba(191, 161, 95, 0.5); }
+        .flight-card:hover .path-bar::before, .flight-card:hover .path-bar::after { border-color: #bfa15f; }
+        
+        .stop-badge { font-size: 10px; color: #bfa15f; font-weight: 700; letter-spacing: 1.5px; margin-top: 10px; text-transform: uppercase; }
+
+        .flight-price { width: 22%; text-align: right; display: flex; flex-direction: column; align-items: flex-end; }
+        .price-large { font-size: 28px; font-weight: 600; color: #ffffff; font-family: 'Rajdhani', sans-serif; margin-bottom: 12px; }
+        
+        .book-btn { 
+            background: linear-gradient(135deg, #a6192e 0%, #7c1222 100%); 
+            color: #fff; border: none; padding: 10px 24px; border-radius: 4px; 
+            font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+            cursor: pointer; transition: all 0.25s ease;
+        }
+        .book-btn:hover { background: #bfa15f; color: #07090e; transform: translateY(-1px); }
+
+        /* --- 5. THE CORPORATE MILEAGE EXECUTIVE LOUNGE --- */
+        .loyalty-section { 
+            background: rgba(13, 17, 28, 0.85);
+            border-radius: 12px; padding: 35px 40px; margin-top: 55px; 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            display: none; 
+        }
+        .loyalty-title { font-weight: 600; font-family: 'Playfair Display', serif; font-size: 24px; color: #fff; }
+        .loyalty-subtitle { font-size: 13px; color: #94a3b8; margin-top: 6px; }
+        
+        .loyalty-card { 
+            background: rgba(255, 255, 255, 0.02); 
+            border: 1px solid rgba(255, 255, 255, 0.04); 
+            border-radius: 8px; padding: 20px 25px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 14px; transition: all 0.3s ease;
+        }
+        .loyalty-card:hover { 
+            border-color: rgba(191, 161, 95, 0.25); 
+            background: rgba(255, 255, 255, 0.04);
+            transform: translateX(4px);
+        }
+        
+        .points-tag { font-size: 12px; color: #94a3b8; margin-top: 6px; font-weight: 600; letter-spacing: 0.5px; }
+        .savings-badge { font-size: 11px; color: #bfa15f; font-weight: 700; margin-top: 6px; letter-spacing: 1px; text-transform: uppercase; }
+        .redeem-btn {
+            background: transparent; border: 1px solid rgba(255, 255, 255, 0.15); color: #fff;
+            padding: 9px 22px; border-radius: 4px; font-size: 11px; font-weight: 600; letter-spacing: 1px;
+            cursor: pointer; transition: all 0.2s; text-transform: uppercase;
+        }
+        .redeem-btn:hover { background: #fff; color: #07090e; border-color: #fff; }
     </style>
 </head>
 <body>
 
+    <div class="ambient-glow-container">
+        <div class="ambient-glow glow-crimson"></div>
+        <div class="ambient-glow glow-gold"></div>
+    </div>
+
     <div class="results-wrapper">
         <div id="loading-state">
-            <i class="fa-solid fa-plane fa-bounce" style="font-size: 40px; color: #ed1c24; margin-bottom: 20px;"></i>
-            <h2 id="loading-text" style="font-family: 'Playfair Display', serif; font-weight: 400;">Establishing secure connection...</h2>
+            <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 40px; color: #bfa15f; margin-bottom: 25px;"></i>
+            <h2 id="loading-text">Connecting to Live Server...</h2>
         </div>
 
         <div id="results-header">
-            <h1 id="route-title" style="font-family: 'Playfair Display', serif; font-weight: 400; font-size: 32px; margin-bottom: 10px;"></h1>
-            <p id="route-details" style="color: #aaa;"></p>
+            <h1 id="route-title"></h1>
+            <p id="route-details"></p>
         </div>
 
         <div id="flight-list"></div>
 
         <div id="loyalty-section" class="loyalty-section">
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 20px;">
                 <div>
-                    <h3 style="margin-top:0; font-weight: 700; font-size: 22px; color: #fff;">Your Maharaja Club Benefits</h3>
-                    <p style="font-size: 13px; color: #aaa; margin-top: 5px;">We found your saved miles! Best redemptions for this route:</p>
+                    <h3 class="loyalty-title">Maharaja Club Lounge Integrations</h3>
+                    <p class="loyalty-subtitle">Verified point balances synchronized securely with corporate partners.</p>
                 </div>
                 <div style="text-align: right;">
-                    <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #999; margin-bottom: 5px;">Logged in as</p>
-                    <p style="font-size: 16px; font-weight: 700; color: #ed1c24;">Shivansh <i class="fa-solid fa-circle-check"></i></p>
+                    <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; margin-bottom: 4px;">Verified Tier ID</p>
+                    <p style="font-size: 15px; font-weight: 600; color: #bfa15f; letter-spacing: 0.5px;">Shivansh <i class="fa-solid fa-circle-check" style="font-size: 13px;"></i></p>
                 </div>
             </div>
             <div id="loyalty-deals"></div>
@@ -66,46 +179,43 @@
     </div>
 
     <script>
-        // Data & Variables
         const airlinesDomestic = [{ name: "IndiGo", code: "6E" }, { name: "Air India", code: "AI" }, { name: "Vistara", code: "UK" }, { name: "SpiceJet", code: "SG" }, { name: "Air India Express", code: "IX" }, { name: "Akasa Air", code: "QP" }];
         const airlinesInternational = [{ name: "Emirates", code: "EK" }, { name: "Etihad Airways", code: "EY" }, { name: "Qatar Airways", code: "QR" }, { name: "British Airways", code: "BA" }, { name: "Lufthansa", code: "LH" }, { name: "Singapore Airlines", code: "SQ" }, { name: "Air India", code: "AI" }, { name: "Vistara", code: "UK" }, { name: "Delta Air Lines", code: "DL" }];
         const userWallet = { "AI": 15000, "EK": 8500, "BA": 12000, "UK": 5000, "6E": 3000 };
         const pointValueINR = 0.50; 
         let generatedFlights = [];
 
-        // On Page Load: Read local storage and generate
         window.onload = () => {
             const paramsString = localStorage.getItem('flightSearchParams');
             if (!paramsString) {
-                document.getElementById('loading-text').innerText = "Session expired. Please return home to search again.";
+                document.getElementById('loading-text').innerText = "Session timeout. Please return to the homepage.";
                 return;
             }
 
             const searchParams = JSON.parse(paramsString);
             const { origin, dest, date, pax, flightClass, isDomestic } = searchParams;
 
-            document.getElementById('loading-text').innerText = `Searching global database for routes to ${dest.city}...`;
+            document.getElementById('loading-text').innerText = `Querying Live Schedules to ${dest.city}...`;
 
             setTimeout(() => {
-                // Generate Flights
                 const totalToGenerate = Math.floor(Math.random() * ((isDomestic ? 11 : 22) - (isDomestic ? 7 : 15) + 1)) + (isDomestic ? 7 : 15);
                 const pool = isDomestic ? airlinesDomestic : airlinesInternational;
 
                 for (let i = 0; i < totalToGenerate; i++) {
                     const airline = pool[Math.floor(Math.random() * pool.length)];
-                    const avgMinutes = isDomestic ? (Math.random() * 120 + 60) : (Math.random() * 480 + 300); 
+                    const avgMinutes = isDomestic ? (Math.random() * 60 + 90) : (Math.random() * 480 + 360); 
                     const hours = Math.floor(avgMinutes / 60);
                     const minutes = Math.floor(avgMinutes % 60);
-                    const depHour = Math.floor(Math.random() * 24);
-                    const depMin = Math.floor(Math.random() * 60);
+                    const depHour = Math.floor(Math.random() * 16 + 6); 
+                    const depMin = Math.floor(Math.random() * 12) * 5;
                     const arrHour = Math.floor((depHour + hours + (depMin + minutes >= 60 ? 1 : 0)) % 24);
                     const arrMin = (depMin + minutes) % 60;
-                    const basePrice = isDomestic ? 3500 : 35000;
-                    const variation = isDomestic ? (Math.random() * 5000) : (Math.random() * 40000);
+                    const basePrice = isDomestic ? 3800 : 42000;
+                    const variation = isDomestic ? (Math.random() * 4500) : (Math.random() * 35000);
                     
                     generatedFlights.push({
                         airline: airline.name, code: airline.code,
-                        flightNo: `${airline.code}-${Math.floor(Math.random() * 900) + 100}`,
+                        flightNo: `${airline.code}-${Math.floor(Math.random() * 800) + 100}`,
                         dep: `${String(depHour).padStart(2,'0')}:${String(depMin).padStart(2,'0')}`,
                         arr: `${String(arrHour).padStart(2,'0')}:${String(arrMin).padStart(2,'0')}`,
                         duration: `${hours}h ${minutes}m`,
@@ -115,40 +225,46 @@
 
                 generatedFlights.sort((a,b) => a.price - b.price);
 
-                // Update UI
                 document.getElementById('loading-state').style.display = 'none';
                 document.getElementById('results-header').style.display = 'block';
-                document.getElementById('route-title').innerHTML = `Flights from <strong style="color: #ed1c24;">${origin.city}</strong> to <strong style="color: #ed1c24;">${dest.city}</strong>`;
-                document.getElementById('route-details').innerHTML = `${date} &nbsp;•&nbsp; ${pax} &nbsp;•&nbsp; ${flightClass} &nbsp;&nbsp;&nbsp;&nbsp; <strong style="color: white;">${generatedFlights.length} options found</strong>`;
+                document.getElementById('route-title').innerHTML = `Flights from <strong>${origin.city}</strong> to <strong>${dest.city}</strong>`;
+                document.getElementById('route-details').innerHTML = `${date} &nbsp;•&nbsp; ${pax} &nbsp;•&nbsp; ${flightClass} &nbsp;•&nbsp; <span style="color: #bfa15f; font-weight: 700;">${generatedFlights.length} Routes Identified</span>`;
 
                 const listHTML = document.getElementById('flight-list');
                 generatedFlights.forEach(flight => {
                     listHTML.innerHTML += `
                         <div class="flight-card">
                             <div class="airline-info">
-                                <div class="airline-logo">${flight.code}</div>
-                                <div><div style="font-weight: 700; font-size: 14px; color: #111;">${flight.airline}</div><div style="font-size: 12px; color: #666;">${flight.flightNo}</div></div>
+                                <div class="airline-logo">
+                                    <img src="https://images.kiwi.com/airlines/64/${flight.code}.png" alt="${flight.airline} Logo">
+                                </div>
+                                <div>
+                                    <div class="airline-name-text">${flight.airline}</div>
+                                    <div class="flight-number-text">${flight.flightNo}</div>
+                                </div>
                             </div>
                             <div class="flight-time">
-                                <div class="time-large">${flight.dep}</div><div class="city-small">${origin.city} (${origin.code})</div>
+                                <div class="time-large">${flight.dep}</div>
+                                <div class="city-small">${origin.city}</div>
                             </div>
-                            <div class="flight-time" style="flex: 0.5;">
-                                <div class="duration-line">${flight.duration}</div><div style="font-size: 10px; color: #ed1c24; font-weight: 700;">NON-STOP</div>
+                            <div class="flight-path-container">
+                                <div class="duration-line">${flight.duration}</div>
+                                <div class="path-bar"></div>
+                                <div class="stop-badge">Non-Stop</div>
                             </div>
                             <div class="flight-time">
-                                <div class="time-large">${flight.arr}</div><div class="city-small">${dest.city} (${dest.code})</div>
+                                <div class="time-large">${flight.arr}</div>
+                                <div class="city-small">${dest.city}</div>
                             </div>
                             <div class="flight-price">
                                 <div class="price-large">₹${flight.price.toLocaleString('en-IN')}</div>
-                                <button class="book-btn">Book Now</button>
+                                <button class="book-btn">Select</button>
                             </div>
                         </div>`;
                 });
 
-                // Calculate & Show Loyalty Deals
                 renderLoyaltyDeals();
-
-            }, 1200);
+            }, 1400);
         };
 
         function renderLoyaltyDeals() {
@@ -166,27 +282,29 @@
             document.getElementById('loyalty-section').style.display = 'block';
 
             if (deals.length === 0) {
-                dealsBox.innerHTML = `<p style="text-align: center; color: #666; padding: 20px;">No point redemption options available for these routes.</p>`;
+                dealsBox.innerHTML = `<p style="text-align: center; color: #64748b; font-size: 14px; padding: 20px; font-style: italic;">No partner mileage opportunities found for this sector.</p>`;
                 return;
             }
 
             deals.slice(0, 3).forEach(deal => {
                 dealsBox.innerHTML += `
-                    <div style="background: #222; border: 1px solid #444; border-radius: 8px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <div style="display: flex; gap: 15px; align-items: center; width: 40%;">
-                            <div class="airline-logo" style="width: 35px; height: 35px; font-size: 14px; color: #ed1c24; background: #fff;">${deal.code}</div>
+                    <div class="loyalty-card">
+                        <div style="display: flex; gap: 18px; align-items: center; width: 40%;">
+                            <div class="airline-logo">
+                                <img src="https://images.kiwi.com/airlines/64/${deal.code}.png" alt="${deal.airline} Logo">
+                            </div>
                             <div>
-                                <p style="font-weight: 700; font-size: 14px; margin: 0; color: #fff;">${deal.airline} <span style="font-weight: 500; color: #999; font-size: 12px;">(${deal.flightNo})</span></p>
-                                <p style="font-size: 12px; color: #3b82f6; margin: 3px 0 0 0; font-weight: 600;"><i class="fa-solid fa-coins"></i> Applying ${deal.pointsUsed.toLocaleString()} Points</p>
+                                <p style="font-weight: 600; font-size: 15px; margin: 0; color: #fff;">${deal.airline} <span style="font-weight: 500; color: #64748b; font-size: 12px;">(${deal.flightNo})</span></p>
+                                <p class="points-tag"><i class="fa-solid fa-award"></i> ${deal.pointsUsed.toLocaleString()} Miles Applied</p>
                             </div>
                         </div>
                         <div style="text-align: center; width: 30%;">
-                            <p style="font-size: 12px; color: #888; text-decoration: line-through; margin: 0;">₹${deal.originalPrice.toLocaleString('en-IN')}</p>
-                            <p style="font-size: 11px; color: #22c55e; font-weight: 700; margin: 2px 0 0 0;">You save ₹${deal.discountValue.toLocaleString('en-IN')}</p>
+                            <p style="font-size: 12px; color: #64748b; text-decoration: line-through; margin: 0;">₹${deal.originalPrice.toLocaleString('en-IN')}</p>
+                            <p class="savings-badge">Allowance: -₹${deal.discountValue.toLocaleString('en-IN')}</p>
                         </div>
                         <div style="text-align: right; width: 30%;">
-                            <p style="font-size: 22px; font-weight: 700; color: #fff; font-family: 'Rajdhani', sans-serif; margin: 0 0 5px 0;">₹${deal.finalPrice.toLocaleString('en-IN')}</p>
-                            <button class="book-btn" style="padding: 8px 20px; font-size: 12px;">Redeem & Book</button>
+                            <p style="font-size: 24px; font-weight: 600; color: #fff; font-family: 'Rajdhani', sans-serif; margin: 0 0 6px 0;">₹${deal.finalPrice.toLocaleString('en-IN')}</p>
+                            <button class="redeem-btn" onclick="alert('Securing mileage authorization for ${deal.flightNo}...')">Redeem</button>
                         </div>
                     </div>`;
             });
