@@ -289,10 +289,89 @@ function updatePaxDisplay() {
 }
 
 // ==========================================
-// 6. BUTTON PLACEHOLDERS (Prevents Console Errors)
+// 8. DYNAMIC FLIGHT SEARCH ENGINE (MOCK API)
 // ==========================================
-function performFlightSearch() { console.log("Searching for flights..."); }
-function calculateDeal() { console.log("Calculating fare..."); }
+function performFlightSearch() {
+    const originInput = document.getElementById('fromInput').value;
+    const destInput = document.getElementById('toInput').value;
+    const dateVal = document.getElementById('departVal').innerText;
+
+    // 1. Validation: Make sure they actually filled it out
+    if (!originInput || !destInput || dateVal === "Select Date") {
+        alert("Please select an Origin, Destination, and Departure Date to search.");
+        return;
+    }
+
+    // 2. Extract just the city names (e.g., turns "Delhi (DEL)" into "Delhi")
+    const originCity = originInput.split(' ')[0] || "Origin";
+    const destCity = destInput.split(' ')[0] || "Destination";
+
+    const container = document.getElementById('flight-results-container');
+    container.style.display = 'flex';
+    
+    // Show a loading state
+    container.innerHTML = `
+        <div style="text-align: center; color: white; padding: 40px;">
+            <i class="fa-solid fa-plane fa-bounce" style="font-size: 30px; color: #ed1c24; margin-bottom: 15px;"></i>
+            <h3>Searching global database...</h3>
+        </div>
+    `;
+
+    // Scroll down so the user sees the loading state
+    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // 3. Fake a network delay of 1.2 seconds, then generate the flights!
+    setTimeout(() => {
+        // Our template flights. We generate random prices for realism.
+        const mockFlights = [
+            { airline: "Air India", flightNo: "AI-101", dep: "06:00", arr: "08:15", duration: "2h 15m", price: Math.floor(Math.random() * 4000) + 4000 },
+            { airline: "Air India Express", flightNo: "IX-224", dep: "10:30", arr: "12:50", duration: "2h 20m", price: Math.floor(Math.random() * 3000) + 3500 },
+            { airline: "Air India", flightNo: "AI-305", dep: "17:45", arr: "20:10", duration: "2h 25m", price: Math.floor(Math.random() * 5000) + 4500 }
+        ];
+
+        // Add the header
+        container.innerHTML = `<h2 style="color: white; font-weight: 400; margin-bottom: 10px; font-family: 'Playfair Display', serif;">Showing flights from <strong style="color: #ed1c24;">${originCity}</strong> to <strong style="color: #ed1c24;">${destCity}</strong></h2><p style="color: #ccc; margin-bottom: 20px;">Departure on ${dateVal} • ${document.getElementById('paxVal').innerText}</p>`;
+
+        // Inject the cards into the HTML
+        mockFlights.forEach(flight => {
+            // Format price with commas (e.g. 5000 -> 5,000)
+            const formattedPrice = "₹" + flight.price.toLocaleString('en-IN');
+
+            container.innerHTML += `
+                <div class="flight-card">
+                    <div class="airline-info">
+                        <div class="airline-logo">AI</div>
+                        <div>
+                            <div style="font-weight: 700; font-size: 14px; color: #111;">${flight.airline}</div>
+                            <div style="font-size: 12px; color: #666;">${flight.flightNo}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flight-time">
+                        <div class="time-large">${flight.dep}</div>
+                        <div class="city-small">${originCity}</div>
+                    </div>
+                    
+                    <div class="flight-time" style="flex: 0.5;">
+                        <div class="duration-line">${flight.duration}</div>
+                        <div style="font-size: 10px; color: #ed1c24; font-weight: 700;">NON-STOP</div>
+                    </div>
+                    
+                    <div class="flight-time">
+                        <div class="time-large">${flight.arr}</div>
+                        <div class="city-small">${destCity}</div>
+                    </div>
+                    
+                    <div class="flight-price">
+                        <div class="price-large">${formattedPrice}</div>
+                        <button class="book-btn" onclick="alert('Proceeding to checkout for ${flight.flightNo}!')">Book Now</button>
+                    </div>
+                </div>
+            `;
+        });
+    }, 1200); // 1200 milliseconds (1.2 seconds) wait time
+}
+
 // ==========================================
 // 7. MODALS & NAVIGATION LOGIC
 // ==========================================
@@ -331,3 +410,138 @@ document.querySelectorAll('.modal-overlay').forEach(modal => {
         }
     });
 });
+// ==========================================
+// 8. MASTER DYNAMIC RESULTS ENGINE (SCALABLE)
+// ==========================================
+
+const airlinesDomestic = [
+    { name: "IndiGo", code: "6E" }, { name: "Air India", code: "AI" },
+    { name: "Vistara", code: "UK" }, { name: "SpiceJet", code: "SG" },
+    { name: "Air India Express", code: "IX" }, { name: "Akasa Air", code: "QP" },
+    { name: "Alliance Air", code: "9I" }, { name: "Star Air", code: "S5" }
+];
+
+const airlinesInternational = [
+    { name: "Emirates", code: "EK" }, { name: "Etihad Airways", code: "EY" },
+    { name: "Qatar Airways", code: "QR" }, { name: "British Airways", code: "BA" },
+    { name: "Lufthansa", code: "LH" }, { name: "Singapore Airlines", code: "SQ" },
+    { name: "Air India", code: "AI" }, { name: "Vistara", code: "UK" },
+    { name: "Turkish Airlines", code: "TK" }, { name: "KLM", code: "KL" },
+    { name: "Cathay Pacific", code: "CX" }, { name: "Delta Air Lines", code: "DL" },
+    { name: "United Airlines", code: "UA" }, { name: "Air France", code: "AF" },
+    { name: "Japan Airlines", code: "JL" }, { name: "Qantas", code: "QF" },
+    { name: "Oman Air", code: "WY" }, { name: "Gulf Air", code: "GF" },
+    { name: "SriLankan Airlines", code: "UL" }, { name: "Malaysia Airlines", code: "MH" }
+];
+
+function performFlightSearch() {
+    const rawOrigin = document.getElementById('fromInput').value;
+    const rawDest = document.getElementById('toInput').value;
+    const dateVal = document.getElementById('departVal').innerText;
+    
+    if (!rawOrigin || !rawDest || dateVal === "Select Date") {
+        alert("Please select Origin, Destination, and Date."); return;
+    }
+
+    // Extract the 3-letter codes from the input box (e.g., "DEL")
+    const originCode = (rawOrigin.match(/\((.*?)\)/) || [])[1];
+    const destCode = (rawDest.match(/\((.*?)\)/) || [])[1];
+    
+    // SMART LOOKUP: Find the exact airport in your massive database
+    const originData = airports.find(a => a.code === originCode) || { city: rawOrigin.split(' (')[0], country: "Unknown", code: originCode };
+    const destData = airports.find(a => a.code === destCode) || { city: rawDest.split(' (')[0], country: "Unknown", code: destCode };
+
+    // Determine Domestic vs International
+    const isDomestic = (originData.country === "India" && destData.country === "India");
+    
+    // Show Loading UI
+    const container = document.getElementById('flight-results-container');
+    container.style.display = 'flex';
+    container.innerHTML = `<div style="text-align: center; color: white; padding: 40px;"><i class="fa-solid fa-plane fa-bounce" style="font-size: 30px; color: #ed1c24; margin-bottom: 15px;"></i><h3>Searching routes across ${isDomestic ? 'India' : 'the Globe'}...</h3></div>`;
+    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    setTimeout(() => {
+        // Enforce the strict Minimums (7 for Domestic, 15 for International)
+        const minFlights = isDomestic ? 7 : 15;
+        const maxFlights = isDomestic ? 11 : 22; 
+        const totalToGenerate = Math.floor(Math.random() * (maxFlights - minFlights + 1)) + minFlights;
+
+        const mockFlights = [];
+        const pool = isDomestic ? airlinesDomestic : airlinesInternational;
+
+        // Generate the massive list of flights
+        for (let i = 0; i < totalToGenerate; i++) {
+            // Pick a random airline from the pool
+            const airline = pool[Math.floor(Math.random() * pool.length)];
+            
+            // Realistic Math Based on Route Type
+            const avgMinutes = isDomestic ? (Math.random() * 120 + 60) : (Math.random() * 480 + 300); // 1-3 hrs domestic, 5-13 hrs intl
+            const hours = Math.floor(avgMinutes / 60);
+            const minutes = Math.floor(avgMinutes % 60);
+
+            const depHour = Math.floor(Math.random() * 24);
+            const depMin = Math.floor(Math.random() * 60);
+            const arrHour = Math.floor((depHour + hours + (depMin + minutes >= 60 ? 1 : 0)) % 24);
+            const arrMin = (depMin + minutes) % 60;
+
+            const basePrice = isDomestic ? 3500 : 35000;
+            const variation = isDomestic ? (Math.random() * 5000) : (Math.random() * 40000);
+            
+            mockFlights.push({
+                airline: airline.name,
+                code: airline.code,
+                flightNo: `${airline.code}-${Math.floor(Math.random() * 900) + 100}`,
+                dep: `${String(depHour).padStart(2,'0')}:${String(depMin).padStart(2,'0')}`,
+                arr: `${String(arrHour).padStart(2,'0')}:${String(arrMin).padStart(2,'0')}`,
+                duration: `${hours}h ${minutes}m`,
+                price: Math.round(basePrice + variation)
+            });
+        }
+
+        // Sort cheapest first
+        mockFlights.sort((a,b) => a.price - b.price);
+
+        // Render Headers
+        container.innerHTML = `
+            <h2 style="color: white; font-weight: 400; margin-bottom: 10px; font-family: 'Playfair Display', serif;">
+                Flights from <strong style="color: #ed1c24;">${originData.city}, ${originData.country}</strong> to <strong style="color: #ed1c24;">${destData.city}, ${destData.country}</strong>
+            </h2>
+            <p style="color: #ccc; margin-bottom: 30px;">
+                Departure: ${dateVal} • ${document.getElementById('paxVal').innerText} • ${document.getElementById('classSelect').value}
+                <span style="float: right; color: #ed1c24; font-weight: bold;">${mockFlights.length} options found</span>
+            </p>
+        `;
+
+        // Render Cards
+        mockFlights.forEach(flight => {
+            const formattedPrice = "₹" + flight.price.toLocaleString('en-IN');
+            container.innerHTML += `
+                <div class="flight-card">
+                    <div class="airline-info">
+                        <div class="airline-logo">${flight.code}</div>
+                        <div>
+                            <div style="font-weight: 700; font-size: 14px; color: #111;">${flight.airline}</div>
+                            <div style="font-size: 12px; color: #666;">${flight.flightNo}</div>
+                        </div>
+                    </div>
+                    <div class="flight-time">
+                        <div class="time-large">${flight.dep}</div>
+                        <div class="city-small" style="font-weight:700;">${originData.city} (${originData.code})</div>
+                    </div>
+                    <div class="flight-time" style="flex: 0.5;">
+                        <div class="duration-line">${flight.duration}</div>
+                        <div style="font-size: 10px; color: #ed1c24; font-weight: 700;">NON-STOP</div>
+                    </div>
+                    <div class="flight-time">
+                        <div class="time-large">${flight.arr}</div>
+                        <div class="city-small" style="font-weight:700;">${destData.city} (${destData.code})</div>
+                    </div>
+                    <div class="flight-price">
+                        <div class="price-large">${formattedPrice}</div>
+                        <button class="book-btn" onclick="alert('Checking live availability for ${flight.airline} flight ${flight.flightNo}...')">Book Now</button>
+                    </div>
+                </div>
+            `;
+        });
+    }, 1200); 
+}

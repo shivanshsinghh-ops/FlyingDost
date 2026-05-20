@@ -226,6 +226,46 @@
         .pax-btn.plus { background: #374151; color: white; border: none; }
         .pax-btn.plus:hover { background: #111827; }
         .pax-count { font-size: 15px; font-weight: 700; width: 15px; text-align: center; color: #111; }
+        /* --- 11. SEARCH RESULTS --- */
+        .results-container {
+            width: 95%; max-width: 1000px; margin: 0 auto 50px auto;
+            display: none; /* Hidden until you click Search */
+            flex-direction: column; gap: 20px;
+            position: relative; z-index: 50;
+        }
+        .flight-card {
+            background: #fff; border-radius: 12px; padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            display: flex; justify-content: space-between; align-items: center;
+            border-left: 5px solid #ed1c24; transition: transform 0.2s;
+        }
+        .flight-card:hover { transform: translateY(-3px); }
+        .airline-info { display: flex; align-items: center; gap: 15px; width: 25%; }
+        .airline-logo { width: 40px; height: 40px; border-radius: 50%; background: #f0f0f0; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #ed1c24; font-size: 18px; font-family: 'Rajdhani', sans-serif; }
+        .flight-time { text-align: center; flex: 1; }
+        .time-large { font-size: 24px; font-weight: 700; color: #111; font-family: 'Rajdhani', sans-serif;}
+        .city-small { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-top: 5px; }
+        .duration-line { font-size: 11px; color: #999; margin: 5px 0; position: relative; font-weight: 600;}
+        .duration-line::before { content: ''; position: absolute; top: 50%; left: 10%; width: 30%; height: 1px; background: #ddd; }
+        .duration-line::after { content: ''; position: absolute; top: 50%; right: 10%; width: 30%; height: 1px; background: #ddd; }
+        .flight-price { width: 20%; text-align: right; }
+        .price-large { font-size: 26px; font-weight: 700; color: #111; margin-bottom: 10px; font-family: 'Rajdhani', sans-serif;}
+        .book-btn { background: #ed1c24; color: #fff; border: none; padding: 12px 30px; border-radius: 30px; font-weight: 600; cursor: pointer; transition: 0.3s; font-family: 'Montserrat', sans-serif; }
+        .book-btn:hover { background: #111; }
+        /* --- 11. SEARCH RESULTS (FIXED VISIBILITY) --- */
+        .results-container {
+            width: 95%; max-width: 1000px; margin: 0 auto 50px auto;
+            display: none; 
+            flex-direction: column; gap: 20px;
+            position: relative; z-index: 50;
+            background: #1a1a1a; /* FIXED: Dark background for visibility */
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 1px solid #333;
+        }
+        
+        .results-container h2, .results-container p { color: white !important; } /* FIXED: Forces text to be visible */
     </style>
 </head>
 <body>
@@ -361,6 +401,8 @@
     </div> 
 
     <div class="lower-content-wrapper">
+        <div id="flight-results-container" class="results-container">
+        </div>
         <div class="pricing-tools">
             <h3 style="margin-top:0; font-weight: 500; letter-spacing: 1px;">Smart Fare Calculator</h3>
             <div class="form-grid" style="margin-bottom: 0;">
@@ -505,8 +547,9 @@
             </div>
         </div>
     </div>
+    <a href="#" id="new-window-results-trigger" target="_blank" style="display:none;"></a>
 
     <script src="app.js"></script>
-    
+      
 </body>
 </html>
