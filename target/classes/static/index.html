@@ -202,6 +202,30 @@
         .action-btns button { padding: 12px 30px; border: none; border-radius: 30px; font-family: 'Montserrat', sans-serif; font-weight: 700; cursor: pointer; font-size: 14px; }
         .cancel-btn { background: transparent; color: #666; margin-right: 10px; }
         .confirm-btn { background: #ed1c24; color: #fff; }
+        /* --- 10. PASSENGER POPOVER --- */
+        .pax-dropdown {
+            position: absolute; top: 100%; left: -50px; width: 280px;
+            background: #fff; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 2000; padding: 20px; display: none; margin-top: 10px; cursor: default;
+            border: 1px solid #eee;
+        }
+        .pax-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .pax-row:last-child { margin-bottom: 0; }
+        .pax-info h4 { margin: 0; font-size: 14px; color: #111; font-weight: 700; }
+        .pax-info p { margin: 0; font-size: 11px; color: #666; font-weight: 500; }
+        .pax-controls { display: flex; align-items: center; gap: 15px; }
+        
+        /* The +/- Buttons */
+        .pax-btn { 
+            width: 32px; height: 32px; border-radius: 4px; border: 1px solid #d1d5db; 
+            background: #f3f4f6; cursor: pointer; font-size: 20px; 
+            display: flex; justify-content: center; align-items: center; color: #6b7280;
+            transition: all 0.2s;
+        }
+        .pax-btn:hover { background: #e5e7eb; color: #111; }
+        .pax-btn.plus { background: #374151; color: white; border: none; }
+        .pax-btn.plus:hover { background: #111827; }
+        .pax-count { font-size: 15px; font-weight: 700; width: 15px; text-align: center; color: #111; }
     </style>
 </head>
 <body>
@@ -275,9 +299,49 @@
                     <div id="returnVal" class="val">Select Date</div>
                 </div>
 
-                <div class="search-unit pax">
+                <div class="search-unit pax" onclick="togglePax()">
                     <div class="unit-label">Passenger(s)</div>
                     <div id="paxVal" class="val">1 Adult</div>
+
+                    <div id="paxDropdown" class="pax-dropdown" onclick="event.stopPropagation()">
+                        
+                        <div class="pax-row">
+                            <div class="pax-info">
+                                <h4>Adults</h4>
+                                <p>12+ Years</p>
+                            </div>
+                            <div class="pax-controls">
+                                <button type="button" class="pax-btn" onclick="updatePax('adult', -1)">-</button>
+                                <span id="adultCount" class="pax-count">1</span>
+                                <button type="button" class="pax-btn plus" onclick="updatePax('adult', 1)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="pax-row">
+                            <div class="pax-info">
+                                <h4>Children</h4>
+                                <p>2-11 Years</p>
+                            </div>
+                            <div class="pax-controls">
+                                <button type="button" class="pax-btn" onclick="updatePax('child', -1)">-</button>
+                                <span id="childCount" class="pax-count">0</span>
+                                <button type="button" class="pax-btn plus" onclick="updatePax('child', 1)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="pax-row">
+                            <div class="pax-info">
+                                <h4>Infants</h4>
+                                <p>0-2 Years</p>
+                            </div>
+                            <div class="pax-controls">
+                                <button type="button" class="pax-btn" onclick="updatePax('infant', -1)">-</button>
+                                <span id="infantCount" class="pax-count">0</span>
+                                <button type="button" class="pax-btn plus" onclick="updatePax('infant', 1)">+</button>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
 
                 <div class="search-unit class">
@@ -331,9 +395,37 @@
                 <h3>Regional Settings</h3>
                 <button class="close-btn" onclick="closeModal('regionalModal')"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="input-group"><label>Language</label><select></select></div>
-            <div class="input-group"><label>Country / Region</label><select></select></div>
-            <div class="input-group"><label>Currency</label><select></select></div>
+            
+            <div class="input-group">
+                <label>Language</label>
+                <select>
+                    <option>English (UK)</option>
+                    <option>English (US)</option>
+                    <option>Hindi</option>
+                    <option>French</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Country / Region</label>
+                <select>
+                    <option>India</option>
+                    <option>United States</option>
+                    <option>United Kingdom</option>
+                    <option>United Arab Emirates</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Currency</label>
+                <select>
+                    <option>INR (₹) - Indian Rupee</option>
+                    <option>USD ($) - US Dollar</option>
+                    <option>GBP (£) - British Pound</option>
+                    <option>AED (د.إ) - UAE Dirham</option>
+                </select>
+            </div>
+            
             <button class="submit-btn" style="margin-top: 30px;" onclick="closeModal('regionalModal')">Save</button>
         </div>
     </div>

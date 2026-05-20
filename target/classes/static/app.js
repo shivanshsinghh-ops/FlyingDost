@@ -143,9 +143,6 @@ const airports = [
     { city: "Colombo", country: "Sri Lanka", code: "CMB" }
 ];
 
-
-
-
 // ==========================================
 // 2. AUTOCOMPLETE SUGGESTIONS LOGIC
 // ==========================================
@@ -154,7 +151,6 @@ function showSuggestions(type) {
     let box = document.getElementById(`${type}Suggestions`);
     const query = input.value.toLowerCase();
 
-    // Create the dropdown box if it doesn't exist yet
     if (!box) {
         box = document.createElement('div');
         box.id = `${type}Suggestions`;
@@ -164,13 +160,11 @@ function showSuggestions(type) {
 
     box.innerHTML = ''; 
 
-    // Hide if empty
     if (query.length < 1) {
         box.style.display = 'none';
         return;
     }
 
-    // Filter the massive airport array
     const filtered = airports.filter(a => a.city.toLowerCase().includes(query) || a.code.toLowerCase().includes(query));
 
     if (filtered.length > 0) {
@@ -182,8 +176,6 @@ function showSuggestions(type) {
                 <span class="city-code">${airport.code}</span>
                 <span class="city-name">${airport.city}, ${airport.country}</span>
             `;
-            
-            // When clicked, lock it into the input box
             div.onclick = () => {
                 input.value = `${airport.city} (${airport.code})`;
                 box.style.display = 'none'; 
@@ -195,14 +187,19 @@ function showSuggestions(type) {
     }
 }
 
-// Close dropdowns if user clicks anywhere else on the screen
+// THE TWEAK IS ALREADY APPLIED RIGHT HERE:
 document.addEventListener('click', function(e) {
-    if (!e.target.closest('.search-unit')) {
+    // Close Airport Suggestions
+    if (!e.target.closest('.search-unit.from') && !e.target.closest('.search-unit.to')) {
         const boxes = document.querySelectorAll('.suggestions-box');
         boxes.forEach(box => box.style.display = 'none');
     }
+    // Close Pax Dropdown
+    if (!e.target.closest('.search-unit.pax')) {
+        const paxBox = document.getElementById('paxDropdown');
+        if (paxBox) paxBox.style.display = 'none';
+    }
 });
-
 
 // ==========================================
 // 3. SWAP LOCATIONS LOGIC
@@ -211,12 +208,10 @@ function swapLocations() {
     const fromInput = document.getElementById('fromInput');
     const toInput = document.getElementById('toInput');
 
-    // Swap the actual text values
     const tempValue = fromInput.value;
     fromInput.value = toInput.value;
     toInput.value = tempValue;
 
-    // Spin the icon for a premium UI feel
     const swapIcon = document.querySelector('.ai-swap-btn i');
     if (swapIcon) {
         swapIcon.style.transition = 'transform 0.3s ease-in-out';
@@ -227,7 +222,6 @@ function swapLocations() {
         }, 300);
     }
 }
-
 
 // ==========================================
 // 4. WIDE LUXURY CALENDAR LOGIC
@@ -243,50 +237,59 @@ function closeCalendar() {
 
 function renderDummyDays() {
     const grids = ['month1Grid', 'month2Grid'];
-    
     grids.forEach(id => {
         const grid = document.getElementById(id);
-        if (!grid) return; // Safety check
-        
+        if (!grid) return; 
         grid.innerHTML = ''; 
-        
-        // Add a few blank spaces so the 1st of the month starts randomly
         for(let i=0; i<3; i++) grid.innerHTML += `<div></div>`;
-        
-        // Inject 31 clickable days
         for(let i=1; i<=31; i++) {
             grid.innerHTML += `<div class="day-cell" onclick="selectDay(this)">${i}</div>`;
         }
     });
 }
 
-// Handles clicking a day on the calendar
 function selectDay(element) {
-    // Remove red highlight from all days
     document.querySelectorAll('.day-cell').forEach(el => el.classList.remove('selected'));
-    
-    // Add red highlight to the clicked day
     element.classList.add('selected');
-
-    // MAGIC TOUCH: Update the "Depart" box with the selected date!
     const departVal = document.getElementById('departVal');
     if (departVal) {
-        // Pads numbers under 10 with a zero (e.g., "05 May 2026")
         const dayNumber = element.innerText.padStart(2, '0');
         departVal.innerText = `${dayNumber} May 2026`;
-        departVal.style.color = '#111'; // Make text dark to show it's active
+        departVal.style.color = '#111';
     }
 }
 
 // ==========================================
-// 5. BUTTON PLACEHOLDERS (Prevents Console Errors)
+// 5. PASSENGER LOGIC
 // ==========================================
-function performFlightSearch() {
-    console.log("Searching for flights...");
-    // You will add your backend search logic here later
+let pax = { adult: 1, child: 0, infant: 0 };
+
+function togglePax() {
+    const dropdown = document.getElementById('paxDropdown');
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
 }
 
-function calculateDeal() {
-    console.log("Calculating fare...");
-    // You will add your pricing engine logic here later
+function updatePax(type, change) {
+    const newCount = pax[type] + change;
+    if (newCount < 0) return; 
+    if (type === 'adult' && newCount < 1) return; 
+    if (type === 'infant' && newCount > pax.adult) return; 
+
+    pax[type] = newCount;
+    document.getElementById(`${type}Count`).innerText = pax[type];
+    updatePaxDisplay();
 }
+
+function updatePaxDisplay() {
+    let parts = [];
+    if (pax.adult > 0) parts.push(`${pax.adult} Adult${pax.adult > 1 ? 's' : ''}`);
+    if (pax.child > 0) parts.push(`${pax.child} Child${pax.child > 1 ? 'ren' : ''}`);
+    if (pax.infant > 0) parts.push(`${pax.infant} Infant${pax.infant > 1 ? 's' : ''}`);
+    document.getElementById('paxVal').innerText = parts.join(', ');
+}
+
+// ==========================================
+// 6. BUTTON PLACEHOLDERS (Prevents Console Errors)
+// ==========================================
+function performFlightSearch() { console.log("Searching for flights..."); }
+function calculateDeal() { console.log("Calculating fare..."); }
