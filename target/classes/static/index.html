@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FlyingDost | Hey Traveller</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,600&family=Montserrat:wght@300;400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -43,7 +43,7 @@
         .hero-btn { background-color: transparent; color: white; border: 1px solid white; padding: 15px 40px; margin-top: 40px; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.3s; border-radius: 30px; }
         .hero-btn:hover { background-color: white; color: black; }
 
-        /* --- 5. SEARCH BAR SECTION (Cleaned & Unified) --- */
+        /* --- 5. SEARCH BAR SECTION --- */
         .booking-section {
             position: relative; z-index: 100;
             display: flex; flex-direction: column; align-items: center;
@@ -51,19 +51,20 @@
             background: transparent; border: none; outline: none;
         }
 
-        /* The Greeting Text */
         .greeting-container {
             width: 95%; max-width: 1200px; margin-bottom: 25px;
             opacity: 0; transform: translateY(20px); transition: all 0.8s ease;
         }
         .greeting-container.visible { opacity: 1; transform: translateY(0); }
-        .aesthetic-greeting { font-family: 'Playfair Display', serif; color: #ffffff; font-size: 34px; font-style: italic; text-shadow: 2px 4px 10px rgba(0,0,0,0.8); }
-
-        /* The Solid White Container */
+        
         .ai-premium-container {
-            background-color: #ffffff !important; width: 95%; max-width: 1200px;
-            border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-            padding: 0 0 15px 0; overflow: hidden;
+            background-color: #ffffff !important;
+            width: 95%;
+            max-width: 1200px;
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            padding: 0 0 15px 0;
+            overflow: visible !important; 
         }
 
         .ai-tabs { display: flex; background: #f9f9f9; border-bottom: 1px solid #eee; padding: 10px 20px; align-items: center; }
@@ -75,22 +76,76 @@
         .multi-city { color: #0071c2; text-decoration: none; }
         .pay-options span { margin-right: 20px; }
 
-        .ai-main-search { display: flex; margin: 0 20px; border: 1px solid #e0e0e0; border-radius: 8px; align-items: center; }
-        .search-unit { flex: 1; padding: 12px 15px; border-right: 1px solid #eee; height: 75px; cursor: pointer; }
+        /* BULLETPROOF HORIZONTAL LAYOUT */
+        .ai-main-search {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            align-items: center;
+            margin: 0 20px 20px 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        .search-unit { 
+            flex: 1; 
+            padding: 12px 15px; 
+            border-right: 1px solid #eee; 
+            height: 75px; 
+            display: flex;
+            flex-direction: column; 
+            justify-content: center;
+            min-width: 0; 
+            position: relative; 
+            cursor: pointer;
+            user-select: none;
+        }
         .search-unit:last-of-type { border-right: none; }
         .unit-label { font-size: 11px; color: #ed1c24; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; }
-        .search-unit input, .search-unit select, .search-unit .val { width: 100%; border: none; outline: none; font-size: 16px; font-weight: 700; color: #333; background: transparent; cursor: pointer; }
+        .search-unit select, .search-unit .val { width: 100%; border: none; outline: none; font-size: 16px; font-weight: 700; color: #333; background: transparent; cursor: pointer; }
+        
+        .giant-input {
+            font-family: 'Rajdhani', sans-serif !important;
+            font-size: 32px !important;
+            font-weight: 700 !important;
+            text-transform: uppercase;
+            color: #111 !important;
+            height: 40px;
+            border: none;
+            outline: none;
+            background: transparent;
+            width: 100%;
+        }
+
+        .giant-input::placeholder {
+            font-family: 'Rajdhani', sans-serif !important;
+            font-weight: 700 !important;
+            color: rgba(50, 50, 50, 0.65) !important;
+        }
+
         .ai-swap-btn { background: none; border: none; color: #d11920; cursor: pointer; font-size: 18px; padding: 0 15px; }
-        .ai-final-search { background: #ed1c24; color: white; border: none; padding: 0 40px; height: 75px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .ai-final-search { background: #ed1c24; color: white; border: none; padding: 0 40px; height: 75px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; border-radius: 0 8px 8px 0; }
         .ai-final-search:hover { background: #d11920; }
 
-        /* --- 6. LOWER CONTENT WRAPPER (Fixes floating fare calculator) --- */
+        /* --- 6. AUTOCOMPLETE DROPDOWN MENU --- */
+        .suggestions-box {
+            position: absolute; top: 100%; left: 0; width: 350px; background: #ffffff;
+            border-radius: 8px; box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            z-index: 2000; max-height: 350px; overflow-y: auto; display: none; margin-top: 10px;
+        }
+        .suggestion-item { padding: 15px 20px; cursor: pointer; display: flex; align-items: center; gap: 20px; border-bottom: 1px solid #f0f0f0; transition: background 0.2s ease; }
+        .suggestion-item:last-child { border-bottom: none; }
+        .suggestion-item:hover { background-color: #f8f9fa; }
+        .city-code { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 22px; color: #ed1c24; min-width: 55px; }
+        .city-name { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; color: #111; }
+
+        /* --- 7. LOWER CONTENT WRAPPER --- */
         .lower-content-wrapper {
             background-color: #f4f5f7; width: 100%; padding: 80px 20px;
             display: flex; flex-direction: column; align-items: center;
             position: relative; z-index: 10; border-top: 1px solid #ddd;
         }
-
         .pricing-tools {
             background-color: #ffffff; width: 100%; max-width: 900px;
             padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);
@@ -105,7 +160,7 @@
         #result-box { margin-top: 30px; padding: 20px; border: 1px solid #e5e7eb; background: white; display: none; text-align: center; }
         #final-price { font-family: 'Playfair Display', serif; font-size: 42px; margin: 0; color: #111827; }
 
-        /* --- 7. MODALS (Fixed Visibility) --- */
+        /* --- 8. MODALS --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px);
@@ -120,10 +175,33 @@
         .close-btn { background: transparent; border: none; color: #9ca3af; font-size: 20px; cursor: pointer; }
         .close-btn:hover { color: white; }
 
-        /* Calendar Overlay */
-        .calendar-full-overlay { position: fixed; top: -100%; left: 0; width: 100%; height: 100vh; background: white; z-index: 2000; transition: 0.5s ease-in-out; padding: 50px; }
-        .calendar-full-overlay.active { top: 0; }
-        .wide-picker { width: 100%; font-size: 40px; border: none; text-align: center; margin-top: 100px; }
+        /* --- 9. CALENDAR OVERLAY (LUXURY) --- */
+        .calendar-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); display: none; justify-content: center;
+            align-items: center; z-index: 3000;
+        }
+        .calendar-modal {
+            background: #fff; width: 900px; border-radius: 12px; padding: 30px 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); font-family: 'Montserrat', sans-serif;
+        }
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .cal-header h2 { margin: 0; font-size: 22px; font-weight: 700; color: #111; }
+        .cal-controls { display: flex; gap: 20px; align-items: center; font-size: 14px; font-weight: 600; }
+        .cal-reset-btn { border: none; background: none; color: #ed1c24; font-weight: 600; cursor: pointer; }
+        .cal-months-container { display: flex; gap: 50px; }
+        .month-view { flex: 1; }
+        .month-header { display: flex; justify-content: space-between; align-items: center; font-size: 18px; margin-bottom: 20px; }
+        .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: 600; color: #666; margin-bottom: 10px; font-size: 14px; }
+        .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+        .day-cell { aspect-ratio: 1; display: flex; justify-content: center; align-items: center; border-radius: 50%; cursor: pointer; font-weight: 600; font-size: 15px; color: #111; transition: all 0.2s; }
+        .day-cell:hover { background: #f0f0f0; }
+        .day-cell.selected { background: #ed1c24; color: #fff; }
+        .cal-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
+        .days-btn { border: 1px solid #ccc; background: #fff; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; }
+        .action-btns button { padding: 12px 30px; border: none; border-radius: 30px; font-family: 'Montserrat', sans-serif; font-weight: 700; cursor: pointer; font-size: 14px; }
+        .cancel-btn { background: transparent; color: #666; margin-right: 10px; }
+        .confirm-btn { background: #ed1c24; color: #fff; }
     </style>
 </head>
 <body>
@@ -172,27 +250,36 @@
             </div>
 
             <div class="ai-main-search">
+                
                 <div class="search-unit from">
-                    <div class="unit-label">FROM</div>
-                    <input type="text" id="fromInput" placeholder="Origin" autocomplete="off">
+                    <div class="unit-label">Origin</div>
+                    <input type="text" id="fromInput" class="giant-input" placeholder="FROM" autocomplete="off" oninput="showSuggestions('from')">
                 </div>
-                <button class="ai-swap-btn"><i class="fa-solid fa-right-left"></i></button>
+
+                <button class="ai-swap-btn" onclick="swapLocations()">
+                    <i class="fa-solid fa-right-left"></i>
+                </button>
+
                 <div class="search-unit to">
-                    <div class="unit-label">TO</div>
-                    <input type="text" id="toInput" placeholder="Destination" autocomplete="off">
+                    <div class="unit-label">Destination</div>
+                    <input type="text" id="toInput" class="giant-input" placeholder="TO" autocomplete="off" oninput="showSuggestions('to')">
                 </div>
+
                 <div class="search-unit date" onclick="openWideCalendar()">
                     <div class="unit-label">Depart</div>
                     <div id="departVal" class="val">Select Date</div>
                 </div>
+
                 <div class="search-unit date" onclick="openWideCalendar()">
                     <div class="unit-label">Return</div>
                     <div id="returnVal" class="val">Select Date</div>
                 </div>
-                <div class="search-unit pax" onclick="openModal('travellerModal')">
+
+                <div class="search-unit pax">
                     <div class="unit-label">Passenger(s)</div>
                     <div id="paxVal" class="val">1 Adult</div>
                 </div>
+
                 <div class="search-unit class">
                     <div class="unit-label">Class</div>
                     <select id="classSelect">
@@ -202,11 +289,13 @@
                         <option>First Class</option>
                     </select>
                 </div>
+
                 <button class="ai-final-search" onclick="performFlightSearch()">Search</button>
+                
             </div>
-        </div>
-    </div>
-    
+        </div> 
+    </div> 
+
     <div class="lower-content-wrapper">
         <div class="pricing-tools">
             <h3 style="margin-top:0; font-weight: 500; letter-spacing: 1px;">Smart Fare Calculator</h3>
@@ -276,19 +365,57 @@
         </div>
     </div>
 
-    <div id="calendarOverlay" class="calendar-full-overlay">
-        <div class="calendar-header">
-            <h2>Select Dates</h2>
-            <button onclick="closeWideCalendar()">CONFIRM</button>
-        </div>
-        <div class="calendar-flex">
-            <input type="date" id="ai-date-picker" class="wide-picker">
+    <div id="calendarOverlay" class="calendar-overlay">
+        <div class="calendar-modal">
+            <div class="cal-header">
+                <h2>Select Departure Date</h2>
+                <div class="cal-controls">
+                    <button class="cal-reset-btn">Reset</button>
+                    <label class="one-way-toggle"><input type="checkbox"> One Way</label>
+                </div>
+            </div>
+
+            <div class="cal-months-container">
+                <div class="month-view">
+                    <div class="month-header">
+                        <i class="fa-solid fa-chevron-left"></i>
+                        <strong>May 2026</strong>
+                        <span></span>
+                    </div>
+                    <div class="weekdays">
+                        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                    </div>
+                    <div class="days-grid" id="month1Grid"></div>
+                </div>
+
+                <div class="month-view">
+                    <div class="month-header">
+                        <span></span>
+                        <strong>June 2026</strong>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                    <div class="weekdays">
+                        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                    </div>
+                    <div class="days-grid" id="month2Grid"></div>
+                </div>
+            </div>
+
+            <div class="cal-footer">
+                <div class="trip-duration">
+                    Return trip - the fare is for a round-trip covering 
+                    <button class="days-btn">-</button> <strong>7</strong> <button class="days-btn">+</button> days
+                </div>
+                <div class="action-btns">
+                    <button class="cancel-btn" onclick="closeCalendar()">Cancel</button>
+                    <button class="confirm-btn" onclick="closeCalendar()">Confirm</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script src="app.js"></script>
     <script>
-        // ADD THIS SCRIPT TO FIX THE BUTTON SCROLL & GREETING REVEAL
         function scrollToForm() {
             const section = document.getElementById('booking-section');
             const greeting = document.querySelector('.greeting-container');

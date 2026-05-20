@@ -144,62 +144,17 @@ const airports = [
 ];
 
 
-const globalLanguages = ["English (UK)", "English (US)", "English (India)", "Español", "Français", "Deutsch", "Italiano", "日本語", "हिन्दी", "العربية"];
-const globalCountries = ["India", "United Kingdom", "United States", "United Arab Emirates", "Canada", "Germany", "France", "Japan", "Australia", "Singapore"];
-const globalCurrencies = ["INR - ₹", "USD - $", "GBP - £", "EUR - €", "AED - د.إ", "JPY - ¥"];
 
 
 // ==========================================
-// 2. UI INTERACTIONS & ANIMATIONS
+// 2. AUTOCOMPLETE SUGGESTIONS LOGIC
 // ==========================================
-
-// Smooth Scroll & Reveal Greeting
-function scrollToForm() {
-    const section = document.getElementById('booking-section');
-    const greeting = document.querySelector('.greeting-container');
-
-    section.scrollIntoView({ behavior: 'smooth' });
-
-    setTimeout(() => {
-        if (greeting) {
-            greeting.classList.add('visible');
-        }
-    }, 600);
-}
-
-// Wide Calendar Logic
-function openWideCalendar() {
-    document.getElementById('calendarOverlay').classList.add('active');
-}
-
-function closeWideCalendar() {
-    const dateVal = document.getElementById('ai-date-picker').value;
-    if(dateVal) {
-        // Format date to look nicer (e.g., 2026-05-15 -> 15 May 2026)
-        const dateObj = new Date(dateVal);
-        const options = { day: 'numeric', month: 'short', year: 'numeric' };
-        document.getElementById('departVal').innerText = dateObj.toLocaleDateString('en-GB', options);
-    }
-    document.getElementById('calendarOverlay').classList.remove('active');
-}
-
-// Swap Locations (The missing function)
-function swapLocations() {
-    const fromInput = document.getElementById('fromInput');
-    const toInput = document.getElementById('toInput');
-    
-    const temp = fromInput.value;
-    fromInput.value = toInput.value;
-    toInput.value = temp;
-}
-
-// Autocomplete Suggestions
 function showSuggestions(type) {
     const input = document.getElementById(`${type}Input`);
     let box = document.getElementById(`${type}Suggestions`);
     const query = input.value.toLowerCase();
 
-    // Create the box dynamically if it doesn't exist in HTML yet
+    // Create the dropdown box if it doesn't exist yet
     if (!box) {
         box = document.createElement('div');
         box.id = `${type}Suggestions`;
@@ -209,11 +164,13 @@ function showSuggestions(type) {
 
     box.innerHTML = ''; 
 
+    // Hide if empty
     if (query.length < 1) {
         box.style.display = 'none';
         return;
     }
 
+    // Filter the massive airport array
     const filtered = airports.filter(a => a.city.toLowerCase().includes(query) || a.code.toLowerCase().includes(query));
 
     if (filtered.length > 0) {
@@ -221,10 +178,15 @@ function showSuggestions(type) {
         filtered.forEach(airport => {
             const div = document.createElement('div');
             div.className = 'suggestion-item';
-            div.innerHTML = `<span class="city-name">${airport.city}, ${airport.country}</span> <span class="city-code">${airport.code}</span>`;
+            div.innerHTML = `
+                <span class="city-code">${airport.code}</span>
+                <span class="city-name">${airport.city}, ${airport.country}</span>
+            `;
+            
+            // When clicked, lock it into the input box
             div.onclick = () => {
                 input.value = `${airport.city} (${airport.code})`;
-                box.style.display = 'none';
+                box.style.display = 'none'; 
             };
             box.appendChild(div);
         });
@@ -233,421 +195,98 @@ function showSuggestions(type) {
     }
 }
 
-
-// ==========================================
-// 3. MODAL LOGIC
-// ==========================================
-function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-    modal.style.display = 'flex';
-    setTimeout(() => modal.classList.add('active'), 10);
-}
-
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    modal.classList.remove('active');
-    setTimeout(() => modal.style.display = 'none', 300);
-}
-
-// Close modals when clicking outside the box
-window.onclick = function(event) {
-    if (event.target.classList.contains('modal-overlay')) {
-        closeModal(event.target.id);
+// Close dropdowns if user clicks anywhere else on the screen
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.search-unit')) {
+        const boxes = document.querySelectorAll('.suggestions-box');
+        boxes.forEach(box => box.style.display = 'none');
     }
-};
+});
 
 
 // ==========================================
-// 4. API & CORE LOGIC
+// 3. SWAP LOCATIONS LOGIC
 // ==========================================
-
-// Flight Search Integration
-async function performFlightSearch() {
-    const fromLocation = document.getElementById('fromInput').value;
-    const toLocation = document.getElementById('toInput').value;
-    const travelDate = document.getElementById('departVal').innerText;
-    const btn = document.querySelector('.ai-final-search');
-
-    if (!fromLocation || !toLocation || travelDate === "Select Date") {
-        alert("Please enter Origin, Destination, and Date before searching.");
-        return;
-    }
-
-    // UI Loading State
-    const originalText = btn.innerText;
-    btn.innerHTML = '<i class="fa-solid fa-plane fa-spin"></i>';
-    btn.style.opacity = '0.7';
-
-    try {
-        const response = await fetch(`http://localhost:8080/api/flights/search?from=${fromLocation}&to=${toLocation}&date=${travelDate}`);
-        
-        if (!response.ok) throw new Error("Server response not OK");
-        
-        const results = await response.json();
-        console.log("Flights found:", results);
-        alert(`Success! Found flights from ${fromLocation} to ${toLocation}. (Check console for data)`);
-        
-    } catch (error) {
-        console.error("Backend connection failed:", error);
-        alert(`Searching for flights from ${fromLocation} to ${toLocation}...\n(Backend disconnected, showing mockup)`);
-    } finally {
-        // Reset Button
-        btn.innerHTML = originalText;
-        btn.style.opacity = '1';
-    }
-}
-
-// Fare Calculator
-async function calculateDeal() {
-    const basePrice = document.getElementById('basePrice').value;
-    const cardSelection = document.getElementById('cardSelect').value;
-    const isExhausted = document.getElementById('exhaustedToggle').checked; 
-
-    if (!basePrice || cardSelection === 'none') {
-        alert("Please enter a price and select a card!");
-        return;
-    }
-
-    let offerData = {};
-    let statusMessage = "";
-
-    try {
-        offerData = JSON.parse(cardSelection);
-    } catch (e) {
-        // Fallback hardcoded values if backend didn't supply JSON
-        offerData = { bankName: "Unknown", discountRate: 0.10, maxCap: 1000.0, convenienceFee: 300.0 };
-    }
-
-    if (isExhausted) {
-        offerData.discountRate = 0.0;
-        offerData.maxCap = 0.0;
-        statusMessage = "⚠️ Offer already used! You are paying full price + convenience fee.";
-    } else {
-        statusMessage = "✅ Discount applied successfully!";
-    }
-
-    const requestBody = { basePrice: parseFloat(basePrice), offer: offerData };
-
-    try {
-        const response = await fetch('http://localhost:8080/api/pricing/calculate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody)
-        });
-
-        const finalPrice = await response.json();
-
-        // Update UI
-        document.getElementById('status-message').innerText = statusMessage;
-        document.getElementById('status-message').style.color = isExhausted ? "#e74c3c" : "#27ae60";
-        document.getElementById('final-price').style.color = isExhausted ? "#c0392b" : "#27ae60";
-        document.getElementById('final-price').innerText = "₹" + finalPrice.toFixed(2);
-        document.getElementById('result-box').style.display = "block";
-
-    } catch (error) {
-        console.error("Error:", error);
-        
-        // Fallback UI math if server is dead
-        const discount = Math.min(parseFloat(basePrice) * offerData.discountRate, offerData.maxCap);
-        const fallbackPrice = parseFloat(basePrice) - discount + offerData.convenienceFee;
-        
-        document.getElementById('status-message').innerText = statusMessage + " (Offline Mode)";
-        document.getElementById('final-price').innerText = "₹" + fallbackPrice.toFixed(2);
-        document.getElementById('result-box').style.display = "block";
-    }
-}
-
-// Populate Regional Settings
-function populateRegionalSettings() {
-    const langSelect = document.getElementById('languageSelect');
-    const countrySelect = document.getElementById('countrySelect');
-    const currencySelect = document.getElementById('currencySelect');
-
-    if(langSelect && countrySelect && currencySelect) {
-        globalLanguages.forEach(item => langSelect.innerHTML += `<option value="${item}">${item}</option>`);
-        globalCountries.forEach(item => countrySelect.innerHTML += `<option value="${item}">${item}</option>`);
-        globalCurrencies.forEach(item => currencySelect.innerHTML += `<option value="${item}">${item}</option>`);
-    }
-}
-
-
-// ==========================================
-// 5. INITIALIZATION
-// ==========================================
-window.onload = async function() {
-    populateRegionalSettings();
-
-    try {
-        const response = await fetch('http://localhost:8080/api/pricing/offers');
-        const offers = await response.json();
-        const select = document.getElementById('cardSelect');
-
-        offers.forEach(offer => {
-            const opt = document.createElement('option');
-            opt.value = JSON.stringify(offer);
-            opt.innerHTML = `${offer.bankName} ${offer.cardName} (${offer.discountRate * 100}% off)`;
-            select.appendChild(opt);
-        });
-    } catch (error) {
-        console.log("Backend not running. Populating fake offers for UI testing.");
-        const select = document.getElementById('cardSelect');
-        if(select) {
-            select.innerHTML += `<option value='{"bankName":"HDFC","cardName":"Infinia","discountRate":0.15,"maxCap":1500,"convenienceFee":350}'>HDFC Infinia (15% off)</option>`;
-            select.innerHTML += `<option value='{"bankName":"SBI","cardName":"Cashback","discountRate":0.05,"maxCap":1000,"convenienceFee":300}'>SBI Cashback (5% off)</option>`;
-        }
-    }
-};
-
-const globalLanguages = ["English (UK)", "English (US)", "English (India)", "Español", "Français", "Deutsch", "Italiano", "日本語", "हिन्दी", "العربية"];
-const globalCountries = ["India", "United Kingdom", "United States", "United Arab Emirates", "Canada", "Germany", "France", "Japan", "Australia", "Singapore"];
-const globalCurrencies = ["INR - ₹", "USD - $", "GBP - £", "EUR - €", "AED - د.إ", "JPY - ¥"];
-
-
-// ==========================================
-// 2. UI INTERACTIONS & ANIMATIONS
-// ==========================================
-
-// Smooth Scroll & Reveal Greeting
-function scrollToForm() {
-    const section = document.getElementById('booking-section');
-    const greeting = document.querySelector('.greeting-container');
-
-    section.scrollIntoView({ behavior: 'smooth' });
-
-    setTimeout(() => {
-        if (greeting) {
-            greeting.classList.add('visible');
-        }
-    }, 600);
-}
-
-// Wide Calendar Logic
-function openWideCalendar() {
-    document.getElementById('calendarOverlay').classList.add('active');
-}
-
-function closeWideCalendar() {
-    const dateVal = document.getElementById('ai-date-picker').value;
-    if(dateVal) {
-        // Format date to look nicer (e.g., 2026-05-15 -> 15 May 2026)
-        const dateObj = new Date(dateVal);
-        const options = { day: 'numeric', month: 'short', year: 'numeric' };
-        document.getElementById('departVal').innerText = dateObj.toLocaleDateString('en-GB', options);
-    }
-    document.getElementById('calendarOverlay').classList.remove('active');
-}
-
-// Swap Locations (The missing function)
 function swapLocations() {
     const fromInput = document.getElementById('fromInput');
     const toInput = document.getElementById('toInput');
-    
-    const temp = fromInput.value;
+
+    // Swap the actual text values
+    const tempValue = fromInput.value;
     fromInput.value = toInput.value;
-    toInput.value = temp;
-}
+    toInput.value = tempValue;
 
-// Autocomplete Suggestions
-function showSuggestions(type) {
-    const input = document.getElementById(`${type}Input`);
-    let box = document.getElementById(`${type}Suggestions`);
-    const query = input.value.toLowerCase();
-
-    // Create the box dynamically if it doesn't exist in HTML yet
-    if (!box) {
-        box = document.createElement('div');
-        box.id = `${type}Suggestions`;
-        box.className = 'suggestions-box';
-        input.parentNode.appendChild(box);
-    }
-
-    box.innerHTML = ''; 
-
-    if (query.length < 1) {
-        box.style.display = 'none';
-        return;
-    }
-
-    const filtered = airports.filter(a => a.city.toLowerCase().includes(query) || a.code.toLowerCase().includes(query));
-
-    if (filtered.length > 0) {
-        box.style.display = 'block';
-        filtered.forEach(airport => {
-            const div = document.createElement('div');
-            div.className = 'suggestion-item';
-            div.innerHTML = `<span class="city-name">${airport.city}, ${airport.country}</span> <span class="city-code">${airport.code}</span>`;
-            div.onclick = () => {
-                input.value = `${airport.city} (${airport.code})`;
-                box.style.display = 'none';
-            };
-            box.appendChild(div);
-        });
-    } else {
-        box.style.display = 'none';
+    // Spin the icon for a premium UI feel
+    const swapIcon = document.querySelector('.ai-swap-btn i');
+    if (swapIcon) {
+        swapIcon.style.transition = 'transform 0.3s ease-in-out';
+        swapIcon.style.transform = 'rotate(180deg)';
+        setTimeout(() => {
+            swapIcon.style.transition = 'none';
+            swapIcon.style.transform = 'rotate(0deg)';
+        }, 300);
     }
 }
 
 
 // ==========================================
-// 3. MODAL LOGIC
+// 4. WIDE LUXURY CALENDAR LOGIC
 // ==========================================
-function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-    modal.style.display = 'flex';
-    setTimeout(() => modal.classList.add('active'), 10);
+function openWideCalendar() {
+    document.getElementById('calendarOverlay').style.display = 'flex';
+    renderDummyDays();
 }
 
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    modal.classList.remove('active');
-    setTimeout(() => modal.style.display = 'none', 300);
+function closeCalendar() {
+    document.getElementById('calendarOverlay').style.display = 'none';
 }
 
-// Close modals when clicking outside the box
-window.onclick = function(event) {
-    if (event.target.classList.contains('modal-overlay')) {
-        closeModal(event.target.id);
-    }
-};
-
-
-// ==========================================
-// 4. API & CORE LOGIC
-// ==========================================
-
-// Flight Search Integration
-async function performFlightSearch() {
-    const fromLocation = document.getElementById('fromInput').value;
-    const toLocation = document.getElementById('toInput').value;
-    const travelDate = document.getElementById('departVal').innerText;
-    const btn = document.querySelector('.ai-final-search');
-
-    if (!fromLocation || !toLocation || travelDate === "Select Date") {
-        alert("Please enter Origin, Destination, and Date before searching.");
-        return;
-    }
-
-    // UI Loading State
-    const originalText = btn.innerText;
-    btn.innerHTML = '<i class="fa-solid fa-plane fa-spin"></i>';
-    btn.style.opacity = '0.7';
-
-    try {
-        const response = await fetch(`http://localhost:8080/api/flights/search?from=${fromLocation}&to=${toLocation}&date=${travelDate}`);
+function renderDummyDays() {
+    const grids = ['month1Grid', 'month2Grid'];
+    
+    grids.forEach(id => {
+        const grid = document.getElementById(id);
+        if (!grid) return; // Safety check
         
-        if (!response.ok) throw new Error("Server response not OK");
+        grid.innerHTML = ''; 
         
-        const results = await response.json();
-        console.log("Flights found:", results);
-        alert(`Success! Found flights from ${fromLocation} to ${toLocation}. (Check console for data)`);
+        // Add a few blank spaces so the 1st of the month starts randomly
+        for(let i=0; i<3; i++) grid.innerHTML += `<div></div>`;
         
-    } catch (error) {
-        console.error("Backend connection failed:", error);
-        alert(`Searching for flights from ${fromLocation} to ${toLocation}...\n(Backend disconnected, showing mockup)`);
-    } finally {
-        // Reset Button
-        btn.innerHTML = originalText;
-        btn.style.opacity = '1';
-    }
-}
-
-// Fare Calculator
-async function calculateDeal() {
-    const basePrice = document.getElementById('basePrice').value;
-    const cardSelection = document.getElementById('cardSelect').value;
-    const isExhausted = document.getElementById('exhaustedToggle').checked; 
-
-    if (!basePrice || cardSelection === 'none') {
-        alert("Please enter a price and select a card!");
-        return;
-    }
-
-    let offerData = {};
-    let statusMessage = "";
-
-    try {
-        offerData = JSON.parse(cardSelection);
-    } catch (e) {
-        // Fallback hardcoded values if backend didn't supply JSON
-        offerData = { bankName: "Unknown", discountRate: 0.10, maxCap: 1000.0, convenienceFee: 300.0 };
-    }
-
-    if (isExhausted) {
-        offerData.discountRate = 0.0;
-        offerData.maxCap = 0.0;
-        statusMessage = "⚠️ Offer already used! You are paying full price + convenience fee.";
-    } else {
-        statusMessage = "✅ Discount applied successfully!";
-    }
-
-    const requestBody = { basePrice: parseFloat(basePrice), offer: offerData };
-
-    try {
-        const response = await fetch('http://localhost:8080/api/pricing/calculate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody)
-        });
-
-        const finalPrice = await response.json();
-
-        // Update UI
-        document.getElementById('status-message').innerText = statusMessage;
-        document.getElementById('status-message').style.color = isExhausted ? "#e74c3c" : "#27ae60";
-        document.getElementById('final-price').style.color = isExhausted ? "#c0392b" : "#27ae60";
-        document.getElementById('final-price').innerText = "₹" + finalPrice.toFixed(2);
-        document.getElementById('result-box').style.display = "block";
-
-    } catch (error) {
-        console.error("Error:", error);
-        
-        // Fallback UI math if server is dead
-        const discount = Math.min(parseFloat(basePrice) * offerData.discountRate, offerData.maxCap);
-        const fallbackPrice = parseFloat(basePrice) - discount + offerData.convenienceFee;
-        
-        document.getElementById('status-message').innerText = statusMessage + " (Offline Mode)";
-        document.getElementById('final-price').innerText = "₹" + fallbackPrice.toFixed(2);
-        document.getElementById('result-box').style.display = "block";
-    }
-}
-
-// Populate Regional Settings
-function populateRegionalSettings() {
-    const langSelect = document.getElementById('languageSelect');
-    const countrySelect = document.getElementById('countrySelect');
-    const currencySelect = document.getElementById('currencySelect');
-
-    if(langSelect && countrySelect && currencySelect) {
-        globalLanguages.forEach(item => langSelect.innerHTML += `<option value="${item}">${item}</option>`);
-        globalCountries.forEach(item => countrySelect.innerHTML += `<option value="${item}">${item}</option>`);
-        globalCurrencies.forEach(item => currencySelect.innerHTML += `<option value="${item}">${item}</option>`);
-    }
-}
-
-
-// ==========================================
-// 5. INITIALIZATION
-// ==========================================
-window.onload = async function() {
-    populateRegionalSettings();
-
-    try {
-        const response = await fetch('http://localhost:8080/api/pricing/offers');
-        const offers = await response.json();
-        const select = document.getElementById('cardSelect');
-
-        offers.forEach(offer => {
-            const opt = document.createElement('option');
-            opt.value = JSON.stringify(offer);
-            opt.innerHTML = `${offer.bankName} ${offer.cardName} (${offer.discountRate * 100}% off)`;
-            select.appendChild(opt);
-        });
-    } catch (error) {
-        console.log("Backend not running. Populating fake offers for UI testing.");
-        const select = document.getElementById('cardSelect');
-        if(select) {
-            select.innerHTML += `<option value='{"bankName":"HDFC","cardName":"Infinia","discountRate":0.15,"maxCap":1500,"convenienceFee":350}'>HDFC Infinia (15% off)</option>`;
-            select.innerHTML += `<option value='{"bankName":"SBI","cardName":"Cashback","discountRate":0.05,"maxCap":1000,"convenienceFee":300}'>SBI Cashback (5% off)</option>`;
+        // Inject 31 clickable days
+        for(let i=1; i<=31; i++) {
+            grid.innerHTML += `<div class="day-cell" onclick="selectDay(this)">${i}</div>`;
         }
+    });
+}
+
+// Handles clicking a day on the calendar
+function selectDay(element) {
+    // Remove red highlight from all days
+    document.querySelectorAll('.day-cell').forEach(el => el.classList.remove('selected'));
+    
+    // Add red highlight to the clicked day
+    element.classList.add('selected');
+
+    // MAGIC TOUCH: Update the "Depart" box with the selected date!
+    const departVal = document.getElementById('departVal');
+    if (departVal) {
+        // Pads numbers under 10 with a zero (e.g., "05 May 2026")
+        const dayNumber = element.innerText.padStart(2, '0');
+        departVal.innerText = `${dayNumber} May 2026`;
+        departVal.style.color = '#111'; // Make text dark to show it's active
     }
-};
+}
+
+// ==========================================
+// 5. BUTTON PLACEHOLDERS (Prevents Console Errors)
+// ==========================================
+function performFlightSearch() {
+    console.log("Searching for flights...");
+    // You will add your backend search logic here later
+}
+
+function calculateDeal() {
+    console.log("Calculating fare...");
+    // You will add your pricing engine logic here later
+}
