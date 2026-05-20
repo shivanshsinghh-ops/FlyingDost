@@ -170,9 +170,9 @@
         .modal-overlay.active { display: flex; opacity: 1; }
         .modal-content { background: rgba(15, 15, 15, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px; border-radius: 8px; color: white; transform: translateY(20px); transition: transform 0.3s ease; }
         .modal-overlay.active .modal-content { transform: translateY(0); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .modal-header h3 { margin: 0; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; font-size: 16px; }
-        .close-btn { background: transparent; border: none; color: #9ca3af; font-size: 20px; cursor: pointer; }
+        .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; width: 100%; }
+        .modal-header h3 { margin: 0; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; font-size: 16px; flex: 1; }
+        .close-btn { background: transparent; border: none; color: #9ca3af; font-size: 20px; cursor: pointer; padding-left: 15px; }
         .close-btn:hover { color: white; }
 
         /* --- 9. CALENDAR OVERLAY (LUXURY) --- */
@@ -401,18 +401,13 @@
     </div> 
     <div id="flight-results-container" class="results-container"></div>
 
-    <div class="lower-content-wrapper">
-        <div class="pricing-tools" style="max-width: 1000px; width: 95%;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
-                <div>
-                    <h3 style="margin-top:0; font-weight: 700; font-size: 20px; color: #111;">Your Maharaja Club Benefits</h3>
-                    <p style="font-size: 13px; color: #666; margin-top: 5px;">We found your saved miles! Here are the best ways to use them for this trip.</p>
-                </div>
-                <div style="text-align: right;">
-                    <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; margin-bottom: 5px;">Logged in as</p>
-                    <p style="font-size: 16px; font-weight: 700; color: #ed1c24;">Shivansh <i class="fa-solid fa-circle-check"></i></p>
-                </div>
+    
+
+            <div id="loyalty-deals-container" style="display: flex; flex-direction: column; gap: 15px;">
+                <p style="text-align: center; color: #999; font-style: italic; padding: 20px;">Search for a flight to see your personalized point redemptions.</p>
             </div>
+        </div>
+    </div>
 
             <div id="loyalty-deals-container" style="display: flex; flex-direction: column; gap: 15px;">
                 <p style="text-align: center; color: #999; font-style: italic; padding: 20px;">Search for a flight to see your personalized point redemptions.</p>

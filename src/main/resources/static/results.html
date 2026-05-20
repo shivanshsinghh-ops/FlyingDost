@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Results | FlyingDost</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600&family=Montserrat:wght@300;400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        body { background-color: #111; color: white; padding: 50px 20px; }
+        
+        .results-wrapper { width: 100%; max-width: 1000px; margin: 0 auto; }
+        
+        /* Loading & Header */
+        #loading-state { text-align: center; padding: 80px 0; }
+        #results-header { margin-bottom: 30px; display: none; border-bottom: 1px solid #333; padding-bottom: 20px; }
+        
+        /* Flight Cards */
+        .flight-card { background: #fff; border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #ed1c24; margin-bottom: 15px; }
+        .airline-info { display: flex; align-items: center; gap: 15px; width: 25%; }
+        .airline-logo { width: 40px; height: 40px; border-radius: 50%; background: #f0f0f0; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #ed1c24; font-size: 18px; font-family: 'Rajdhani', sans-serif; }
+        .flight-time { text-align: center; flex: 1; }
+        .time-large { font-size: 24px; font-weight: 700; color: #111; font-family: 'Rajdhani', sans-serif;}
+        .city-small { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-top: 5px; }
+        .duration-line { font-size: 11px; color: #999; margin: 5px 0; position: relative; font-weight: 600;}
+        .duration-line::before { content: ''; position: absolute; top: 50%; left: 10%; width: 30%; height: 1px; background: #ddd; }
+        .duration-line::after { content: ''; position: absolute; top: 50%; right: 10%; width: 30%; height: 1px; background: #ddd; }
+        .flight-price { width: 20%; text-align: right; }
+        .price-large { font-size: 26px; font-weight: 700; color: #111; margin-bottom: 10px; font-family: 'Rajdhani', sans-serif;}
+        .book-btn { background: #ed1c24; color: #fff; border: none; padding: 12px 30px; border-radius: 30px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .book-btn:hover { background: #111; }
+
+        /* Loyalty Section */
+        .loyalty-section { background: #1a1a1a; border-radius: 12px; padding: 40px; margin-top: 50px; border: 1px solid #333; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="results-wrapper">
+        <div id="loading-state">
+            <i class="fa-solid fa-plane fa-bounce" style="font-size: 40px; color: #ed1c24; margin-bottom: 20px;"></i>
+            <h2 id="loading-text" style="font-family: 'Playfair Display', serif; font-weight: 400;">Establishing secure connection...</h2>
+        </div>
+
+        <div id="results-header">
+            <h1 id="route-title" style="font-family: 'Playfair Display', serif; font-weight: 400; font-size: 32px; margin-bottom: 10px;"></h1>
+            <p id="route-details" style="color: #aaa;"></p>
+        </div>
+
+        <div id="flight-list"></div>
+
+        <div id="loyalty-section" class="loyalty-section">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px;">
+                <div>
+                    <h3 style="margin-top:0; font-weight: 700; font-size: 22px; color: #fff;">Your Maharaja Club Benefits</h3>
+                    <p style="font-size: 13px; color: #aaa; margin-top: 5px;">We found your saved miles! Best redemptions for this route:</p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #999; margin-bottom: 5px;">Logged in as</p>
+                    <p style="font-size: 16px; font-weight: 700; color: #ed1c24;">Shivansh <i class="fa-solid fa-circle-check"></i></p>
+                </div>
+            </div>
+            <div id="loyalty-deals"></div>
+        </div>
+    </div>
+
+    <script>
+        // Data & Variables
+        const airlinesDomestic = [{ name: "IndiGo", code: "6E" }, { name: "Air India", code: "AI" }, { name: "Vistara", code: "UK" }, { name: "SpiceJet", code: "SG" }, { name: "Air India Express", code: "IX" }, { name: "Akasa Air", code: "QP" }];
+        const airlinesInternational = [{ name: "Emirates", code: "EK" }, { name: "Etihad Airways", code: "EY" }, { name: "Qatar Airways", code: "QR" }, { name: "British Airways", code: "BA" }, { name: "Lufthansa", code: "LH" }, { name: "Singapore Airlines", code: "SQ" }, { name: "Air India", code: "AI" }, { name: "Vistara", code: "UK" }, { name: "Delta Air Lines", code: "DL" }];
+        const userWallet = { "AI": 15000, "EK": 8500, "BA": 12000, "UK": 5000, "6E": 3000 };
+        const pointValueINR = 0.50; 
+        let generatedFlights = [];
+
+        // On Page Load: Read local storage and generate
+        window.onload = () => {
+            const paramsString = localStorage.getItem('flightSearchParams');
+            if (!paramsString) {
+                document.getElementById('loading-text').innerText = "Session expired. Please return home to search again.";
+                return;
+            }
+
+            const searchParams = JSON.parse(paramsString);
+            const { origin, dest, date, pax, flightClass, isDomestic } = searchParams;
+
+            document.getElementById('loading-text').innerText = `Searching global database for routes to ${dest.city}...`;
+
+            setTimeout(() => {
+                // Generate Flights
+                const totalToGenerate = Math.floor(Math.random() * ((isDomestic ? 11 : 22) - (isDomestic ? 7 : 15) + 1)) + (isDomestic ? 7 : 15);
+                const pool = isDomestic ? airlinesDomestic : airlinesInternational;
+
+                for (let i = 0; i < totalToGenerate; i++) {
+                    const airline = pool[Math.floor(Math.random() * pool.length)];
+                    const avgMinutes = isDomestic ? (Math.random() * 120 + 60) : (Math.random() * 480 + 300); 
+                    const hours = Math.floor(avgMinutes / 60);
+                    const minutes = Math.floor(avgMinutes % 60);
+                    const depHour = Math.floor(Math.random() * 24);
+                    const depMin = Math.floor(Math.random() * 60);
+                    const arrHour = Math.floor((depHour + hours + (depMin + minutes >= 60 ? 1 : 0)) % 24);
+                    const arrMin = (depMin + minutes) % 60;
+                    const basePrice = isDomestic ? 3500 : 35000;
+                    const variation = isDomestic ? (Math.random() * 5000) : (Math.random() * 40000);
+                    
+                    generatedFlights.push({
+                        airline: airline.name, code: airline.code,
+                        flightNo: `${airline.code}-${Math.floor(Math.random() * 900) + 100}`,
+                        dep: `${String(depHour).padStart(2,'0')}:${String(depMin).padStart(2,'0')}`,
+                        arr: `${String(arrHour).padStart(2,'0')}:${String(arrMin).padStart(2,'0')}`,
+                        duration: `${hours}h ${minutes}m`,
+                        price: Math.round(basePrice + variation)
+                    });
+                }
+
+                generatedFlights.sort((a,b) => a.price - b.price);
+
+                // Update UI
+                document.getElementById('loading-state').style.display = 'none';
+                document.getElementById('results-header').style.display = 'block';
+                document.getElementById('route-title').innerHTML = `Flights from <strong style="color: #ed1c24;">${origin.city}</strong> to <strong style="color: #ed1c24;">${dest.city}</strong>`;
+                document.getElementById('route-details').innerHTML = `${date} &nbsp;•&nbsp; ${pax} &nbsp;•&nbsp; ${flightClass} &nbsp;&nbsp;&nbsp;&nbsp; <strong style="color: white;">${generatedFlights.length} options found</strong>`;
+
+                const listHTML = document.getElementById('flight-list');
+                generatedFlights.forEach(flight => {
+                    listHTML.innerHTML += `
+                        <div class="flight-card">
+                            <div class="airline-info">
+                                <div class="airline-logo">${flight.code}</div>
+                                <div><div style="font-weight: 700; font-size: 14px; color: #111;">${flight.airline}</div><div style="font-size: 12px; color: #666;">${flight.flightNo}</div></div>
+                            </div>
+                            <div class="flight-time">
+                                <div class="time-large">${flight.dep}</div><div class="city-small">${origin.city} (${origin.code})</div>
+                            </div>
+                            <div class="flight-time" style="flex: 0.5;">
+                                <div class="duration-line">${flight.duration}</div><div style="font-size: 10px; color: #ed1c24; font-weight: 700;">NON-STOP</div>
+                            </div>
+                            <div class="flight-time">
+                                <div class="time-large">${flight.arr}</div><div class="city-small">${dest.city} (${dest.code})</div>
+                            </div>
+                            <div class="flight-price">
+                                <div class="price-large">₹${flight.price.toLocaleString('en-IN')}</div>
+                                <button class="book-btn">Book Now</button>
+                            </div>
+                        </div>`;
+                });
+
+                // Calculate & Show Loyalty Deals
+                renderLoyaltyDeals();
+
+            }, 1200);
+        };
+
+        function renderLoyaltyDeals() {
+            let deals = [];
+            generatedFlights.forEach(flight => {
+                if (userWallet[flight.code] && userWallet[flight.code] > 0) {
+                    const actualDiscount = Math.min(userWallet[flight.code] * pointValueINR, flight.price * 0.40);
+                    deals.push({ ...flight, originalPrice: flight.price, finalPrice: flight.price - actualDiscount, pointsUsed: actualDiscount / pointValueINR, discountValue: actualDiscount });
+                }
+            });
+
+            deals.sort((a, b) => a.finalPrice - b.finalPrice);
+            
+            const dealsBox = document.getElementById('loyalty-deals');
+            document.getElementById('loyalty-section').style.display = 'block';
+
+            if (deals.length === 0) {
+                dealsBox.innerHTML = `<p style="text-align: center; color: #666; padding: 20px;">No point redemption options available for these routes.</p>`;
+                return;
+            }
+
+            deals.slice(0, 3).forEach(deal => {
+                dealsBox.innerHTML += `
+                    <div style="background: #222; border: 1px solid #444; border-radius: 8px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div style="display: flex; gap: 15px; align-items: center; width: 40%;">
+                            <div class="airline-logo" style="width: 35px; height: 35px; font-size: 14px; color: #ed1c24; background: #fff;">${deal.code}</div>
+                            <div>
+                                <p style="font-weight: 700; font-size: 14px; margin: 0; color: #fff;">${deal.airline} <span style="font-weight: 500; color: #999; font-size: 12px;">(${deal.flightNo})</span></p>
+                                <p style="font-size: 12px; color: #3b82f6; margin: 3px 0 0 0; font-weight: 600;"><i class="fa-solid fa-coins"></i> Applying ${deal.pointsUsed.toLocaleString()} Points</p>
+                            </div>
+                        </div>
+                        <div style="text-align: center; width: 30%;">
+                            <p style="font-size: 12px; color: #888; text-decoration: line-through; margin: 0;">₹${deal.originalPrice.toLocaleString('en-IN')}</p>
+                            <p style="font-size: 11px; color: #22c55e; font-weight: 700; margin: 2px 0 0 0;">You save ₹${deal.discountValue.toLocaleString('en-IN')}</p>
+                        </div>
+                        <div style="text-align: right; width: 30%;">
+                            <p style="font-size: 22px; font-weight: 700; color: #fff; font-family: 'Rajdhani', sans-serif; margin: 0 0 5px 0;">₹${deal.finalPrice.toLocaleString('en-IN')}</p>
+                            <button class="book-btn" style="padding: 8px 20px; font-size: 12px;">Redeem & Book</button>
+                        </div>
+                    </div>`;
+            });
+        }
+    </script>
+</body>
+</html>

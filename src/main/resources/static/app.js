@@ -74,13 +74,8 @@ const airports = [
 ];
 
 // ==========================================
-// 2. USER STATE & GLOBAL VARIABLES
+// 2. STATE VARIABLES
 // ==========================================
-const userWallet = {
-    "AI": 15000, "EK": 8500, "BA": 12000, "UK": 5000, "6E": 3000
-};
-const pointValueINR = 0.50; 
-let currentSearchFlights = []; 
 let pax = { adult: 1, child: 0, infant: 0 };
 
 // ==========================================
@@ -207,30 +202,21 @@ function openModal(id) { const m = document.getElementById(id); if(m) m.classLis
 function closeModal(id) { const m = document.getElementById(id); if(m) m.classList.remove('active'); }
 
 // ==========================================
-// 6. MASTER SEARCH & LOYALTY ENGINE
+// 6. SEARCH ENGINE (DATA EXPORT TO RESULTS TAB)
 // ==========================================
-const airlinesDomestic = [
-    { name: "IndiGo", code: "6E" }, { name: "Air India", code: "AI" }, { name: "Vistara", code: "UK" }, 
-    { name: "SpiceJet", code: "SG" }, { name: "Air India Express", code: "IX" }, { name: "Akasa Air", code: "QP" }
-];
-const airlinesInternational = [
-    { name: "Emirates", code: "EK" }, { name: "Etihad Airways", code: "EY" }, { name: "Qatar Airways", code: "QR" }, 
-    { name: "British Airways", code: "BA" }, { name: "Lufthansa", code: "LH" }, { name: "Singapore Airlines", code: "SQ" },
-    { name: "Air India", code: "AI" }, { name: "Vistara", code: "UK" }, { name: "Delta Air Lines", code: "DL" }
-];
-
 function performFlightSearch() {
     const rawOrigin = document.getElementById('fromInput').value;
     const rawDest = document.getElementById('toInput').value;
     const dateVal = document.getElementById('departVal').innerText;
+    const paxVal = document.getElementById('paxVal').innerText;
+    const classVal = document.getElementById('classSelect').value;
     
+    // 1. Validation
     if (!rawOrigin || !rawDest || dateVal === "Select Date") {
         alert("Please select Origin, Destination, and Date from the dropdowns."); return;
     }
 
-    const container = document.getElementById('flight-results-container');
-    if (!container) { console.error("Missing flight-results-container in HTML!"); return; }
-
+    // 2. Extract Data
     const originMatch = rawOrigin.match(/\((.*?)\)/);
     const destMatch = rawDest.match(/\((.*?)\)/);
     const originCode = originMatch ? originMatch[1] : rawOrigin.substring(0, 3).toUpperCase();
@@ -238,129 +224,18 @@ function performFlightSearch() {
     
     const originData = airports.find(a => a.code === originCode) || { city: rawOrigin.split(' (')[0], country: "India", code: originCode };
     const destData = airports.find(a => a.code === destCode) || { city: rawDest.split(' (')[0], country: "India", code: destCode };
-    const isDomestic = (originData.country === "India" && destData.country === "India");
-    
-    container.style.display = 'flex';
-    container.innerHTML = `<div style="text-align: center; color: white; padding: 40px;"><i class="fa-solid fa-plane fa-bounce" style="font-size: 30px; color: #ed1c24; margin-bottom: 15px;"></i><h3>Searching routes across ${isDomestic ? 'India' : 'the Globe'}...</h3></div>`;
-    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    setTimeout(() => {
-        const totalToGenerate = Math.floor(Math.random() * ((isDomestic ? 11 : 22) - (isDomestic ? 7 : 15) + 1)) + (isDomestic ? 7 : 15);
-        const mockFlights = [];
-        const pool = isDomestic ? airlinesDomestic : airlinesInternational;
+    // 3. Package the search parameters
+    const searchParams = {
+        origin: originData,
+        dest: destData,
+        date: dateVal,
+        pax: paxVal,
+        flightClass: classVal,
+        isDomestic: (originData.country === "India" && destData.country === "India")
+    };
 
-        for (let i = 0; i < totalToGenerate; i++) {
-            const airline = pool[Math.floor(Math.random() * pool.length)];
-            const avgMinutes = isDomestic ? (Math.random() * 120 + 60) : (Math.random() * 480 + 300); 
-            const hours = Math.floor(avgMinutes / 60);
-            const minutes = Math.floor(avgMinutes % 60);
-            const depHour = Math.floor(Math.random() * 24);
-            const depMin = Math.floor(Math.random() * 60);
-            const arrHour = Math.floor((depHour + hours + (depMin + minutes >= 60 ? 1 : 0)) % 24);
-            const arrMin = (depMin + minutes) % 60;
-            const basePrice = isDomestic ? 3500 : 35000;
-            const variation = isDomestic ? (Math.random() * 5000) : (Math.random() * 40000);
-            
-            mockFlights.push({
-                airline: airline.name, code: airline.code,
-                flightNo: `${airline.code}-${Math.floor(Math.random() * 900) + 100}`,
-                dep: `${String(depHour).padStart(2,'0')}:${String(depMin).padStart(2,'0')}`,
-                arr: `${String(arrHour).padStart(2,'0')}:${String(arrMin).padStart(2,'0')}`,
-                duration: `${hours}h ${minutes}m`,
-                price: Math.round(basePrice + variation)
-            });
-        }
-
-        mockFlights.sort((a,b) => a.price - b.price);
-        currentSearchFlights = mockFlights;
-
-        // Render Results UI
-        container.innerHTML = `
-            <h2 style="color: white; font-weight: 400; margin-bottom: 10px; font-family: 'Playfair Display', serif;">
-                Flights from <strong style="color: #ed1c24;">${originData.city}, ${originData.country}</strong> to <strong style="color: #ed1c24;">${destData.city}, ${destData.country}</strong>
-            </h2>
-            <p style="color: #ccc; margin-bottom: 30px;">
-                Departure: ${dateVal} • ${document.getElementById('paxVal').innerText} • ${document.getElementById('classSelect').value}
-                <span style="float: right; color: #ed1c24; font-weight: bold;">${mockFlights.length} options found</span>
-            </p>
-        `;
-
-        mockFlights.forEach(flight => {
-            container.innerHTML += `
-                <div class="flight-card">
-                    <div class="airline-info">
-                        <div class="airline-logo">${flight.code}</div>
-                        <div><div style="font-weight: 700; font-size: 14px; color: #111;">${flight.airline}</div><div style="font-size: 12px; color: #666;">${flight.flightNo}</div></div>
-                    </div>
-                    <div class="flight-time">
-                        <div class="time-large">${flight.dep}</div><div class="city-small" style="font-weight:700;">${originData.city} (${originData.code})</div>
-                    </div>
-                    <div class="flight-time" style="flex: 0.5;">
-                        <div class="duration-line">${flight.duration}</div><div style="font-size: 10px; color: #ed1c24; font-weight: 700;">NON-STOP</div>
-                    </div>
-                    <div class="flight-time">
-                        <div class="time-large">${flight.arr}</div><div class="city-small" style="font-weight:700;">${destData.city} (${destData.code})</div>
-                    </div>
-                    <div class="flight-price">
-                        <div class="price-large">₹${flight.price.toLocaleString('en-IN')}</div>
-                        <button class="book-btn" onclick="alert('Checking live availability for ${flight.airline} flight ${flight.flightNo}...')">Book Now</button>
-                    </div>
-                </div>
-            `;
-        });
-
-        // Trigger Loyalty Deals Generation
-        calculateLoyaltyDeals();
-
-    }, 1200); 
-}
-
-function calculateLoyaltyDeals() {
-    const container = document.getElementById('loyalty-deals-container');
-    if(!container) return;
-    container.innerHTML = ''; 
-
-    let dealsAvailable = [];
-    currentSearchFlights.forEach(flight => {
-        if (userWallet[flight.code] && userWallet[flight.code] > 0) {
-            const pointsAvailable = userWallet[flight.code];
-            const maxDiscount = pointsAvailable * pointValueINR;
-            const actualDiscount = Math.min(maxDiscount, flight.price * 0.40);
-            const pointsUsed = actualDiscount / pointValueINR;
-            
-            dealsAvailable.push({
-                ...flight, originalPrice: flight.price, finalPrice: flight.price - actualDiscount,
-                pointsUsed: pointsUsed, discountValue: actualDiscount
-            });
-        }
-    });
-
-    dealsAvailable.sort((a, b) => a.finalPrice - b.finalPrice);
-
-    if (dealsAvailable.length === 0) {
-        container.innerHTML = `<p style="text-align: center; color: #666; padding: 20px;">No point redemption options available for these routes. Earn miles by booking standard fares!</p>`;
-        return;
-    }
-
-    dealsAvailable.slice(0, 3).forEach(deal => {
-        container.innerHTML += `
-            <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;">
-                <div style="display: flex; gap: 15px; align-items: center; width: 40%;">
-                    <div class="airline-logo" style="width: 35px; height: 35px; font-size: 14px;">${deal.code}</div>
-                    <div>
-                        <p style="font-weight: 700; font-size: 14px; margin: 0; color: #111;">${deal.airline} <span style="font-weight: 500; color: #666; font-size: 12px;">(${deal.flightNo})</span></p>
-                        <p style="font-size: 12px; color: #0071c2; margin: 3px 0 0 0; font-weight: 600;"><i class="fa-solid fa-coins"></i> Applying ${deal.pointsUsed.toLocaleString()} Points</p>
-                    </div>
-                </div>
-                <div style="text-align: center; width: 30%;">
-                    <p style="font-size: 12px; color: #666; text-decoration: line-through; margin: 0;">₹${deal.originalPrice.toLocaleString('en-IN')}</p>
-                    <p style="font-size: 11px; color: #16a34a; font-weight: 700; margin: 2px 0 0 0;">You save ₹${deal.discountValue.toLocaleString('en-IN')}</p>
-                </div>
-                <div style="text-align: right; width: 30%;">
-                    <p style="font-size: 22px; font-weight: 700; color: #111; font-family: 'Rajdhani', sans-serif; margin: 0 0 5px 0;">₹${deal.finalPrice.toLocaleString('en-IN')}</p>
-                    <button class="book-btn" style="padding: 8px 20px; font-size: 12px;" onclick="alert('Redeeming ${deal.pointsUsed} points for flight ${deal.flightNo}...')">Redeem & Book</button>
-                </div>
-            </div>
-        `;
-    });
+    // 4. Save to Browser Storage & Open New Window
+    localStorage.setItem('flightSearchParams', JSON.stringify(searchParams));
+    window.location.href = 'results.html';
 }
