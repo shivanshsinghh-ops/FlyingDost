@@ -293,3 +293,41 @@ function updatePaxDisplay() {
 // ==========================================
 function performFlightSearch() { console.log("Searching for flights..."); }
 function calculateDeal() { console.log("Calculating fare..."); }
+// ==========================================
+// 7. MODALS & NAVIGATION LOGIC
+// ==========================================
+
+// Smooth scroll to the booking engine from the hero button
+function scrollToForm() {
+    const section = document.getElementById('booking-section');
+    const greeting = document.querySelector('.greeting-container');
+    
+    section.scrollIntoView({ behavior: 'smooth' });
+    
+    // Fade in the greeting text after scrolling
+    setTimeout(() => {
+        if(greeting) greeting.classList.add('visible');
+    }, 600);
+}
+
+// Open a specific modal
+function openModal(id) { 
+    const modal = document.getElementById(id);
+    if(modal) modal.classList.add('active'); 
+}
+
+// Close a specific modal
+function closeModal(id) { 
+    const modal = document.getElementById(id);
+    if(modal) modal.classList.remove('active'); 
+}
+
+// Premium UX: Close modals when clicking outside the content box (on the blurred background)
+document.querySelectorAll('.modal-overlay').forEach(modal => {
+    modal.addEventListener('click', function(e) {
+        // If the user clicked the dark overlay itself (not the white box inside it)
+        if (e.target === this) { 
+            closeModal(this.id);
+        }
+    });
+});

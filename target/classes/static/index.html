@@ -507,17 +507,6 @@
     </div>
 
     <script src="app.js"></script>
-    <script>
-        function scrollToForm() {
-            const section = document.getElementById('booking-section');
-            const greeting = document.querySelector('.greeting-container');
-            section.scrollIntoView({ behavior: 'smooth' });
-            setTimeout(() => {
-                if(greeting) greeting.classList.add('visible');
-            }, 600);
-        }
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-    </script>
+    
 </body>
 </html>
