@@ -270,6 +270,7 @@
                 const totalToGenerate = Math.floor(Math.random() * ((isDomestic ? 11 : 22) - (isDomestic ? 7 : 15) + 1)) + (isDomestic ? 7 : 15);
                 const pool = isDomestic ? airlinesDomestic : airlinesInternational;
 
+                // LOOP THAT GENERATES THE FLIGHTS
                 for (let i = 0; i < totalToGenerate; i++) {
                     const airline = pool[Math.floor(Math.random() * pool.length)];
                     const avgMinutes = isDomestic ? (Math.random() * 60 + 90) : (Math.random() * 480 + 360); 
@@ -279,8 +280,18 @@
                     const depMin = Math.floor(Math.random() * 12) * 5;
                     const arrHour = Math.floor((depHour + hours + (depMin + minutes >= 60 ? 1 : 0)) % 24);
                     const arrMin = (depMin + minutes) % 60;
+                    
                     const basePrice = isDomestic ? 3800 : 42000;
                     const variation = isDomestic ? (Math.random() * 4500) : (Math.random() * 35000);
+                    
+                    // --- NEW: CABIN CLASS MULTIPLIER LOGIC ---
+                    let classMultiplier = 1; // Default for Economy
+                    if (flightClass === "Premium Economy") classMultiplier = 1.5;
+                    else if (flightClass === "Business") classMultiplier = 3.5;
+                    else if (flightClass === "First Class") classMultiplier = 8.5;
+                    
+                    const calculatedPrice = Math.round((basePrice + variation) * classMultiplier);
+                    // -----------------------------------------
                     
                     generatedFlights.push({
                         airline: airline.name, code: airline.code,
@@ -288,7 +299,7 @@
                         dep: `${String(depHour).padStart(2,'0')}:${String(depMin).padStart(2,'0')}`,
                         arr: `${String(arrHour).padStart(2,'0')}:${String(arrMin).padStart(2,'0')}`,
                         duration: `${hours}h ${minutes}m`,
-                        price: Math.round(basePrice + variation)
+                        price: calculatedPrice // Automatically applies the multiplier!
                     });
                 }
 

@@ -43,31 +43,81 @@
         .hero-btn { background-color: transparent; color: white; border: 1px solid white; padding: 15px 40px; margin-top: 40px; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.3s; border-radius: 30px; }
         .hero-btn:hover { background-color: white; color: black; }
 
+        /* --- APPLE-STYLE SCROLL REVEAL --- */
+        #booking-reveal-zone {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 50px;
+            min-height: 300px; /* Ensures the browser observer always catches it */
+        }
+
+        .greeting-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 46px;
+            font-weight: 600;
+            color: #ffffff;
+            text-shadow: 0 4px 25px rgba(0, 0, 0, 0.8);
+            
+            /* Left Aligned to match the search box exactly */
+            text-align: left; 
+            width: 95%; 
+            max-width: 1200px; 
+            margin: 0 auto 25px auto; 
+            
+            /* Apple Text Slide-in */
+            opacity: 0; 
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform, opacity;
+        }
+
         /* --- 5. SEARCH BAR SECTION --- */
         .booking-section {
             position: relative; z-index: 100;
             display: flex; flex-direction: column; align-items: center;
-            padding-top: 50px; padding-bottom: 50px;
+            padding-bottom: 50px;
             background: transparent; border: none; outline: none;
+            width: 100%;
+            
+            /* Apple Card Scale-and-Fade Reveal */
+            opacity: 0;
+            transform: scale(0.92) translateY(20px); /* Starts shrunken and lower */
+            transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+            transition-delay: 0.3s; /* Perfectly delays the search box after the text */
+            will-change: transform, opacity;
         }
 
-        .greeting-container {
-            width: 95%; max-width: 1200px; margin-bottom: 25px;
-            opacity: 0; transform: translateY(20px); transition: all 0.8s ease;
+        /* The classes added by JavaScript when scrolled into view */
+        .is-visible .greeting-text {
+            opacity: 1;
+            transform: translateY(0);
         }
-        .greeting-container.visible { opacity: 1; transform: translateY(0); }
+
+        .is-visible .booking-section {
+            opacity: 1;
+            transform: scale(1) translateY(0); /* Expands to full size */
+        }
         
         .ai-premium-container {
             background-color: #ffffff !important;
             width: 95%;
             max-width: 1200px;
-            border-radius: 12px;
+            border-radius: 32px; /* INCREASED: Makes all 4 corners much rounder */
             box-shadow: 0 15px 40px rgba(0,0,0,0.4);
             padding: 0 0 15px 0;
             overflow: visible !important; 
         }
 
-        .ai-tabs { display: flex; background: #f9f9f9; border-bottom: 1px solid #eee; padding: 10px 20px; align-items: center; }
+        .ai-tabs { 
+            display: flex; 
+            background: #f9f9f9; 
+            border-bottom: 1px solid #eee; 
+            padding: 10px 20px; 
+            align-items: center; 
+            border-radius: 32px 32px 0 0; /* NEW: Rounds the grey tabs to perfectly match the outer box */
+        }
         .tab { padding: 10px 20px; font-size: 13px; font-weight: 700; color: #555; cursor: pointer; }
         .tab.active { color: #d11920; border-bottom: 2px solid #d11920; }
 
@@ -140,27 +190,7 @@
         .city-code { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 22px; color: #ed1c24; min-width: 55px; }
         .city-name { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; color: #111; }
 
-        /* --- 7. LOWER CONTENT WRAPPER --- */
-        .lower-content-wrapper {
-            background-color: #f4f5f7; width: 100%; padding: 80px 20px;
-            display: flex; flex-direction: column; align-items: center;
-            position: relative; z-index: 10; border-top: 1px solid #ddd;
-        }
-        .pricing-tools {
-            background-color: #ffffff; width: 100%; max-width: 900px;
-            padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-        }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-        .input-group label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #6b7280; margin-bottom: 8px; }
-        .input-group input, .input-group select { width: 100%; padding: 15px; background: #f9fafb; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px; color: #111827; }
-        .toggle-container { margin-top: 15px; display: flex; align-items: center; }
-        .toggle-container label { font-size: 13px; color: #4b5563; cursor: pointer; margin-left: 10px; }
-        .submit-btn { background-color: #8b0000; color: white; border: none; padding: 18px 40px; font-size: 13px; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 20px; border-radius: 4px; }
-        
-        #result-box { margin-top: 30px; padding: 20px; border: 1px solid #e5e7eb; background: white; display: none; text-align: center; }
-        #final-price { font-family: 'Playfair Display', serif; font-size: 42px; margin: 0; color: #111827; }
-
-        /* --- 8. MODALS --- */
+        /* --- 7. MODALS --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px);
@@ -174,8 +204,11 @@
         .modal-header h3 { margin: 0; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; font-size: 16px; flex: 1; }
         .close-btn { background: transparent; border: none; color: #9ca3af; font-size: 20px; cursor: pointer; padding-left: 15px; }
         .close-btn:hover { color: white; }
+        .input-group label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #6b7280; margin-bottom: 8px; }
+        .input-group input, .input-group select { width: 100%; padding: 15px; background: #f9fafb; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px; color: #111827; margin-bottom: 15px; }
+        .submit-btn { background-color: #8b0000; color: white; border: none; padding: 18px 40px; font-size: 13px; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 20px; border-radius: 4px; }
 
-        /* --- 9. CALENDAR OVERLAY (LUXURY) --- */
+        /* --- 8. CALENDAR OVERLAY --- */
         .calendar-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); display: none; justify-content: center;
@@ -202,7 +235,8 @@
         .action-btns button { padding: 12px 30px; border: none; border-radius: 30px; font-family: 'Montserrat', sans-serif; font-weight: 700; cursor: pointer; font-size: 14px; }
         .cancel-btn { background: transparent; color: #666; margin-right: 10px; }
         .confirm-btn { background: #ed1c24; color: #fff; }
-        /* --- 10. PASSENGER POPOVER --- */
+        
+        /* --- 9. PASSENGER POPOVER --- */
         .pax-dropdown {
             position: absolute; top: 100%; left: -50px; width: 280px;
             background: #fff; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
@@ -215,7 +249,6 @@
         .pax-info p { margin: 0; font-size: 11px; color: #666; font-weight: 500; }
         .pax-controls { display: flex; align-items: center; gap: 15px; }
         
-        /* The +/- Buttons */
         .pax-btn { 
             width: 32px; height: 32px; border-radius: 4px; border: 1px solid #d1d5db; 
             background: #f3f4f6; cursor: pointer; font-size: 20px; 
@@ -226,46 +259,7 @@
         .pax-btn.plus { background: #374151; color: white; border: none; }
         .pax-btn.plus:hover { background: #111827; }
         .pax-count { font-size: 15px; font-weight: 700; width: 15px; text-align: center; color: #111; }
-        /* --- 11. SEARCH RESULTS --- */
-        .results-container {
-            width: 95%; max-width: 1000px; margin: 0 auto 50px auto;
-            display: none; /* Hidden until you click Search */
-            flex-direction: column; gap: 20px;
-            position: relative; z-index: 50;
-        }
-        .flight-card {
-            background: #fff; border-radius: 12px; padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            display: flex; justify-content: space-between; align-items: center;
-            border-left: 5px solid #ed1c24; transition: transform 0.2s;
-        }
-        .flight-card:hover { transform: translateY(-3px); }
-        .airline-info { display: flex; align-items: center; gap: 15px; width: 25%; }
-        .airline-logo { width: 40px; height: 40px; border-radius: 50%; background: #f0f0f0; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #ed1c24; font-size: 18px; font-family: 'Rajdhani', sans-serif; }
-        .flight-time { text-align: center; flex: 1; }
-        .time-large { font-size: 24px; font-weight: 700; color: #111; font-family: 'Rajdhani', sans-serif;}
-        .city-small { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-top: 5px; }
-        .duration-line { font-size: 11px; color: #999; margin: 5px 0; position: relative; font-weight: 600;}
-        .duration-line::before { content: ''; position: absolute; top: 50%; left: 10%; width: 30%; height: 1px; background: #ddd; }
-        .duration-line::after { content: ''; position: absolute; top: 50%; right: 10%; width: 30%; height: 1px; background: #ddd; }
-        .flight-price { width: 20%; text-align: right; }
-        .price-large { font-size: 26px; font-weight: 700; color: #111; margin-bottom: 10px; font-family: 'Rajdhani', sans-serif;}
-        .book-btn { background: #ed1c24; color: #fff; border: none; padding: 12px 30px; border-radius: 30px; font-weight: 600; cursor: pointer; transition: 0.3s; font-family: 'Montserrat', sans-serif; }
-        .book-btn:hover { background: #111; }
-        /* --- 11. SEARCH RESULTS (FIXED VISIBILITY) --- */
-        .results-container {
-            width: 95%; max-width: 1000px; margin: 0 auto 50px auto;
-            display: none; 
-            flex-direction: column; gap: 20px;
-            position: relative; z-index: 50;
-            background: #1a1a1a; /* FIXED: Dark background for visibility */
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            border: 1px solid #333;
-        }
-        
-        .results-container h2, .results-container p { color: white !important; } /* FIXED: Forces text to be visible */
+
     </style>
 </head>
 <body>
@@ -288,133 +282,117 @@
         <button class="hero-btn" onclick="scrollToForm()">Plan a Flight</button>
     </div>
 
-    <div id="booking-section" class="booking-section">
+    <div id="booking-reveal-zone">
         
-        <div class="greeting-container">
-            <h2 class="aesthetic-greeting">Hey Traveller, where are we flying today?</h2>
-        </div>
+        <h2 class="greeting-text">Hey Traveller, where are we flying today?</h2>
 
-        <div class="ai-premium-container">
-            <div class="ai-tabs">
-                <div class="tab active">SEARCH FLIGHTS</div>
-                <div class="tab">MANAGE BOOKING</div>
-                <div class="tab">FLIGHT STATUS</div>
-            </div>
-
-            <div class="ai-sub-row">
-                <div class="trip-selection">
-                    <label><input type="radio" name="trip" checked> Round Trip</label>
-                    <label><input type="radio" name="trip"> One Way</label>
-                    <a href="#" class="multi-city">Multi City</a>
-                </div>
-                <div class="pay-options">
-                    <span>Pay By <strong>Cash</strong></span>
-                    <span>Add Promo Code</span>
-                </div>
-            </div>
-
-            <div class="ai-main-search">
-                
-                <div class="search-unit from">
-                    <div class="unit-label">Origin</div>
-                    <input type="text" id="fromInput" class="giant-input" placeholder="FROM" autocomplete="off" oninput="showSuggestions('from')">
+        <div id="booking-section" class="booking-section">
+            <div class="ai-premium-container">
+                <div class="ai-tabs">
+                    <div class="tab active">SEARCH FLIGHTS</div>
+                    <div class="tab">MANAGE BOOKING</div>
+                    <div class="tab">FLIGHT STATUS</div>
                 </div>
 
-                <button class="ai-swap-btn" onclick="swapLocations()">
-                    <i class="fa-solid fa-right-left"></i>
-                </button>
-
-                <div class="search-unit to">
-                    <div class="unit-label">Destination</div>
-                    <input type="text" id="toInput" class="giant-input" placeholder="TO" autocomplete="off" oninput="showSuggestions('to')">
-                </div>
-
-                <div class="search-unit date" onclick="openWideCalendar()">
-                    <div class="unit-label">Depart</div>
-                    <div id="departVal" class="val">Select Date</div>
-                </div>
-
-                <div class="search-unit date" onclick="openWideCalendar()">
-                    <div class="unit-label">Return</div>
-                    <div id="returnVal" class="val">Select Date</div>
-                </div>
-
-                <div class="search-unit pax" onclick="togglePax()">
-                    <div class="unit-label">Passenger(s)</div>
-                    <div id="paxVal" class="val">1 Adult</div>
-
-                    <div id="paxDropdown" class="pax-dropdown" onclick="event.stopPropagation()">
-                        
-                        <div class="pax-row">
-                            <div class="pax-info">
-                                <h4>Adults</h4>
-                                <p>12+ Years</p>
-                            </div>
-                            <div class="pax-controls">
-                                <button type="button" class="pax-btn" onclick="updatePax('adult', -1)">-</button>
-                                <span id="adultCount" class="pax-count">1</span>
-                                <button type="button" class="pax-btn plus" onclick="updatePax('adult', 1)">+</button>
-                            </div>
-                        </div>
-
-                        <div class="pax-row">
-                            <div class="pax-info">
-                                <h4>Children</h4>
-                                <p>2-11 Years</p>
-                            </div>
-                            <div class="pax-controls">
-                                <button type="button" class="pax-btn" onclick="updatePax('child', -1)">-</button>
-                                <span id="childCount" class="pax-count">0</span>
-                                <button type="button" class="pax-btn plus" onclick="updatePax('child', 1)">+</button>
-                            </div>
-                        </div>
-
-                        <div class="pax-row">
-                            <div class="pax-info">
-                                <h4>Infants</h4>
-                                <p>0-2 Years</p>
-                            </div>
-                            <div class="pax-controls">
-                                <button type="button" class="pax-btn" onclick="updatePax('infant', -1)">-</button>
-                                <span id="infantCount" class="pax-count">0</span>
-                                <button type="button" class="pax-btn plus" onclick="updatePax('infant', 1)">+</button>
-                            </div>
-                        </div>
-
+                <div class="ai-sub-row">
+                    <div class="trip-selection">
+                        <label><input type="radio" name="trip" checked> Round Trip</label>
+                        <label><input type="radio" name="trip"> One Way</label>
+                        <a href="#" class="multi-city">Multi City</a>
+                    </div>
+                    <div class="pay-options">
+                        <span>Pay By <strong>Cash</strong></span>
+                        <span>Add Promo Code</span>
                     </div>
                 </div>
 
-                <div class="search-unit class">
-                    <div class="unit-label">Class</div>
-                    <select id="classSelect">
-                        <option>Economy</option>
-                        <option>Premium Economy</option>
-                        <option>Business</option>
-                        <option>First Class</option>
-                    </select>
+                <div class="ai-main-search">
+                    
+                    <div class="search-unit from">
+                        <div class="unit-label">Origin</div>
+                        <input type="text" id="fromInput" class="giant-input" placeholder="FROM" autocomplete="off" oninput="showSuggestions('from')">
+                    </div>
+
+                    <button class="ai-swap-btn" onclick="swapLocations()">
+                        <i class="fa-solid fa-right-left"></i>
+                    </button>
+
+                    <div class="search-unit to">
+                        <div class="unit-label">Destination</div>
+                        <input type="text" id="toInput" class="giant-input" placeholder="TO" autocomplete="off" oninput="showSuggestions('to')">
+                    </div>
+
+                    <div class="search-unit date" onclick="openWideCalendar()">
+                        <div class="unit-label">Depart</div>
+                        <div id="departVal" class="val">Select Date</div>
+                    </div>
+
+                    <div class="search-unit date" onclick="openWideCalendar()">
+                        <div class="unit-label">Return</div>
+                        <div id="returnVal" class="val">Select Date</div>
+                    </div>
+
+                    <div class="search-unit pax" onclick="togglePax()">
+                        <div class="unit-label">Passenger(s)</div>
+                        <div id="paxVal" class="val">1 Adult</div>
+
+                        <div id="paxDropdown" class="pax-dropdown" onclick="event.stopPropagation()">
+                            
+                            <div class="pax-row">
+                                <div class="pax-info">
+                                    <h4>Adults</h4>
+                                    <p>12+ Years</p>
+                                </div>
+                                <div class="pax-controls">
+                                    <button type="button" class="pax-btn" onclick="updatePax('adult', -1)">-</button>
+                                    <span id="adultCount" class="pax-count">1</span>
+                                    <button type="button" class="pax-btn plus" onclick="updatePax('adult', 1)">+</button>
+                                </div>
+                            </div>
+
+                            <div class="pax-row">
+                                <div class="pax-info">
+                                    <h4>Children</h4>
+                                    <p>2-11 Years</p>
+                                </div>
+                                <div class="pax-controls">
+                                    <button type="button" class="pax-btn" onclick="updatePax('child', -1)">-</button>
+                                    <span id="childCount" class="pax-count">0</span>
+                                    <button type="button" class="pax-btn plus" onclick="updatePax('child', 1)">+</button>
+                                </div>
+                            </div>
+
+                            <div class="pax-row">
+                                <div class="pax-info">
+                                    <h4>Infants</h4>
+                                    <p>0-2 Years</p>
+                                </div>
+                                <div class="pax-controls">
+                                    <button type="button" class="pax-btn" onclick="updatePax('infant', -1)">-</button>
+                                    <span id="infantCount" class="pax-count">0</span>
+                                    <button type="button" class="pax-btn plus" onclick="updatePax('infant', 1)">+</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="search-unit class">
+                        <div class="unit-label">Class</div>
+                        <select id="classSelect">
+                            <option>Economy</option>
+                            <option>Premium Economy</option>
+                            <option>Business</option>
+                            <option>First Class</option>
+                        </select>
+                    </div>
+
+                    <button class="ai-final-search" onclick="performFlightSearch()">Search</button>
+                    
                 </div>
-
-                <button class="ai-final-search" onclick="performFlightSearch()">Search</button>
-                
-            </div>
-        </div> 
-    </div> 
-    <div id="flight-results-container" class="results-container"></div>
-
-    
-
-            
-                
-        
-
-        <div id="result-box">
-            <p id="status-message"></p>
-            <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6b7280;">Final Out-Of-Pocket Cost</p>
-            <p id="final-price">₹0.00</p>
+            </div> 
         </div>
-    </div>
-
-    <div id="regionalModal" class="modal-overlay">
+    </div> <div id="regionalModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Regional Settings</h3>
@@ -464,7 +442,7 @@
             <p style="font-size: 13px; color: #9ca3af; margin-bottom: 25px;">Log in or create an account to track prices and save your flights.</p>
             <div class="input-group">
                 <label>Email Address</label>
-                <input type="email" placeholder="Enter your email..." style="width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 4px;">
+                <input type="email" placeholder="Enter your email..." style="width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 4px; margin-bottom:0;">
             </div>
             <button class="submit-btn" style="margin-top: 20px;">Continue</button>
         </div>
@@ -533,6 +511,38 @@
     <a href="#" id="new-window-results-trigger" target="_blank" style="display:none;"></a>
 
     <script src="app.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const revealZone = document.getElementById('booking-reveal-zone');
+            
+            if (!revealZone) return;
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    // Triggers the CSS scale-and-fade animation as soon as 5% of the zone is visible
+                    if (entry.isIntersecting) {
+                        revealZone.classList.add('is-visible');
+                        observer.unobserve(revealZone); // Stops watching so it doesn't replay backwards
+                    }
+                });
+            }, { 
+                root: null,
+                threshold: 0.05, 
+                rootMargin: "0px 0px -20px 0px" 
+            });
+
+            observer.observe(revealZone);
+            
+            // Allow the "Plan a Flight" button to trigger the scroll smoothly
+            const planBtn = document.querySelector('.hero-btn');
+            if(planBtn) {
+                planBtn.addEventListener('click', () => {
+                    revealZone.scrollIntoView({ behavior: 'smooth' });
+                });
+            }
+        });
+    </script>
       
 </body>
 </html>
