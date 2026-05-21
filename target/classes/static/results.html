@@ -179,6 +179,28 @@
             cursor: pointer; transition: all 0.2s; text-transform: uppercase;
         }
         .redeem-btn:hover { background: #fff; color: #07090e; border-color: #fff; }
+        /* --- MOBILE RESPONSIVENESS (MAX 768PX) --- */
+        @media (max-width: 768px) {
+            .top-nav { padding: 15px 20px; justify-content: center; }
+            .header-box h2 { font-size: 22px; }
+            .header-box p { font-size: 11px; }
+            
+            /* Stack Flight Card Elements */
+            .flight-card > div { flex-direction: column !important; gap: 20px !important; text-align: center; padding-bottom: 15px; }
+            .airline-info { width: 100%; justify-content: center; flex-direction: column; gap: 8px; }
+            .flight-path-container { width: 100%; margin: 10px 0; }
+            .flight-time { width: 100%; display: flex; justify-content: center; gap: 40px; }
+            .flight-price { width: 100%; text-align: center !important; }
+            .book-btn { width: 100%; padding: 15px; }
+            
+            /* Stack Loyalty / Bank Deal Elements */
+            .loyalty-card { flex-direction: column; gap: 15px; padding: 20px 15px; }
+            .loyalty-card > div { width: 100% !important; text-align: center !important; justify-content: center; flex-direction: column; }
+            
+            /* Bank Offer Dropdown Area */
+            #loyalty-section > div:first-of-type > div { flex-direction: column !important; align-items: stretch !important; }
+            #apply-btn { width: 100%; margin-top: 10px; }
+        }
     </style>
 </head>
 <body>
