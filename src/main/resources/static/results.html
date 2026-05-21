@@ -179,25 +179,53 @@
             cursor: pointer; transition: all 0.2s; text-transform: uppercase;
         }
         .redeem-btn:hover { background: #fff; color: #07090e; border-color: #fff; }
+        
         /* --- MOBILE RESPONSIVENESS (MAX 768PX) --- */
         @media (max-width: 768px) {
+            /* 1. Header Fixes (Reduces massive text) */
             .top-nav { padding: 15px 20px; justify-content: center; }
-            .header-box h2 { font-size: 22px; }
-            .header-box p { font-size: 11px; }
+            .header-box h2 { font-size: 20px !important; line-height: 1.4; margin-bottom: 8px; }
+            .header-box p { font-size: 10px !important; letter-spacing: 0.5px; }
             
-            /* Stack Flight Card Elements */
-            .flight-card > div { flex-direction: column !important; gap: 20px !important; text-align: center; padding-bottom: 15px; }
-            .airline-info { width: 100%; justify-content: center; flex-direction: column; gap: 8px; }
-            .flight-path-container { width: 100%; margin: 10px 0; }
-            .flight-time { width: 100%; display: flex; justify-content: center; gap: 40px; }
-            .flight-price { width: 100%; text-align: center !important; }
-            .book-btn { width: 100%; padding: 15px; }
+            /* 2. Flight Card Grid Engine */
+            .flight-card { padding: 15px !important; }
+            .flight-card, .flight-card > div[style*="display: flex"] {
+                display: grid !important;
+                grid-template-columns: 1fr 1.5fr 1fr;
+                gap: 12px 5px !important;
+            }
             
-            /* Stack Loyalty / Bank Deal Elements */
-            .loyalty-card { flex-direction: column; gap: 15px; padding: 20px 15px; }
+            /* Row 1: Airline Info */
+            .airline-info { grid-column: 1 / 4; display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; width: 100% !important; gap: 12px; }
+            .airline-logo { width: 28px !important; height: 28px !important; }
+            .airline-name-text { font-size: 13px !important; }
+            .flight-number-text { font-size: 11px !important; margin-top: 0; }
+            
+            /* Row 2: Times & Path */
+            .flight-card > .flight-time:nth-child(2), .flight-card > div > .flight-time:nth-child(2) { grid-column: 1 / 2; text-align: left; }
+            .flight-path-container { grid-column: 2 / 3; margin: 0 !important; width: 100%; }
+            .flight-card > .flight-time:nth-child(4), .flight-card > div > .flight-time:nth-child(4) { grid-column: 3 / 4; text-align: right; }
+            
+            .time-large { font-size: 18px !important; }
+            .city-small { font-size: 10px !important; }
+            .duration-line { font-size: 10px !important; margin-bottom: 6px; }
+            .stop-badge { font-size: 9px !important; padding: 2px 6px !important; top: -6px; }
+            
+            /* Row 3: Price & Button */
+            .flight-price { grid-column: 1 / 4; display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; width: 100% !important; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px; margin-top: 5px; visibility: visible !important; text-align: left !important; }
+            .price-large { font-size: 22px !important; margin-bottom: 0 !important; }
+            .book-btn { width: auto !important; padding: 10px 25px !important; font-size: 13px !important; margin: 0; }
+            
+            /* Hide the placeholder blank price on the first leg of Round Trips */
+            .flight-card > div:first-child .flight-price { display: none !important; } 
+            
+            /* 3. Loyalty Cards Optimization */
+            .loyalty-card { flex-direction: column; gap: 15px; padding: 15px; }
             .loyalty-card > div { width: 100% !important; text-align: center !important; justify-content: center; flex-direction: column; }
+            .loyalty-card > div:first-child { flex-direction: row !important; justify-content: flex-start !important; }
+            .loyalty-card > div:last-child { flex-direction: row !important; justify-content: space-between !important; align-items: center; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px; text-align: left !important; }
+            .loyalty-card .redeem-btn { width: auto !important; }
             
-            /* Bank Offer Dropdown Area */
             #loyalty-section > div:first-of-type > div { flex-direction: column !important; align-items: stretch !important; }
             #apply-btn { width: 100%; margin-top: 10px; }
         }
