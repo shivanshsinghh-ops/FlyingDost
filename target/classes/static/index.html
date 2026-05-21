@@ -76,6 +76,13 @@
         .ai-swap-btn { background: none; border: none; color: #d11920; cursor: pointer; font-size: 18px; padding: 0 15px; }
         .ai-final-search { background: #ed1c24; color: white; border: none; padding: 0 40px; height: 75px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; border-radius: 0 8px 8px 0; }
         .ai-final-search:hover { background: #d11920; }
+        /* --- AUTOCOMPLETE DROPDOWN --- */
+        .suggestions-box { position: absolute; top: 100%; left: 0; width: 350px; background: #ffffff; border-radius: 8px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); z-index: 2000; max-height: 350px; overflow-y: auto; display: none; margin-top: 10px; }
+        .suggestion-item { padding: 15px 20px; cursor: pointer; display: flex; align-items: center; gap: 20px; border-bottom: 1px solid #f0f0f0; transition: background 0.2s ease; }
+        .suggestion-item:last-child { border-bottom: none; }
+        .suggestion-item:hover { background-color: #f8f9fa; }
+        .city-code { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 22px; color: #ed1c24; min-width: 55px; }
+        .city-name { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; color: #111; }
 
         /* --- MODALS OVERLAY STYLING --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 3000; opacity: 0; transition: opacity 0.3s ease; }
@@ -146,9 +153,19 @@
                     </div>
                 </div>
                 <div class="ai-main-search">
-                    <div class="search-unit from"><div class="unit-label" data-i18n="origin">Origin</div><input type="text" id="fromInput" class="giant-input" placeholder="FROM" autocomplete="off"></div>
+                    <div class="search-unit from">
+                        <div class="unit-label" data-i18n="origin">Origin</div>
+                        <input type="text" id="fromInput" class="giant-input" placeholder="FROM" autocomplete="off" oninput="showSuggestions('from')" onkeydown="handleKeydown(event, 'from')">
+                        <div id="fromSuggestions" class="suggestions-box"></div>
+                    </div>
+
                     <button class="ai-swap-btn"><i class="fa-solid fa-right-left"></i></button>
-                    <div class="search-unit to"><div class="unit-label" data-i18n="dest">Destination</div><input type="text" id="toInput" class="giant-input" placeholder="TO" autocomplete="off"></div>
+
+                    <div class="search-unit to">
+                        <div class="unit-label" data-i18n="dest">Destination</div>
+                        <input type="text" id="toInput" class="giant-input" placeholder="TO" autocomplete="off" oninput="showSuggestions('to')" onkeydown="handleKeydown(event, 'to')">
+                        <div id="toSuggestions" class="suggestions-box"></div>
+                    </div>
                     
                     <div class="search-unit date" onclick="openTargetedCalendar('depart')"><div class="unit-label" data-i18n="depart">Depart</div><div id="departVal" class="val">Select Date</div></div>
                     <div class="search-unit date" id="return-box" onclick="openTargetedCalendar('return')"><div class="unit-label" data-i18n="return">Return</div><div id="returnVal" class="val">Select Date</div></div>
@@ -263,6 +280,128 @@
     </div>
 
     <script>
+        // --- AUTOCOMPLETE LOGIC ---
+        const airports = [
+    // --- INDIA ---
+    { city: "Delhi", country: "India", code: "DEL" }, { city: "Mumbai", country: "India", code: "BOM" },
+    { city: "Bengaluru", country: "India", code: "BLR" }, { city: "Hyderabad", country: "India", code: "HYD" },
+    { city: "Chennai", country: "India", code: "MAA" }, { city: "Kolkata", country: "India", code: "CCU" },
+    { city: "Ahmedabad", country: "India", code: "AMD" }, { city: "Kochi", country: "India", code: "COK" },
+    { city: "Pune", country: "India", code: "PNQ" }, { city: "Goa (Mopa)", country: "India", code: "GOX" },
+    { city: "Guwahati", country: "India", code: "GAU" }, { city: "Lucknow", country: "India", code: "LKO" },
+    { city: "Jaipur", country: "India", code: "JAI" }, { city: "Bhubaneswar", country: "India", code: "BBI" },
+    { city: "Patna", country: "India", code: "PAT" }, { city: "Indore", country: "India", code: "IDR" },
+    { city: "Chandigarh", country: "India", code: "IXC" }, { city: "Srinagar", country: "India", code: "SXR" },
+    { city: "Ranchi", country: "India", code: "IXR" }, { city: "Raipur", country: "India", code: "RPR" },
+    { city: "Dehradun", country: "India", code: "DED" }, { city: "Port Blair", country: "India", code: "IXZ" },
+    { city: "Agartala", country: "India", code: "IXA" }, { city: "Imphal", country: "India", code: "IMF" },
+    { city: "Shillong", country: "India", code: "SHL" }, { city: "Aizawl", country: "India", code: "AJL" },
+    { city: "Dimapur", country: "India", code: "DMU" }, { city: "Itanagar", country: "India", code: "HGI" },
+    { city: "Leh", country: "India", code: "IXL" }, { city: "Puducherry", country: "India", code: "PNY" },
+    { city: "Agatti", country: "India", code: "AGX" }, { city: "Daman", country: "India", code: "NMB" },
+    { city: "Shimla", country: "India", code: "SLV" }, { city: "Gangtok (Pakyong)", country: "India", code: "PYG" },
+    // --- GLOBAL ---
+    { city: "Atlanta", country: "USA", code: "ATL" }, { city: "Dubai", country: "UAE", code: "DXB" },
+    { city: "Tokyo", country: "Japan", code: "HND" }, { city: "Dallas", country: "USA", code: "DFW" },
+    { city: "Shanghai", country: "China", code: "PVG" }, { city: "London", country: "UK", code: "LHR" },
+    { city: "Chicago", country: "USA", code: "ORD" }, { city: "Istanbul", country: "Turkey", code: "IST" },
+    { city: "Guangzhou", country: "China", code: "CAN" }, { city: "Denver", country: "USA", code: "DEN" },
+    { city: "Seoul", country: "South Korea", code: "ICN" }, { city: "Los Angeles", country: "USA", code: "LAX" },
+    { city: "Paris", country: "France", code: "CDG" }, { city: "Beijing", country: "China", code: "PEK" },
+    { city: "Singapore", country: "Singapore", code: "SIN" }, { city: "Amsterdam", country: "Netherlands", code: "AMS" },
+    { city: "Madrid", country: "Spain", code: "MAD" }, { city: "Shenzhen", country: "China", code: "SZX" },
+    { city: "Kuala Lumpur", country: "Malaysia", code: "KUL" }, { city: "Frankfurt", country: "Germany", code: "FRA" },
+    { city: "Bangkok", country: "Thailand", code: "BKK" }, { city: "New York", country: "USA", code: "JFK" },
+    { city: "Hong Kong", country: "Hong Kong", code: "HKG" }, { city: "Orlando", country: "USA", code: "MCO" },
+    { city: "Barcelona", country: "Spain", code: "BCN" }, { city: "Chengdu", country: "China", code: "TFU" },
+    { city: "Miami", country: "USA", code: "MIA" }, { city: "Las Vegas", country: "USA", code: "LAS" },
+    { city: "Jakarta", country: "Indonesia", code: "CGK" }, { city: "San Francisco", country: "USA", code: "SFO" },
+    { city: "Doha", country: "Qatar", code: "DOH" }, { city: "Charlotte", country: "USA", code: "CLT" },
+    { city: "Jeddah", country: "Saudi Arabia", code: "JED" }, { city: "Seattle", country: "USA", code: "SEA" },
+    { city: "Manila", country: "Philippines", code: "MNL" }, { city: "Phoenix", country: "USA", code: "PHX" },
+    { city: "Rome", country: "Italy", code: "FCO" }, { city: "Hangzhou", country: "China", code: "HGH" },
+    { city: "Chongqing", country: "China", code: "CKG" }, { city: "Kunming", country: "China", code: "KMG" },
+    { city: "Xi'an", country: "China", code: "XIY" }, { city: "Houston", country: "USA", code: "IAH" },
+    { city: "Toronto", country: "Canada", code: "YYZ" }, { city: "Munich", country: "Germany", code: "MUC" },
+    { city: "Sydney", country: "Australia", code: "SYD" }, { city: "Mexico City", country: "Mexico", code: "MEX" },
+    { city: "Boston", country: "USA", code: "BOS" }, { city: "Ho Chi Minh City", country: "Vietnam", code: "SGN" },
+    { city: "Minneapolis", country: "USA", code: "MSP" }, { city: "Detroit", country: "USA", code: "DTW" },
+    { city: "Melbourne", country: "Australia", code: "MEL" }, { city: "Cairo", country: "Egypt", code: "CAI" },
+    { city: "Lisbon", country: "Portugal", code: "LIS" }, { city: "Dublin", country: "Ireland", code: "DUB" },
+    { city: "Zurich", country: "Switzerland", code: "ZRH" }, { city: "Vienna", country: "Austria", code: "VIE" },
+    { city: "Manchester", country: "UK", code: "MAN" }, { city: "Copenhagen", country: "Denmark", code: "CPH" },
+    { city: "Stockholm", country: "Sweden", code: "ARN" }, { city: "Brussels", country: "Belgium", code: "BRU" },
+    { city: "Oslo", country: "Norway", code: "OSL" }, { city: "Helsinki", country: "Finland", code: "HEL" },
+    { city: "Athens", country: "Greece", code: "ATH" }, { city: "Prague", country: "Czech Republic", code: "PRG" },
+    { city: "Warsaw", country: "Poland", code: "WAW" }, { city: "Budapest", country: "Hungary", code: "BUD" },
+    { city: "Tel Aviv", country: "Israel", code: "TLV" }, { city: "Johannesburg", country: "South Africa", code: "JNB" },
+    { city: "Casablanca", country: "Morocco", code: "CMN" }, { city: "Addis Ababa", country: "Ethiopia", code: "ADD" },
+    { city: "Nairobi", country: "Kenya", code: "NBO" }, { city: "Cape Town", country: "South Africa", code: "CPT" },
+    { city: "Sao Paulo", country: "Brazil", code: "GRU" }, { city: "Bogota", country: "Colombia", code: "BOG" },
+    { city: "Lima", country: "Peru", code: "LIM" }, { city: "Santiago", country: "Chile", code: "SCL" },
+    { city: "Buenos Aires", country: "Argentina", code: "EZE" }, { city: "Auckland", country: "New Zealand", code: "AKL" },
+    { city: "Brisbane", country: "Australia", code: "BNE" }, { city: "Perth", country: "Australia", code: "PER" },
+    { city: "Vancouver", country: "Canada", code: "YVR" }, { city: "Montreal", country: "Canada", code: "YUL" },
+    { city: "Calgary", country: "Canada", code: "YYC" }, { city: "Riyadh", country: "Saudi Arabia", code: "RUH" },
+    { city: "Abu Dhabi", country: "UAE", code: "AUH" }, { city: "Muscat", country: "Oman", code: "MCT" },
+    { city: "Kuwait City", country: "Kuwait", code: "KWI" }, { city: "Manama", country: "Bahrain", code: "BAH" },
+    { city: "Taipei", country: "Taiwan", code: "TPE" }, { city: "Fukuoka", country: "Japan", code: "FUK" },
+    { city: "Osaka", country: "Japan", code: "KIX" }, { city: "Sapporo", country: "Japan", code: "CTS" },
+    { city: "Jeju", country: "South Korea", code: "CJU" }, { city: "Busan", country: "South Korea", code: "PUS" },
+    { city: "Hanoi", country: "Vietnam", code: "HAN" }, { city: "Bali", country: "Indonesia", code: "DPS" },
+    { city: "Phuket", country: "Thailand", code: "HKT" }, { city: "Male", country: "Maldives", code: "MLE" },
+    { city: "Colombo", country: "Sri Lanka", code: "CMB" }
+];
+
+        function showSuggestions(type) {
+            const input = document.getElementById(type + 'Input').value.toLowerCase();
+            const box = document.getElementById(type + 'Suggestions');
+            box.innerHTML = '';
+            
+            if (!input) {
+                box.style.display = 'none';
+                return;
+            }
+
+            const matches = airports.filter(a => 
+                a.code.toLowerCase().includes(input) || 
+                a.city.toLowerCase().includes(input) || 
+                a.country.toLowerCase().includes(input)
+            );
+            
+            if (matches.length > 0) {
+                box.style.display = 'block';
+                matches.forEach(match => {
+                    // We now pass city and country to the select function
+                    box.innerHTML += `
+                        <div class="suggestion-item" onclick="selectCity('${type}', '${match.code}', '${match.city}', '${match.country}')">
+                            <div class="city-code">${match.code}</div>
+                            <div class="city-name">${match.city}, ${match.country}</div>
+                        </div>`;
+                });
+            } else {
+                box.style.display = 'none';
+            }
+        }
+
+        function selectCity(type, code, city, country) {
+            // Formats exactly how you requested: "Mumbai, India (BOM)"
+            document.getElementById(type + 'Input').value = `${city}, ${country} (${code})`;
+            document.getElementById(type + 'Suggestions').style.display = 'none';
+        }
+
+        // NEW: Handles hitting "Enter" to auto-select the top result
+        function handleKeydown(event, type) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevents the page from randomly refreshing
+                const box = document.getElementById(type + 'Suggestions');
+                
+                // If the dropdown is open and has results, click the very first one automatically
+                if (box.style.display === 'block' && box.firstElementChild) {
+                    box.firstElementChild.click();
+                }
+            }
+        }
         // --- TRANSLATION ENGINE (TOP 10 LANGUAGES) ---
         const dictionary = {
             "en": {
