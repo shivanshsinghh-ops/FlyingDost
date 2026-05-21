@@ -33,8 +33,45 @@
             0% { transform: translate(0, 0) scale(1); } 
             100% { transform: translate(40px, -30px) scale(1.08); } 
         }
+
+        /* --- GUARANTEED PLANE BOUNCE --- */
+        .custom-plane-bounce {
+            display: inline-block;
+            animation: smoothBounce 2s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+        }
+        @keyframes smoothBounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(-3deg); }
+        }
+
+        /* --- ATMOSPHERIC WIND TEXTURE (FIXED VISIBILITY) --- */
+        .wind-currents {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 1; /* Pushed above the background so it is visible! */
+            overflow: hidden; pointer-events: none;
+            background: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.05"/%3E%3C/svg%3E');
+        }
         
-        .results-wrapper { width: 100%; max-width: 1050px; margin: 0 auto; position: relative; z-index: 10; }
+        .wind-stream {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent); /* Made 2x brighter */
+            height: 1.5px; width: 40vw; border-radius: 50%;
+            filter: blur(1px);
+            animation: blow 10s linear infinite;
+        }
+        
+        .stream-1 { top: 20%; left: -50vw; animation-duration: 14s; animation-delay: 0s; }
+        .stream-2 { top: 50%; left: -50vw; animation-duration: 9s; animation-delay: 3s; width: 60vw; opacity: 0.8; }
+        .stream-3 { top: 75%; left: -50vw; animation-duration: 18s; animation-delay: 7s; }
+        .stream-4 { top: 10%; left: -50vw; animation-duration: 11s; animation-delay: 1s; width: 30vw; }
+        .stream-5 { top: 85%; left: -50vw; animation-duration: 12s; animation-delay: 5s; width: 50vw; opacity: 0.9; }
+        
+        @keyframes blow {
+            0% { transform: translateX(0) translateY(0) rotate(-4deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateX(160vw) translateY(-15vh) rotate(-4deg); opacity: 0; }
+        }
         
         /* --- 2. PREMIUM LOADING STATE --- */
         #loading-state { text-align: center; padding: 120px 0; }
@@ -144,6 +181,13 @@
     </style>
 </head>
 <body>
+    <div class="wind-currents">
+        <div class="wind-stream stream-1"></div>
+        <div class="wind-stream stream-2"></div>
+        <div class="wind-stream stream-3"></div>
+        <div class="wind-stream stream-4"></div>
+        <div class="wind-stream stream-5"></div>
+    </div>
 
     <div class="ambient-glow-container">
         <div class="ambient-glow glow-crimson"></div>
@@ -152,7 +196,7 @@
 
     <div class="results-wrapper">
         <div id="loading-state">
-            <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 40px; color: #bfa15f; margin-bottom: 25px;"></i>
+            <i class="fa-solid fa-plane custom-plane-bounce" style="font-size: 40px; color: #bfa15f; margin-bottom: 25px;"></i>
             <h2 id="loading-text">Connecting to Live Server...</h2>
         </div>
 
@@ -174,7 +218,30 @@
                     <p style="font-size: 15px; font-weight: 600; color: #bfa15f; letter-spacing: 0.5px;">Shivansh <i class="fa-solid fa-circle-check" style="font-size: 13px;"></i></p>
                 </div>
             </div>
+            
             <div id="loyalty-deals"></div>
+            
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+                <p style="font-size: 11px; color: #64748b; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Apply External Partner Card</p>
+                <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                    
+                    <select id="partnerCardSelect" style="flex: 1; min-width: 250px; background: rgba(7, 9, 14, 0.6); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 12px; border-radius: 4px; font-family: 'Montserrat', sans-serif; font-size: 13px; outline: none; cursor: pointer;">
+                        <option value="none">-- Select to apply benefits --</option>
+                        <option value="HDFC Infinia Metal Edition">HDFC Infinia Metal Edition</option>
+                        <option value="American Express Platinum Travel">American Express Platinum Travel</option>
+                        <option value="SBI Elite Credit Card">SBI Elite Credit Card</option>
+                    </select>
+                    
+                    <div style="display: flex; align-items: center; gap: 8px; color: #94a3b8; font-size: 12px;">
+                        <input type="checkbox" id="offerUtilized" style="accent-color: #bfa15f; width: 16px; height: 16px; cursor: pointer;">
+                        <label for="offerUtilized" style="cursor: pointer;">Offer already utilized this month</label>
+                    </div>
+                    
+                    <button class="book-btn" onclick="applyPartnerCard()" style="padding: 12px 30px; margin-left: auto;">Calculate Final Price</button>
+                </div>
+                
+                <div id="card-deal-output"></div>
+            </div>
         </div>
     </div>
 
@@ -183,7 +250,9 @@
         const airlinesInternational = [{ name: "Emirates", code: "EK" }, { name: "Etihad Airways", code: "EY" }, { name: "Qatar Airways", code: "QR" }, { name: "British Airways", code: "BA" }, { name: "Lufthansa", code: "LH" }, { name: "Singapore Airlines", code: "SQ" }, { name: "Air India", code: "AI" }, { name: "Vistara", code: "UK" }, { name: "Delta Air Lines", code: "DL" }];
         const userWallet = { "AI": 15000, "EK": 8500, "BA": 12000, "UK": 5000, "6E": 3000 };
         const pointValueINR = 0.50; 
+        
         let generatedFlights = [];
+        let sharedLoyaltyDeals = []; // This acts as shared memory for the exact same flights!
 
         window.onload = () => {
             const paramsString = localStorage.getItem('flightSearchParams');
@@ -278,15 +347,18 @@
 
             deals.sort((a, b) => a.finalPrice - b.finalPrice);
             
+            // Save the exact top 3 flights to our shared memory
+            sharedLoyaltyDeals = deals.slice(0, 3);
+            
             const dealsBox = document.getElementById('loyalty-deals');
             document.getElementById('loyalty-section').style.display = 'block';
 
-            if (deals.length === 0) {
+            if (sharedLoyaltyDeals.length === 0) {
                 dealsBox.innerHTML = `<p style="text-align: center; color: #64748b; font-size: 14px; padding: 20px; font-style: italic;">No partner mileage opportunities found for this sector.</p>`;
                 return;
             }
 
-            deals.slice(0, 3).forEach(deal => {
+            sharedLoyaltyDeals.forEach(deal => {
                 dealsBox.innerHTML += `
                     <div class="loyalty-card">
                         <div style="display: flex; gap: 18px; align-items: center; width: 40%;">
@@ -308,6 +380,59 @@
                         </div>
                     </div>`;
             });
+        }
+        
+        function applyPartnerCard() {
+            const cardSelect = document.getElementById('partnerCardSelect');
+            const utilized = document.getElementById('offerUtilized').checked;
+            const outputDiv = document.getElementById('card-deal-output');
+            
+            if (cardSelect.value === "none") {
+                outputDiv.innerHTML = `<p style="color: #ef4444; font-size: 13px; margin-top: 15px; font-weight: 600;"><i class="fa-solid fa-triangle-exclamation"></i> Please select a valid bank card.</p>`;
+                return;
+            }
+
+            const cardName = cardSelect.value;
+            let outputHTML = ""; 
+
+            // Loop through the exact same flights saved from the loyalty section
+            sharedLoyaltyDeals.forEach(flight => {
+                let discount = 0;
+
+                // Bank Logic (Simulated)
+                if (!utilized) {
+                    if (cardName.includes("Infinia")) discount = Math.min(flight.price * 0.15, 4000); 
+                    else if (cardName.includes("American Express")) discount = Math.min(flight.price * 0.10, 3000); 
+                    else if (cardName.includes("SBI")) discount = Math.min(flight.price * 0.08, 2000); 
+                }
+
+                // Apply the card discount to the base price of the flight
+                const finalPrice = flight.price - discount;
+
+                outputHTML += `
+                    <div class="loyalty-card" style="border-color: rgba(191, 161, 95, 0.4); background: rgba(191, 161, 95, 0.05); margin-top: 15px;">
+                        <div style="display: flex; gap: 18px; align-items: center; width: 40%;">
+                            <div class="airline-logo" style="background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.15); width: 46px; height: 46px; border-radius: 8px; padding: 4px; display: flex; justify-content: center; align-items: center; overflow: hidden;">
+                                <img src="https://images.kiwi.com/airlines/64/${flight.code}.png" alt="${flight.airline} Logo" style="width: 100%; height: 100%; object-fit: contain;">
+                            </div>
+                            <div>
+                                <p style="font-weight: 600; font-size: 15px; margin: 0; color: #fff;">${cardName}</p>
+                                <p class="points-tag" style="color: #bfa15f;"><i class="fa-solid fa-check"></i> Applied to: ${flight.airline} (${flight.flightNo})</p>
+                            </div>
+                        </div>
+                        <div style="text-align: center; width: 30%;">
+                            <p style="font-size: 12px; color: #64748b; text-decoration: line-through; margin: 0;">₹${flight.price.toLocaleString('en-IN')}</p>
+                            <p class="savings-badge">${utilized ? '<span style="color:#ef4444;">LIMIT EXHAUSTED: -₹0</span>' : `CARD BENEFIT: -₹${discount.toLocaleString('en-IN')}`}</p>
+                        </div>
+                        <div style="text-align: right; width: 30%;">
+                            <p style="font-size: 24px; font-weight: 600; color: #fff; font-family: 'Rajdhani', sans-serif; margin: 0 0 6px 0;">₹${finalPrice.toLocaleString('en-IN')}</p>
+                            <button class="redeem-btn" onclick="alert('Redirecting to secure bank gateway for ${cardName} on ${flight.airline}...')">Checkout</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            outputDiv.innerHTML = outputHTML;
         }
     </script>
 </body>
