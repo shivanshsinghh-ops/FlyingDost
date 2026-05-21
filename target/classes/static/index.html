@@ -6,7 +6,7 @@
     <title>FlyingDost | Hey Traveller</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,600&family=Montserrat:wght@300;400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link rel="icon" type="image/png" href="/favicon.png">
     <style>
         /* --- 1. GLOBAL RESET --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -15,16 +15,13 @@
 
         /* --- 2. FIXED BACKGROUND VIDEO --- */
         #video-background {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            object-fit: cover; object-position: center;
-            z-index: -1; filter: brightness(45%);
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            object-fit: cover; object-position: center; z-index: -1; filter: brightness(45%);
         }
 
         /* --- 3. LUXURY TOP NAVIGATION --- */
         .top-nav {
-            position: fixed; top: 0; left: 0; width: 100%;
-            padding: 25px 50px; display: flex; justify-content: flex-end;
+            position: fixed; top: 0; left: 0; width: 100%; padding: 25px 50px; display: flex; justify-content: flex-end;
             z-index: 1000; background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%); 
         }
         .nav-icons { display: flex; gap: 30px; align-items: center; }
@@ -34,9 +31,7 @@
 
         /* --- 4. HERO SECTION --- */
         .hero-section {
-            height: 100vh; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; text-align: center; color: white;
-            position: relative; z-index: 10;
+            height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white; position: relative; z-index: 10;
         }
         .hero-section h1 { font-family: 'Playfair Display', serif; font-size: 52px; font-weight: 400; margin: 0 0 10px 0; letter-spacing: 1px; }
         .hero-section p { font-size: 16px; letter-spacing: 2px; text-transform: uppercase; margin: 0; color: #e5e7eb; }
@@ -44,141 +39,46 @@
         .hero-btn:hover { background-color: white; color: black; }
 
         /* --- APPLE-STYLE SCROLL REVEAL --- */
-        #booking-reveal-zone {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 50px;
-            min-height: 300px;
-        }
-
+        #booking-reveal-zone { width: 100%; display: flex; flex-direction: column; align-items: center; padding-top: 50px; min-height: 300px; }
         .greeting-text {
-            font-family: 'Playfair Display', serif;
-            font-size: 46px;
-            font-weight: 600;
-            color: #ffffff;
-            text-shadow: 0 4px 25px rgba(0, 0, 0, 0.8);
-            text-align: left; 
-            width: 95%; 
-            max-width: 1200px; 
-            margin: 0 auto 25px auto; 
-            opacity: 0; 
-            transform: translateY(40px);
-            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-            will-change: transform, opacity;
+            font-family: 'Playfair Display', serif; font-size: 46px; font-weight: 600; color: #ffffff; text-shadow: 0 4px 25px rgba(0, 0, 0, 0.8);
+            text-align: left; width: 95%; max-width: 1200px; margin: 0 auto 25px auto; 
+            opacity: 0; transform: translateY(40px); transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1); will-change: transform, opacity;
         }
 
         /* --- 5. SEARCH BAR SECTION --- */
         .booking-section {
-            position: relative; z-index: 100;
-            display: flex; flex-direction: column; align-items: center;
-            padding-bottom: 50px;
-            background: transparent; border: none; outline: none;
-            width: 100%;
-            opacity: 0;
-            transform: scale(0.92) translateY(20px);
-            transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-            transition-delay: 0.3s;
-            will-change: transform, opacity;
+            position: relative; z-index: 100; display: flex; flex-direction: column; align-items: center; padding-bottom: 50px;
+            background: transparent; border: none; outline: none; width: 100%;
+            opacity: 0; transform: scale(0.92) translateY(20px); transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.22, 1, 0.36, 1); transition-delay: 0.3s; will-change: transform, opacity;
         }
-
-        .is-visible .greeting-text {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .is-visible .booking-section {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-        }
+        .is-visible .greeting-text { opacity: 1; transform: translateY(0); }
+        .is-visible .booking-section { opacity: 1; transform: scale(1) translateY(0); }
         
-        .ai-premium-container {
-            background-color: #ffffff !important;
-            width: 95%;
-            max-width: 1200px;
-            border-radius: 32px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-            padding: 0 0 15px 0;
-            overflow: visible !important; 
-        }
-
+        .ai-premium-container { background-color: #ffffff !important; width: 95%; max-width: 1200px; border-radius: 32px; box-shadow: 0 15px 40px rgba(0,0,0,0.4); padding: 0 0 15px 0; overflow: visible !important; }
         .ai-tabs { display: flex; background: #f9f9f9; border-bottom: 1px solid #eee; padding: 10px 20px; align-items: center; border-radius: 32px 32px 0 0; }
         .tab { padding: 10px 20px; font-size: 13px; font-weight: 700; color: #555; cursor: pointer; }
         .tab.active { color: #d11920; border-bottom: 2px solid #d11920; }
-
         .ai-sub-row { display: flex; padding: 15px 25px; font-size: 13px; color: #444; gap: 30px; }
         .trip-selection label { margin-right: 20px; cursor: pointer; font-weight: 600; }
         .multi-city { color: #0071c2; text-decoration: none; }
         .pay-options span { margin-right: 20px; }
 
-        /* DIMINISHED RETURN BOX */
-        .diminished-box {
-            opacity: 0.3 !important;
-            pointer-events: none !important;
-            background: rgba(0, 0, 0, 0.03) !important;
-            filter: grayscale(100%);
-        }
+        .diminished-box { opacity: 0.3 !important; pointer-events: none !important; background: rgba(0, 0, 0, 0.03) !important; filter: grayscale(100%); }
 
-        /* BULLETPROOF HORIZONTAL LAYOUT */
-        .ai-main-search {
-            display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: nowrap !important;
-            align-items: center;
-            margin: 0 20px 20px 20px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            background: #fff;
-        }
-
-        .search-unit { 
-            flex: 1; 
-            padding: 12px 15px; 
-            border-right: 1px solid #eee; 
-            height: 75px; 
-            display: flex;
-            flex-direction: column; 
-            justify-content: center;
-            min-width: 0; 
-            position: relative; 
-            cursor: pointer;
-            user-select: none;
-        }
+        .ai-main-search { display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; align-items: center; margin: 0 20px 20px 20px; border: 1px solid #e0e0e0; border-radius: 8px; background: #fff; }
+        .search-unit { flex: 1; padding: 12px 15px; border-right: 1px solid #eee; height: 75px; display: flex; flex-direction: column; justify-content: center; min-width: 0; position: relative; cursor: pointer; user-select: none; }
         .search-unit:last-of-type { border-right: none; }
         .unit-label { font-size: 11px; color: #ed1c24; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; }
         .search-unit select, .search-unit .val { width: 100%; border: none; outline: none; font-size: 16px; font-weight: 700; color: #333; background: transparent; cursor: pointer; }
-        
-        .giant-input {
-            font-family: 'Rajdhani', sans-serif !important;
-            font-size: 32px !important;
-            font-weight: 700 !important;
-            text-transform: uppercase;
-            color: #111 !important;
-            height: 40px;
-            border: none;
-            outline: none;
-            background: transparent;
-            width: 100%;
-        }
-
-        .giant-input::placeholder {
-            font-family: 'Rajdhani', sans-serif !important;
-            font-weight: 700 !important;
-            color: rgba(50, 50, 50, 0.65) !important;
-        }
-
+        .giant-input { font-family: 'Rajdhani', sans-serif !important; font-size: 32px !important; font-weight: 700 !important; text-transform: uppercase; color: #111 !important; height: 40px; border: none; outline: none; background: transparent; width: 100%; }
+        .giant-input::placeholder { font-family: 'Rajdhani', sans-serif !important; font-weight: 700 !important; color: rgba(50, 50, 50, 0.65) !important; }
         .ai-swap-btn { background: none; border: none; color: #d11920; cursor: pointer; font-size: 18px; padding: 0 15px; }
         .ai-final-search { background: #ed1c24; color: white; border: none; padding: 0 40px; height: 75px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; border-radius: 0 8px 8px 0; }
         .ai-final-search:hover { background: #d11920; }
 
         /* --- MODALS OVERLAY STYLING --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px);
-            display: none; justify-content: center; align-items: center;
-            z-index: 3000; opacity: 0; transition: opacity 0.3s ease;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 3000; opacity: 0; transition: opacity 0.3s ease; }
         .modal-overlay.active { display: flex; opacity: 1; }
         .modal-content { background: rgba(15, 15, 15, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px; border-radius: 8px; color: white; transform: translateY(20px); transition: transform 0.3s ease; }
         .modal-overlay.active .modal-content { transform: translateY(0); }
@@ -191,15 +91,8 @@
         .submit-btn { background-color: #8b0000; color: white; border: none; padding: 18px 40px; font-size: 13px; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 20px; border-radius: 4px; }
 
         /* --- CALENDAR OVERLAY --- */
-        .calendar-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); display: none; justify-content: center;
-            align-items: center; z-index: 3000;
-        }
-        .calendar-modal {
-            background: #fff; width: 900px; border-radius: 12px; padding: 30px 40px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3); font-family: 'Montserrat', sans-serif;
-        }
+        .calendar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 3000; }
+        .calendar-modal { background: #fff; width: 900px; border-radius: 12px; padding: 30px 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); font-family: 'Montserrat', sans-serif; }
         .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .cal-header h2 { margin: 0; font-size: 22px; font-weight: 700; color: #111; }
         .cal-controls { display: flex; gap: 20px; align-items: center; font-size: 14px; font-weight: 600; }
@@ -226,47 +119,46 @@
         <div class="nav-icons">
             <button class="nav-icon-btn" onclick="openModal('regionalModal')"><i class="fa-solid fa-globe"></i></button>
             <button class="nav-icon-btn" title="Saved Flights" onclick="openModal('savedModal')"><i class="fa-regular fa-heart"></i></button>
-            <button class="nav-icon-btn login-btn" onclick="openModal('loginModal')"><i class="fa-regular fa-circle-user"></i><span>Log in</span></button>
+            <button class="nav-icon-btn login-btn" onclick="openModal('loginModal')"><i class="fa-regular fa-circle-user"></i><span data-i18n="nav_login">Log in</span></button>
         </div>
     </nav> 
 
     <div class="hero-section">
-        <h1>Flying made simple</h1>
-        <p>Best Fares. No Hidden Fees.</p>
-        <button class="hero-btn" onclick="document.getElementById('booking-reveal-zone').scrollIntoView({ behavior: 'smooth' });">Plan a Flight</button>
+        <h1 data-i18n="hero_title">Flying made simple</h1>
+        <p data-i18n="hero_sub">Best Fares. No Hidden Fees.</p>
+        <button class="hero-btn" data-i18n="plan_btn" onclick="document.getElementById('booking-reveal-zone').scrollIntoView({ behavior: 'smooth' });">Plan a Flight</button>
     </div>
 
     <div id="booking-reveal-zone">
-        <h2 class="greeting-text">Hey Traveller, where are we flying today?</h2>
+        <h2 class="greeting-text" data-i18n="greeting">Hey Traveller, where are we flying today?</h2>
         <div id="booking-section" class="booking-section">
             <div class="ai-premium-container">
                 <div class="ai-tabs">
-                    <div class="tab active">SEARCH FLIGHTS</div>
-                    <div class="tab">MANAGE BOOKING</div>
-                    <div class="tab">FLIGHT STATUS</div>
+                    <div class="tab active" data-i18n="tab_search">SEARCH FLIGHTS</div>
+                    <div class="tab" data-i18n="tab_manage">MANAGE BOOKING</div>
+                    <div class="tab" data-i18n="tab_status">FLIGHT STATUS</div>
                 </div>
                 <div class="ai-sub-row">
                     <div class="trip-selection">
-                        <label><input type="radio" name="trip" id="trip-round" checked onchange="toggleReturnBox()"> Round Trip</label>
-                        <label><input type="radio" name="trip" id="trip-oneway" onchange="toggleReturnBox()"> One Way</label>
-                        <a href="#" class="multi-city">Multi City</a>
+                        <label><input type="radio" name="trip" id="trip-round" checked onchange="toggleReturnBox()"> <span data-i18n="round_trip">Round Trip</span></label>
+                        <label><input type="radio" name="trip" id="trip-oneway" onchange="toggleReturnBox()"> <span data-i18n="one_way">One Way</span></label>
+                        <a href="#" class="multi-city" data-i18n="multi_city">Multi City</a>
                     </div>
-                    <div class="pay-options"><span>Pay By <strong>Cash</strong></span><span>Add Promo Code</span></div>
                 </div>
                 <div class="ai-main-search">
-                    <div class="search-unit from"><div class="unit-label">Origin</div><input type="text" id="fromInput" class="giant-input" placeholder="FROM" autocomplete="off"></div>
+                    <div class="search-unit from"><div class="unit-label" data-i18n="origin">Origin</div><input type="text" id="fromInput" class="giant-input" placeholder="FROM" autocomplete="off"></div>
                     <button class="ai-swap-btn"><i class="fa-solid fa-right-left"></i></button>
-                    <div class="search-unit to"><div class="unit-label">Destination</div><input type="text" id="toInput" class="giant-input" placeholder="TO" autocomplete="off"></div>
+                    <div class="search-unit to"><div class="unit-label" data-i18n="dest">Destination</div><input type="text" id="toInput" class="giant-input" placeholder="TO" autocomplete="off"></div>
                     
-                    <div class="search-unit date" onclick="openTargetedCalendar('depart')"><div class="unit-label">Depart</div><div id="departVal" class="val">Select Date</div></div>
-                    <div class="search-unit date" id="return-box" onclick="openTargetedCalendar('return')"><div class="unit-label">Return</div><div id="returnVal" class="val">Select Date</div></div>
+                    <div class="search-unit date" onclick="openTargetedCalendar('depart')"><div class="unit-label" data-i18n="depart">Depart</div><div id="departVal" class="val">Select Date</div></div>
+                    <div class="search-unit date" id="return-box" onclick="openTargetedCalendar('return')"><div class="unit-label" data-i18n="return">Return</div><div id="returnVal" class="val">Select Date</div></div>
                     
-                    <div class="search-unit pax"><div class="unit-label">Passenger(s)</div><div id="paxVal" class="val">1 Adult</div></div>
+                    <div class="search-unit pax"><div class="unit-label" data-i18n="pax">Passenger(s)</div><div id="paxVal" class="val">1 Adult</div></div>
                     <div class="search-unit class">
-                        <div class="unit-label">Class</div>
+                        <div class="unit-label" data-i18n="class">Class</div>
                         <select id="classSelect"><option>Economy</option><option>Premium Economy</option><option>Business</option><option>First Class</option></select>
                     </div>
-                    <button class="ai-final-search" onclick="performFlightSearch()">Search</button>
+                    <button class="ai-final-search" data-i18n="search_btn" onclick="performFlightSearch()">Search</button>
                 </div>
             </div> 
         </div>
@@ -280,17 +172,42 @@
             </div>
             <div class="input-group">
                 <label>Language</label>
-                <select><option>English (UK)</option><option>English (US)</option><option>Hindi</option><option>French</option></select>
+                <select id="langSelect">
+                    <option value="en">English (English)</option>
+                    <option value="zh">Mandarin (中文)</option>
+                    <option value="hi">Hindi (हिन्दी)</option>
+                    <option value="es">Spanish (Español)</option>
+                    <option value="fr">French (Français)</option>
+                    <option value="ar">Arabic (العربية)</option>
+                    <option value="bn">Bengali (বাংলা)</option>
+                    <option value="ru">Russian (Русский)</option>
+                    <option value="pt">Portuguese (Português)</option>
+                    <option value="ja">Japanese (日本語)</option>
+                </select>
             </div>
             <div class="input-group">
                 <label>Country / Region</label>
-                <select><option>India</option><option>United States</option><option>United Kingdom</option><option>United Arab Emirates</option></select>
+                <select id="countrySelect">
+                    <option>India</option><option>United States</option><option>United Kingdom</option>
+                    <option>China</option><option>Spain</option><option>France</option><option>United Arab Emirates</option>
+                    <option>Bangladesh</option><option>Russia</option><option>Brazil</option><option>Japan</option>
+                </select>
             </div>
             <div class="input-group">
                 <label>Currency</label>
-                <select><option>INR (₹) - Indian Rupee</option><option>USD ($) - US Dollar</option><option>GBP (£) - British Pound</option><option>AED (د.إ) - UAE Dirham</option></select>
+                <select id="currencySelect">
+                    <option value="INR">INR (₹) - Indian Rupee</option>
+                    <option value="USD">USD ($) - US Dollar</option>
+                    <option value="EUR">EUR (€) - Euro</option>
+                    <option value="GBP">GBP (£) - British Pound</option>
+                    <option value="CNY">CNY (¥) - Chinese Yuan</option>
+                    <option value="AED">AED (د.إ) - UAE Dirham</option>
+                    <option value="RUB">RUB (₽) - Russian Ruble</option>
+                    <option value="BRL">BRL (R$) - Brazilian Real</option>
+                    <option value="JPY">JPY (¥) - Japanese Yen</option>
+                </select>
             </div>
-            <button class="submit-btn" style="margin-top: 30px;" onclick="closeModal('regionalModal')">Save</button>
+            <button class="submit-btn" style="margin-top: 30px;" onclick="applyRegionalSettings()">Save Settings</button>
         </div>
     </div>
 
@@ -346,6 +263,123 @@
     </div>
 
     <script>
+        // --- TRANSLATION ENGINE (TOP 10 LANGUAGES) ---
+        const dictionary = {
+            "en": {
+                "nav_login": "Log in", "hero_title": "Flying made simple", "hero_sub": "Best Fares. No Hidden Fees.",
+                "plan_btn": "Plan a Flight", "greeting": "Hey Traveller, where are we flying today?",
+                "tab_search": "SEARCH FLIGHTS", "tab_manage": "MANAGE BOOKING", "tab_status": "FLIGHT STATUS",
+                "round_trip": "Round Trip", "one_way": "One Way", "multi_city": "Multi City",
+                "origin": "Origin", "dest": "Destination", "depart": "Depart", "return": "Return",
+                "pax": "Passenger(s)", "class": "Class", "search_btn": "Search"
+            },
+            "zh": {
+                "nav_login": "登录", "hero_title": "飞行变得简单", "hero_sub": "最佳票价。无隐藏费用。",
+                "plan_btn": "预订航班", "greeting": "嘿，旅行者，今天我们飞往哪里？",
+                "tab_search": "搜索航班", "tab_manage": "管理预订", "tab_status": "航班动态",
+                "round_trip": "往返", "one_way": "单程", "multi_city": "多城市",
+                "origin": "出发地", "dest": "目的地", "depart": "出发日期", "return": "返程日期",
+                "pax": "乘客", "class": "舱位", "search_btn": "搜索"
+            },
+            "hi": {
+                "nav_login": "लॉग इन", "hero_title": "उड़ान हुई आसान", "hero_sub": "बेहतरीन किराये। कोई छुपी हुई फीस नहीं।",
+                "plan_btn": "उड़ान की योजना बनाएं", "greeting": "नमस्ते यात्री, आज हम कहाँ जा रहे हैं?",
+                "tab_search": "उड़ान खोजें", "tab_manage": "बुकिंग प्रबंधित करें", "tab_status": "उड़ान की स्थिति",
+                "round_trip": "राउंड ट्रिप", "one_way": "वन वे", "multi_city": "मल्टी सिटी",
+                "origin": "कहाँ से", "dest": "कहाँ तक", "depart": "प्रस्थान", "return": "वापसी",
+                "pax": "यात्री", "class": "श्रेणी", "search_btn": "खोजें"
+            },
+            "es": {
+                "nav_login": "Acceder", "hero_title": "Volar hecho fácil", "hero_sub": "Mejores tarifas. Sin cargos ocultos.",
+                "plan_btn": "Planificar un vuelo", "greeting": "Hola Viajero, ¿a dónde volamos hoy?",
+                "tab_search": "BUSCAR VUELOS", "tab_manage": "GESTIONAR RESERVA", "tab_status": "ESTADO DEL VUELO",
+                "round_trip": "Ida y vuelta", "one_way": "Solo ida", "multi_city": "Múltiples destinos",
+                "origin": "Origen", "dest": "Destino", "depart": "Ida", "return": "Vuelta",
+                "pax": "Pasajero(s)", "class": "Clase", "search_btn": "Buscar"
+            },
+            "fr": {
+                "nav_login": "Connexion", "hero_title": "Voler en toute simplicité", "hero_sub": "Meilleurs tarifs. Aucun frais caché.",
+                "plan_btn": "Planifier un vol", "greeting": "Hé Voyageur, où volons-nous aujourd'hui ?",
+                "tab_search": "CHERCHER DES VOLS", "tab_manage": "GÉRER LA RÉSERVATION", "tab_status": "STATUT DU VOL",
+                "round_trip": "Aller-retour", "one_way": "Aller simple", "multi_city": "Multi-destinations",
+                "origin": "Origine", "dest": "Destination", "depart": "Départ", "return": "Retour",
+                "pax": "Passager(s)", "class": "Classe", "search_btn": "Rechercher"
+            },
+            "ar": {
+                "nav_login": "تسجيل الدخول", "hero_title": "الطيران أصبح بسيطاً", "hero_sub": "أفضل الأسعار. لا رسوم خفية.",
+                "plan_btn": "خطط لرحلة", "greeting": "مرحباً أيها المسافر، إلى أين نطير اليوم؟",
+                "tab_search": "البحث عن رحلات", "tab_manage": "إدارة الحجز", "tab_status": "حالة الرحلة",
+                "round_trip": "ذهاب وعودة", "one_way": "ذهاب فقط", "multi_city": "مدن متعددة",
+                "origin": "من", "dest": "إلى", "depart": "المغادرة", "return": "العودة",
+                "pax": "المسافرون", "class": "الدرجة", "search_btn": "بحث"
+            },
+            "bn": {
+                "nav_login": "লগ ইন", "hero_title": "বিমান ভ্রমণ এখন সহজ", "hero_sub": "সেরা ভাড়া। কোনো লুকানো চার্জ নেই।",
+                "plan_btn": "ফ্লাইট খুঁজুন", "greeting": "হে যাত্রী, আজ আমরা কোথায় যাচ্ছি?",
+                "tab_search": "ফ্লাইট খুঁজুন", "tab_manage": "বুকিং পরিচালনা করুন", "tab_status": "ফ্লাইটের অবস্থা",
+                "round_trip": "রাউন্ড ট্রিপ", "one_way": "একমুখী", "multi_city": "মাল্টি সিটি",
+                "origin": "কোথা থেকে", "dest": "গন্তব্য", "depart": "যাত্রা", "return": "ফেরা",
+                "pax": "যাত্রী", "class": "ক্লাস", "search_btn": "খুঁজুন"
+            },
+            "ru": {
+                "nav_login": "Войти", "hero_title": "Летать просто", "hero_sub": "Лучшие цены. Без скрытых комиссий.",
+                "plan_btn": "Запланировать полет", "greeting": "Эй, путешественник, куда летим сегодня?",
+                "tab_search": "ПОИСК РЕЙСОВ", "tab_manage": "УПРАВЛЕНИЕ БРОНЬЮ", "tab_status": "СТАТУС РЕЙСА",
+                "round_trip": "Туда и обратно", "one_way": "В одну сторону", "multi_city": "Сложный маршрут",
+                "origin": "Откуда", "dest": "Куда", "depart": "Туда", "return": "Обратно",
+                "pax": "Пассажиры", "class": "Класс", "search_btn": "Найти"
+            },
+            "pt": {
+                "nav_login": "Entrar", "hero_title": "Voar de forma simples", "hero_sub": "Melhores Tarifas. Sem taxas ocultas.",
+                "plan_btn": "Planejar um Voo", "greeting": "Ei Viajante, para onde vamos voar hoje?",
+                "tab_search": "BUSCAR VOOS", "tab_manage": "GERENCIAR RESERVA", "tab_status": "STATUS DO VOO",
+                "round_trip": "Ida e volta", "one_way": "Só ida", "multi_city": "Várias cidades",
+                "origin": "Origem", "dest": "Destino", "depart": "Ida", "return": "Volta",
+                "pax": "Passageiro(s)", "class": "Classe", "search_btn": "Buscar"
+            },
+            "ja": {
+                "nav_login": "ログイン", "hero_title": "フライトをシンプルに", "hero_sub": "ベストプライス。隠れた費用なし。",
+                "plan_btn": "フライトを計画", "greeting": "トラベラーさん、今日はどこへ飛びますか？",
+                "tab_search": "フライト検索", "tab_manage": "予約管理", "tab_status": "運行状況",
+                "round_trip": "往復", "one_way": "片道", "multi_city": "周遊",
+                "origin": "出発地", "dest": "目的地", "depart": "出発日", "return": "現地出発日",
+                "pax": "乗客", "class": "クラス", "search_btn": "検索"
+            }
+        };
+
+        function applyRegionalSettings() {
+            const lang = document.getElementById('langSelect').value;
+            const currency = document.getElementById('currencySelect').value;
+            
+            // Save settings globally to browser memory
+            localStorage.setItem('userLang', lang);
+            localStorage.setItem('userCurrency', currency);
+            
+            translatePage(lang);
+            closeModal('regionalModal');
+        }
+
+        function translatePage(lang) {
+            const textSet = dictionary[lang] || dictionary["en"];
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (textSet[key]) {
+                    element.innerText = textSet[key];
+                }
+            });
+        }
+
+        // Load saved preferences when page opens
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedLang = localStorage.getItem('userLang') || 'en';
+            const savedCurrency = localStorage.getItem('userCurrency') || 'INR';
+            
+            document.getElementById('langSelect').value = savedLang;
+            document.getElementById('currencySelect').value = savedCurrency;
+            
+            translatePage(savedLang);
+        });
+
         // --- MODAL CONTROLS ---
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
