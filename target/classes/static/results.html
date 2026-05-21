@@ -252,17 +252,17 @@
         const pointValueINR = 0.50; 
         
         let generatedFlights = [];
-        let sharedLoyaltyDeals = []; // This acts as shared memory for the exact same flights!
+        let sharedLoyaltyDeals = []; 
 
         window.onload = () => {
             const paramsString = localStorage.getItem('flightSearchParams');
-            if (!paramsString) {
-                document.getElementById('loading-text').innerText = "Session timeout. Please return to the homepage.";
-                return;
-            }
+            if (!paramsString) return;
 
             const searchParams = JSON.parse(paramsString);
             const { origin, dest, date, pax, flightClass, isDomestic } = searchParams;
+            
+            // Default to Round Trip if undefined
+            const isRoundTrip = searchParams.isRoundTrip !== false; 
 
             document.getElementById('loading-text').innerText = `Querying Live Schedules to ${dest.city}...`;
 
@@ -270,8 +270,8 @@
                 const totalToGenerate = Math.floor(Math.random() * ((isDomestic ? 11 : 22) - (isDomestic ? 7 : 15) + 1)) + (isDomestic ? 7 : 15);
                 const pool = isDomestic ? airlinesDomestic : airlinesInternational;
 
-                // LOOP THAT GENERATES THE FLIGHTS
                 for (let i = 0; i < totalToGenerate; i++) {
+                    // Outbound Flight Logic
                     const airline = pool[Math.floor(Math.random() * pool.length)];
                     const avgMinutes = isDomestic ? (Math.random() * 60 + 90) : (Math.random() * 480 + 360); 
                     const hours = Math.floor(avgMinutes / 60);
@@ -284,14 +284,19 @@
                     const basePrice = isDomestic ? 3800 : 42000;
                     const variation = isDomestic ? (Math.random() * 4500) : (Math.random() * 35000);
                     
-                    // --- NEW: CABIN CLASS MULTIPLIER LOGIC ---
-                    let classMultiplier = 1; // Default for Economy
+                    // Cabin Class Multiplier
+                    let classMultiplier = 1;
                     if (flightClass === "Premium Economy") classMultiplier = 1.5;
                     else if (flightClass === "Business") classMultiplier = 3.5;
                     else if (flightClass === "First Class") classMultiplier = 8.5;
                     
-                    const calculatedPrice = Math.round((basePrice + variation) * classMultiplier);
-                    // -----------------------------------------
+                    const calculatedOutboundPrice = Math.round((basePrice + variation) * classMultiplier);
+
+                    // Return Flight Logic (Generated if Round Trip is true)
+                    const retAirline = pool[Math.floor(Math.random() * pool.length)]; // Can be a different airline!
+                    const calculatedReturnPrice = isRoundTrip ? Math.round((basePrice + variation * Math.random()) * classMultiplier) : 0;
+                    const retDepHour = (arrHour + Math.floor(Math.random() * 5) + 4) % 24;
+                    const retArrHour = (retDepHour + hours) % 24;
                     
                     generatedFlights.push({
                         airline: airline.name, code: airline.code,
@@ -299,7 +304,14 @@
                         dep: `${String(depHour).padStart(2,'0')}:${String(depMin).padStart(2,'0')}`,
                         arr: `${String(arrHour).padStart(2,'0')}:${String(arrMin).padStart(2,'0')}`,
                         duration: `${hours}h ${minutes}m`,
-                        price: calculatedPrice // Automatically applies the multiplier!
+                        price: calculatedOutboundPrice + calculatedReturnPrice, // Total Combined Price
+                        
+                        // Store Return Data
+                        isRoundTrip: isRoundTrip,
+                        retAirline: retAirline.name, retCode: retAirline.code,
+                        retFlightNo: `${retAirline.code}-${Math.floor(Math.random() * 800) + 100}`,
+                        retDep: `${String(retDepHour).padStart(2,'0')}:${String(depMin).padStart(2,'0')}`,
+                        retArr: `${String(retArrHour).padStart(2,'0')}:${String(arrMin).padStart(2,'0')}`
                     });
                 }
 
@@ -308,45 +320,106 @@
                 document.getElementById('loading-state').style.display = 'none';
                 document.getElementById('results-header').style.display = 'block';
                 document.getElementById('route-title').innerHTML = `Flights from <strong>${origin.city}</strong> to <strong>${dest.city}</strong>`;
-                document.getElementById('route-details').innerHTML = `${date} &nbsp;•&nbsp; ${pax} &nbsp;•&nbsp; ${flightClass} &nbsp;•&nbsp; <span style="color: #bfa15f; font-weight: 700;">${generatedFlights.length} Routes Identified</span>`;
+                document.getElementById('route-details').innerHTML = `${date} &nbsp;•&nbsp; ${pax} &nbsp;•&nbsp; ${flightClass} &nbsp;•&nbsp; <span style="color: #bfa15f; font-weight: 700;">${isRoundTrip ? 'Round Trip' : 'One Way'}</span>`;
 
                 const listHTML = document.getElementById('flight-list');
                 generatedFlights.forEach(flight => {
-                    listHTML.innerHTML += `
-                        <div class="flight-card">
-                            <div class="airline-info">
-                                <div class="airline-logo">
-                                    <img src="https://images.kiwi.com/airlines/64/${flight.code}.png" alt="${flight.airline} Logo">
+                    
+                    if (flight.isRoundTrip) {
+                        // RENDER STACKED ROUND-TRIP CARD
+                        listHTML.innerHTML += `
+                            <div class="flight-card" style="display: block;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                    <div class="airline-info">
+                                        <div class="airline-logo"><img src="https://images.kiwi.com/airlines/64/${flight.code}.png" alt="Logo"></div>
+                                        <div>
+                                            <div class="airline-name-text">${flight.airline}</div>
+                                            <div class="flight-number-text" style="color:#bfa15f;">Outbound • ${flight.flightNo}</div>
+                                        </div>
+                                    </div>
+                                    <div class="flight-time">
+                                        <div class="time-large">${flight.dep}</div>
+                                        <div class="city-small">${origin.city}</div>
+                                    </div>
+                                    <div class="flight-path-container">
+                                        <div class="duration-line">${flight.duration}</div>
+                                        <div class="path-bar"></div>
+                                        <div class="stop-badge">Non-Stop</div>
+                                    </div>
+                                    <div class="flight-time">
+                                        <div class="time-large">${flight.arr}</div>
+                                        <div class="city-small">${dest.city}</div>
+                                    </div>
+                                    <div class="flight-price" style="visibility: hidden;">
+                                        <div class="price-large">₹0</div>
+                                        <button class="book-btn">Select</button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <div class="airline-name-text">${flight.airline}</div>
-                                    <div class="flight-number-text">${flight.flightNo}</div>
+                                
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 1px dashed rgba(255,255,255,0.1);">
+                                    <div class="airline-info">
+                                        <div class="airline-logo"><img src="https://images.kiwi.com/airlines/64/${flight.retCode}.png" alt="Logo"></div>
+                                        <div>
+                                            <div class="airline-name-text">${flight.retAirline}</div>
+                                            <div class="flight-number-text" style="color:#bfa15f;">Return • ${flight.retFlightNo}</div>
+                                        </div>
+                                    </div>
+                                    <div class="flight-time">
+                                        <div class="time-large">${flight.retDep}</div>
+                                        <div class="city-small">${dest.city}</div>
+                                    </div>
+                                    <div class="flight-path-container">
+                                        <div class="duration-line">${flight.duration}</div>
+                                        <div class="path-bar"></div>
+                                        <div class="stop-badge">Non-Stop</div>
+                                    </div>
+                                    <div class="flight-time">
+                                        <div class="time-large">${flight.retArr}</div>
+                                        <div class="city-small">${origin.city}</div>
+                                    </div>
+                                    <div class="flight-price">
+                                        <div class="price-large">₹${flight.price.toLocaleString('en-IN')}</div>
+                                        <button class="book-btn">Select</button>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="flight-time">
-                                <div class="time-large">${flight.dep}</div>
-                                <div class="city-small">${origin.city}</div>
-                            </div>
-                            <div class="flight-path-container">
-                                <div class="duration-line">${flight.duration}</div>
-                                <div class="path-bar"></div>
-                                <div class="stop-badge">Non-Stop</div>
-                            </div>
-                            <div class="flight-time">
-                                <div class="time-large">${flight.arr}</div>
-                                <div class="city-small">${dest.city}</div>
-                            </div>
-                            <div class="flight-price">
-                                <div class="price-large">₹${flight.price.toLocaleString('en-IN')}</div>
-                                <button class="book-btn">Select</button>
-                            </div>
-                        </div>`;
+                            </div>`;
+                    } else {
+                        // RENDER STANDARD ONE-WAY CARD
+                        listHTML.innerHTML += `
+                            <div class="flight-card">
+                                <div class="airline-info">
+                                    <div class="airline-logo"><img src="https://images.kiwi.com/airlines/64/${flight.code}.png" alt="Logo"></div>
+                                    <div>
+                                        <div class="airline-name-text">${flight.airline}</div>
+                                        <div class="flight-number-text">${flight.flightNo}</div>
+                                    </div>
+                                </div>
+                                <div class="flight-time">
+                                    <div class="time-large">${flight.dep}</div>
+                                    <div class="city-small">${origin.city}</div>
+                                </div>
+                                <div class="flight-path-container">
+                                    <div class="duration-line">${flight.duration}</div>
+                                    <div class="path-bar"></div>
+                                    <div class="stop-badge">Non-Stop</div>
+                                </div>
+                                <div class="flight-time">
+                                    <div class="time-large">${flight.arr}</div>
+                                    <div class="city-small">${dest.city}</div>
+                                </div>
+                                <div class="flight-price">
+                                    <div class="price-large">₹${flight.price.toLocaleString('en-IN')}</div>
+                                    <button class="book-btn">Select</button>
+                                </div>
+                            </div>`;
+                    }
                 });
 
                 renderLoyaltyDeals();
             }, 1400);
         };
 
+        // ... (The rest of your loyalty deals and partner card functions remain exactly the same here) ...
         function renderLoyaltyDeals() {
             let deals = [];
             generatedFlights.forEach(flight => {
@@ -357,8 +430,6 @@
             });
 
             deals.sort((a, b) => a.finalPrice - b.finalPrice);
-            
-            // Save the exact top 3 flights to our shared memory
             sharedLoyaltyDeals = deals.slice(0, 3);
             
             const dealsBox = document.getElementById('loyalty-deals');
@@ -373,9 +444,7 @@
                 dealsBox.innerHTML += `
                     <div class="loyalty-card">
                         <div style="display: flex; gap: 18px; align-items: center; width: 40%;">
-                            <div class="airline-logo">
-                                <img src="https://images.kiwi.com/airlines/64/${deal.code}.png" alt="${deal.airline} Logo">
-                            </div>
+                            <div class="airline-logo"><img src="https://images.kiwi.com/airlines/64/${deal.code}.png" alt="Logo"></div>
                             <div>
                                 <p style="font-weight: 600; font-size: 15px; margin: 0; color: #fff;">${deal.airline} <span style="font-weight: 500; color: #64748b; font-size: 12px;">(${deal.flightNo})</span></p>
                                 <p class="points-tag"><i class="fa-solid fa-award"></i> ${deal.pointsUsed.toLocaleString()} Miles Applied</p>
@@ -406,25 +475,21 @@
             const cardName = cardSelect.value;
             let outputHTML = ""; 
 
-            // Loop through the exact same flights saved from the loyalty section
             sharedLoyaltyDeals.forEach(flight => {
                 let discount = 0;
-
-                // Bank Logic (Simulated)
                 if (!utilized) {
                     if (cardName.includes("Infinia")) discount = Math.min(flight.price * 0.15, 4000); 
                     else if (cardName.includes("American Express")) discount = Math.min(flight.price * 0.10, 3000); 
                     else if (cardName.includes("SBI")) discount = Math.min(flight.price * 0.08, 2000); 
                 }
 
-                // Apply the card discount to the base price of the flight
                 const finalPrice = flight.price - discount;
 
                 outputHTML += `
                     <div class="loyalty-card" style="border-color: rgba(191, 161, 95, 0.4); background: rgba(191, 161, 95, 0.05); margin-top: 15px;">
                         <div style="display: flex; gap: 18px; align-items: center; width: 40%;">
                             <div class="airline-logo" style="background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.15); width: 46px; height: 46px; border-radius: 8px; padding: 4px; display: flex; justify-content: center; align-items: center; overflow: hidden;">
-                                <img src="https://images.kiwi.com/airlines/64/${flight.code}.png" alt="${flight.airline} Logo" style="width: 100%; height: 100%; object-fit: contain;">
+                                <img src="https://images.kiwi.com/airlines/64/${flight.code}.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
                             </div>
                             <div>
                                 <p style="font-weight: 600; font-size: 15px; margin: 0; color: #fff;">${cardName}</p>

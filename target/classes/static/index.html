@@ -50,7 +50,7 @@
             flex-direction: column;
             align-items: center;
             padding-top: 50px;
-            min-height: 300px; /* Ensures the browser observer always catches it */
+            min-height: 300px;
         }
 
         .greeting-text {
@@ -59,14 +59,10 @@
             font-weight: 600;
             color: #ffffff;
             text-shadow: 0 4px 25px rgba(0, 0, 0, 0.8);
-            
-            /* Left Aligned to match the search box exactly */
             text-align: left; 
             width: 95%; 
             max-width: 1200px; 
             margin: 0 auto 25px auto; 
-            
-            /* Apple Text Slide-in */
             opacity: 0; 
             transform: translateY(40px);
             transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
@@ -80,16 +76,13 @@
             padding-bottom: 50px;
             background: transparent; border: none; outline: none;
             width: 100%;
-            
-            /* Apple Card Scale-and-Fade Reveal */
             opacity: 0;
-            transform: scale(0.92) translateY(20px); /* Starts shrunken and lower */
+            transform: scale(0.92) translateY(20px);
             transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-            transition-delay: 0.3s; /* Perfectly delays the search box after the text */
+            transition-delay: 0.3s;
             will-change: transform, opacity;
         }
 
-        /* The classes added by JavaScript when scrolled into view */
         .is-visible .greeting-text {
             opacity: 1;
             transform: translateY(0);
@@ -97,27 +90,20 @@
 
         .is-visible .booking-section {
             opacity: 1;
-            transform: scale(1) translateY(0); /* Expands to full size */
+            transform: scale(1) translateY(0);
         }
         
         .ai-premium-container {
             background-color: #ffffff !important;
             width: 95%;
             max-width: 1200px;
-            border-radius: 32px; /* INCREASED: Makes all 4 corners much rounder */
+            border-radius: 32px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.4);
             padding: 0 0 15px 0;
             overflow: visible !important; 
         }
 
-        .ai-tabs { 
-            display: flex; 
-            background: #f9f9f9; 
-            border-bottom: 1px solid #eee; 
-            padding: 10px 20px; 
-            align-items: center; 
-            border-radius: 32px 32px 0 0; /* NEW: Rounds the grey tabs to perfectly match the outer box */
-        }
+        .ai-tabs { display: flex; background: #f9f9f9; border-bottom: 1px solid #eee; padding: 10px 20px; align-items: center; border-radius: 32px 32px 0 0; }
         .tab { padding: 10px 20px; font-size: 13px; font-weight: 700; color: #555; cursor: pointer; }
         .tab.active { color: #d11920; border-bottom: 2px solid #d11920; }
 
@@ -125,6 +111,14 @@
         .trip-selection label { margin-right: 20px; cursor: pointer; font-weight: 600; }
         .multi-city { color: #0071c2; text-decoration: none; }
         .pay-options span { margin-right: 20px; }
+
+        /* DIMINISHED RETURN BOX */
+        .diminished-box {
+            opacity: 0.3 !important;
+            pointer-events: none !important;
+            background: rgba(0, 0, 0, 0.03) !important;
+            filter: grayscale(100%);
+        }
 
         /* BULLETPROOF HORIZONTAL LAYOUT */
         .ai-main-search {
@@ -178,19 +172,7 @@
         .ai-final-search { background: #ed1c24; color: white; border: none; padding: 0 40px; height: 75px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; border-radius: 0 8px 8px 0; }
         .ai-final-search:hover { background: #d11920; }
 
-        /* --- 6. AUTOCOMPLETE DROPDOWN MENU --- */
-        .suggestions-box {
-            position: absolute; top: 100%; left: 0; width: 350px; background: #ffffff;
-            border-radius: 8px; box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-            z-index: 2000; max-height: 350px; overflow-y: auto; display: none; margin-top: 10px;
-        }
-        .suggestion-item { padding: 15px 20px; cursor: pointer; display: flex; align-items: center; gap: 20px; border-bottom: 1px solid #f0f0f0; transition: background 0.2s ease; }
-        .suggestion-item:last-child { border-bottom: none; }
-        .suggestion-item:hover { background-color: #f8f9fa; }
-        .city-code { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 22px; color: #ed1c24; min-width: 55px; }
-        .city-name { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; color: #111; }
-
-        /* --- 7. MODALS --- */
+        /* --- MODALS OVERLAY STYLING --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px);
@@ -208,7 +190,7 @@
         .input-group input, .input-group select { width: 100%; padding: 15px; background: #f9fafb; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px; color: #111827; margin-bottom: 15px; }
         .submit-btn { background-color: #8b0000; color: white; border: none; padding: 18px 40px; font-size: 13px; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 20px; border-radius: 4px; }
 
-        /* --- 8. CALENDAR OVERLAY --- */
+        /* --- CALENDAR OVERLAY --- */
         .calendar-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); display: none; justify-content: center;
@@ -230,44 +212,16 @@
         .day-cell { aspect-ratio: 1; display: flex; justify-content: center; align-items: center; border-radius: 50%; cursor: pointer; font-weight: 600; font-size: 15px; color: #111; transition: all 0.2s; }
         .day-cell:hover { background: #f0f0f0; }
         .day-cell.selected { background: #ed1c24; color: #fff; }
+        .day-cell.disabled { color: #ccc; cursor: not-allowed; background: transparent !important; text-decoration: line-through; opacity: 0.5; }
         .cal-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
-        .days-btn { border: 1px solid #ccc; background: #fff; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; }
         .action-btns button { padding: 12px 30px; border: none; border-radius: 30px; font-family: 'Montserrat', sans-serif; font-weight: 700; cursor: pointer; font-size: 14px; }
         .cancel-btn { background: transparent; color: #666; margin-right: 10px; }
         .confirm-btn { background: #ed1c24; color: #fff; }
-        
-        /* --- 9. PASSENGER POPOVER --- */
-        .pax-dropdown {
-            position: absolute; top: 100%; left: -50px; width: 280px;
-            background: #fff; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            z-index: 2000; padding: 20px; display: none; margin-top: 10px; cursor: default;
-            border: 1px solid #eee;
-        }
-        .pax-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .pax-row:last-child { margin-bottom: 0; }
-        .pax-info h4 { margin: 0; font-size: 14px; color: #111; font-weight: 700; }
-        .pax-info p { margin: 0; font-size: 11px; color: #666; font-weight: 500; }
-        .pax-controls { display: flex; align-items: center; gap: 15px; }
-        
-        .pax-btn { 
-            width: 32px; height: 32px; border-radius: 4px; border: 1px solid #d1d5db; 
-            background: #f3f4f6; cursor: pointer; font-size: 20px; 
-            display: flex; justify-content: center; align-items: center; color: #6b7280;
-            transition: all 0.2s;
-        }
-        .pax-btn:hover { background: #e5e7eb; color: #111; }
-        .pax-btn.plus { background: #374151; color: white; border: none; }
-        .pax-btn.plus:hover { background: #111827; }
-        .pax-count { font-size: 15px; font-weight: 700; width: 15px; text-align: center; color: #111; }
-
     </style>
 </head>
 <body>
-
-    <video autoplay muted loop id="video-background">
-      <source src="bg a380.mp4" type="video/mp4">
-    </video>
-
+    <video autoplay muted loop id="video-background"><source src="bg a380.mp4" type="video/mp4"></video>
+    
     <nav class="top-nav">
         <div class="nav-icons">
             <button class="nav-icon-btn" onclick="openModal('regionalModal')"><i class="fa-solid fa-globe"></i></button>
@@ -279,13 +233,11 @@
     <div class="hero-section">
         <h1>Flying made simple</h1>
         <p>Best Fares. No Hidden Fees.</p>
-        <button class="hero-btn" onclick="scrollToForm()">Plan a Flight</button>
+        <button class="hero-btn" onclick="document.getElementById('booking-reveal-zone').scrollIntoView({ behavior: 'smooth' });">Plan a Flight</button>
     </div>
 
     <div id="booking-reveal-zone">
-        
         <h2 class="greeting-text">Hey Traveller, where are we flying today?</h2>
-
         <div id="booking-section" class="booking-section">
             <div class="ai-premium-container">
                 <div class="ai-tabs">
@@ -293,142 +245,51 @@
                     <div class="tab">MANAGE BOOKING</div>
                     <div class="tab">FLIGHT STATUS</div>
                 </div>
-
                 <div class="ai-sub-row">
                     <div class="trip-selection">
-                        <label><input type="radio" name="trip" checked> Round Trip</label>
-                        <label><input type="radio" name="trip"> One Way</label>
+                        <label><input type="radio" name="trip" id="trip-round" checked onchange="toggleReturnBox()"> Round Trip</label>
+                        <label><input type="radio" name="trip" id="trip-oneway" onchange="toggleReturnBox()"> One Way</label>
                         <a href="#" class="multi-city">Multi City</a>
                     </div>
-                    <div class="pay-options">
-                        <span>Pay By <strong>Cash</strong></span>
-                        <span>Add Promo Code</span>
-                    </div>
+                    <div class="pay-options"><span>Pay By <strong>Cash</strong></span><span>Add Promo Code</span></div>
                 </div>
-
                 <div class="ai-main-search">
+                    <div class="search-unit from"><div class="unit-label">Origin</div><input type="text" id="fromInput" class="giant-input" placeholder="FROM" autocomplete="off"></div>
+                    <button class="ai-swap-btn"><i class="fa-solid fa-right-left"></i></button>
+                    <div class="search-unit to"><div class="unit-label">Destination</div><input type="text" id="toInput" class="giant-input" placeholder="TO" autocomplete="off"></div>
                     
-                    <div class="search-unit from">
-                        <div class="unit-label">Origin</div>
-                        <input type="text" id="fromInput" class="giant-input" placeholder="FROM" autocomplete="off" oninput="showSuggestions('from')">
-                    </div>
-
-                    <button class="ai-swap-btn" onclick="swapLocations()">
-                        <i class="fa-solid fa-right-left"></i>
-                    </button>
-
-                    <div class="search-unit to">
-                        <div class="unit-label">Destination</div>
-                        <input type="text" id="toInput" class="giant-input" placeholder="TO" autocomplete="off" oninput="showSuggestions('to')">
-                    </div>
-
-                    <div class="search-unit date" onclick="openWideCalendar()">
-                        <div class="unit-label">Depart</div>
-                        <div id="departVal" class="val">Select Date</div>
-                    </div>
-
-                    <div class="search-unit date" onclick="openWideCalendar()">
-                        <div class="unit-label">Return</div>
-                        <div id="returnVal" class="val">Select Date</div>
-                    </div>
-
-                    <div class="search-unit pax" onclick="togglePax()">
-                        <div class="unit-label">Passenger(s)</div>
-                        <div id="paxVal" class="val">1 Adult</div>
-
-                        <div id="paxDropdown" class="pax-dropdown" onclick="event.stopPropagation()">
-                            
-                            <div class="pax-row">
-                                <div class="pax-info">
-                                    <h4>Adults</h4>
-                                    <p>12+ Years</p>
-                                </div>
-                                <div class="pax-controls">
-                                    <button type="button" class="pax-btn" onclick="updatePax('adult', -1)">-</button>
-                                    <span id="adultCount" class="pax-count">1</span>
-                                    <button type="button" class="pax-btn plus" onclick="updatePax('adult', 1)">+</button>
-                                </div>
-                            </div>
-
-                            <div class="pax-row">
-                                <div class="pax-info">
-                                    <h4>Children</h4>
-                                    <p>2-11 Years</p>
-                                </div>
-                                <div class="pax-controls">
-                                    <button type="button" class="pax-btn" onclick="updatePax('child', -1)">-</button>
-                                    <span id="childCount" class="pax-count">0</span>
-                                    <button type="button" class="pax-btn plus" onclick="updatePax('child', 1)">+</button>
-                                </div>
-                            </div>
-
-                            <div class="pax-row">
-                                <div class="pax-info">
-                                    <h4>Infants</h4>
-                                    <p>0-2 Years</p>
-                                </div>
-                                <div class="pax-controls">
-                                    <button type="button" class="pax-btn" onclick="updatePax('infant', -1)">-</button>
-                                    <span id="infantCount" class="pax-count">0</span>
-                                    <button type="button" class="pax-btn plus" onclick="updatePax('infant', 1)">+</button>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
+                    <div class="search-unit date" onclick="openTargetedCalendar('depart')"><div class="unit-label">Depart</div><div id="departVal" class="val">Select Date</div></div>
+                    <div class="search-unit date" id="return-box" onclick="openTargetedCalendar('return')"><div class="unit-label">Return</div><div id="returnVal" class="val">Select Date</div></div>
+                    
+                    <div class="search-unit pax"><div class="unit-label">Passenger(s)</div><div id="paxVal" class="val">1 Adult</div></div>
                     <div class="search-unit class">
                         <div class="unit-label">Class</div>
-                        <select id="classSelect">
-                            <option>Economy</option>
-                            <option>Premium Economy</option>
-                            <option>Business</option>
-                            <option>First Class</option>
-                        </select>
+                        <select id="classSelect"><option>Economy</option><option>Premium Economy</option><option>Business</option><option>First Class</option></select>
                     </div>
-
                     <button class="ai-final-search" onclick="performFlightSearch()">Search</button>
-                    
                 </div>
             </div> 
         </div>
-    </div> <div id="regionalModal" class="modal-overlay">
+    </div>
+
+    <div id="regionalModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Regional Settings</h3>
                 <button class="close-btn" onclick="closeModal('regionalModal')"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            
             <div class="input-group">
                 <label>Language</label>
-                <select>
-                    <option>English (UK)</option>
-                    <option>English (US)</option>
-                    <option>Hindi</option>
-                    <option>French</option>
-                </select>
+                <select><option>English (UK)</option><option>English (US)</option><option>Hindi</option><option>French</option></select>
             </div>
-            
             <div class="input-group">
                 <label>Country / Region</label>
-                <select>
-                    <option>India</option>
-                    <option>United States</option>
-                    <option>United Kingdom</option>
-                    <option>United Arab Emirates</option>
-                </select>
+                <select><option>India</option><option>United States</option><option>United Kingdom</option><option>United Arab Emirates</option></select>
             </div>
-            
             <div class="input-group">
                 <label>Currency</label>
-                <select>
-                    <option>INR (₹) - Indian Rupee</option>
-                    <option>USD ($) - US Dollar</option>
-                    <option>GBP (£) - British Pound</option>
-                    <option>AED (د.إ) - UAE Dirham</option>
-                </select>
+                <select><option>INR (₹) - Indian Rupee</option><option>USD ($) - US Dollar</option><option>GBP (£) - British Pound</option><option>AED (د.إ) - UAE Dirham</option></select>
             </div>
-            
             <button class="submit-btn" style="margin-top: 30px;" onclick="closeModal('regionalModal')">Save</button>
         </div>
     </div>
@@ -463,86 +324,176 @@
     <div id="calendarOverlay" class="calendar-overlay">
         <div class="calendar-modal">
             <div class="cal-header">
-                <h2>Select Departure Date</h2>
-                <div class="cal-controls">
-                    <button class="cal-reset-btn">Reset</button>
-                    <label class="one-way-toggle"><input type="checkbox"> One Way</label>
-                </div>
+                <h2>Select Date</h2>
+                <div class="cal-controls"><button class="cal-reset-btn" onclick="closeCalendar()">Close</button></div>
             </div>
-
             <div class="cal-months-container">
                 <div class="month-view">
-                    <div class="month-header">
-                        <i class="fa-solid fa-chevron-left"></i>
-                        <strong>May 2026</strong>
-                        <span></span>
-                    </div>
-                    <div class="weekdays">
-                        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
-                    </div>
+                    <div class="month-header"><i class="fa-solid fa-chevron-left" id="calPrevBtn" onclick="changeMonth(-1)" style="cursor: pointer;"></i><strong id="month1Title">May 2026</strong><span></span></div>
+                    <div class="weekdays"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
                     <div class="days-grid" id="month1Grid"></div>
                 </div>
-
                 <div class="month-view">
-                    <div class="month-header">
-                        <span></span>
-                        <strong>June 2026</strong>
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </div>
-                    <div class="weekdays">
-                        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
-                    </div>
+                    <div class="month-header"><span></span><strong id="month2Title">June 2026</strong><i class="fa-solid fa-chevron-right" onclick="changeMonth(1)" style="cursor: pointer;"></i></div>
+                    <div class="weekdays"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
                     <div class="days-grid" id="month2Grid"></div>
                 </div>
             </div>
-
             <div class="cal-footer">
-                <div class="trip-duration">
-                    Return trip - the fare is for a round-trip covering 
-                    <button class="days-btn">-</button> <strong>7</strong> <button class="days-btn">+</button> days
-                </div>
-                <div class="action-btns">
-                    <button class="cancel-btn" onclick="closeCalendar()">Cancel</button>
-                    <button class="confirm-btn" onclick="closeCalendar()">Confirm</button>
-                </div>
+                <div class="action-btns"><button class="cancel-btn" onclick="closeCalendar()">Cancel</button><button class="confirm-btn" onclick="confirmDateSelection()">Confirm</button></div>
             </div>
         </div>
     </div>
-    <a href="#" id="new-window-results-trigger" target="_blank" style="display:none;"></a>
-
-    <script src="app.js"></script>
 
     <script>
+        // --- MODAL CONTROLS ---
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.remove('active');
+        }
+
+        // --- ONE-WAY VS ROUND TRIP LOGIC ---
+        function toggleReturnBox() {
+            const returnBox = document.getElementById('return-box');
+            const isOneWay = document.getElementById('trip-oneway').checked;
+            if (isOneWay) returnBox.classList.add('diminished-box');
+            else returnBox.classList.remove('diminished-box');
+        }
+
+        // --- SEARCH SUBMISSION LOGIC ---
+        function performFlightSearch() {
+            const searchParams = {
+                origin: { city: document.getElementById('fromInput').value || "Delhi" },
+                dest: { city: document.getElementById('toInput').value || "Dubai" },
+                date: document.getElementById('departVal').innerText || "30 May 2026",
+                pax: document.getElementById('paxVal').innerText || "1 Adult",
+                flightClass: document.getElementById('classSelect').value || "Economy",
+                isDomestic: false, 
+                isRoundTrip: document.getElementById('trip-round').checked
+            };
+            localStorage.setItem('flightSearchParams', JSON.stringify(searchParams));
+            window.location.href = "results.html";
+        }
+
+        // --- APPLE-STYLE SCROLL TRIGGER ---
         document.addEventListener("DOMContentLoaded", () => {
             const revealZone = document.getElementById('booking-reveal-zone');
-            
             if (!revealZone) return;
-
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                    // Triggers the CSS scale-and-fade animation as soon as 5% of the zone is visible
                     if (entry.isIntersecting) {
                         revealZone.classList.add('is-visible');
-                        observer.unobserve(revealZone); // Stops watching so it doesn't replay backwards
+                        observer.unobserve(revealZone); 
                     }
                 });
-            }, { 
-                root: null,
-                threshold: 0.05, 
-                rootMargin: "0px 0px -20px 0px" 
-            });
-
+            }, { root: null, threshold: 0.05, rootMargin: "0px 0px -20px 0px" });
             observer.observe(revealZone);
-            
-            // Allow the "Plan a Flight" button to trigger the scroll smoothly
-            const planBtn = document.querySelector('.hero-btn');
-            if(planBtn) {
-                planBtn.addEventListener('click', () => {
-                    revealZone.scrollIntoView({ behavior: 'smooth' });
-                });
+        });
+
+        // --- FULL DYNAMIC CALENDAR ENGINE ---
+        let selectedDateString = ""; 
+        let activeDateBox = 'depart'; 
+        let currentViewDate = new Date();
+        currentViewDate.setDate(1); 
+
+        function renderCalendarMonths() {
+            const month1Grid = document.getElementById('month1Grid');
+            const month2Grid = document.getElementById('month2Grid');
+            if(!month1Grid || !month2Grid) return;
+
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+            const month1 = currentViewDate.getMonth();
+            const year1 = currentViewDate.getFullYear();
+
+            let month2 = month1 + 1;
+            let year2 = year1;
+            if (month2 > 11) { month2 = 0; year2++; }
+
+            document.getElementById('month1Title').innerText = `${monthNames[month1]} ${year1}`;
+            document.getElementById('month2Title').innerText = `${monthNames[month2]} ${year2}`;
+
+            function buildMonth(grid, year, monthIndex) {
+                grid.innerHTML = ''; 
+                const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+                const startDay = new Date(year, monthIndex, 1).getDay(); 
+
+                for (let i = 0; i < startDay; i++) {
+                    grid.innerHTML += `<div class="day-cell" style="visibility: hidden;"></div>`;
+                }
+
+                for (let i = 1; i <= daysInMonth; i++) {
+                    const cellDate = new Date(year, monthIndex, i);
+                    if (cellDate < today) {
+                        grid.innerHTML += `<div class="day-cell disabled">${i}</div>`;
+                    } else {
+                        grid.innerHTML += `<div class="day-cell" onclick="selectDate(this, ${i}, ${monthIndex}, ${year})">${i}</div>`;
+                    }
+                }
             }
+
+            buildMonth(month1Grid, year1, month1);
+            buildMonth(month2Grid, year2, month2);
+
+            const prevBtn = document.getElementById('calPrevBtn');
+            if (year1 === today.getFullYear() && month1 === today.getMonth()) {
+                prevBtn.style.opacity = '0.2';
+                prevBtn.style.pointerEvents = 'none';
+            } else {
+                prevBtn.style.opacity = '1';
+                prevBtn.style.pointerEvents = 'auto';
+            }
+        }
+
+        function changeMonth(offset) {
+            currentViewDate.setMonth(currentViewDate.getMonth() + offset);
+            renderCalendarMonths();
+        }
+
+        function selectDate(element, day, monthIndex, year) {
+            document.querySelectorAll('.day-cell').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            selectedDateString = `${String(day).padStart(2, '0')} ${monthNames[monthIndex]} ${year}`;
+        }
+
+        function openTargetedCalendar(target) {
+            const isOneWay = document.getElementById('trip-oneway').checked;
+            if (target === 'return' && isOneWay) return; 
+            activeDateBox = target; 
+            document.getElementById('calendarOverlay').style.display = 'flex';
+            renderCalendarMonths(); 
+        }
+
+        function closeCalendar() {
+            document.getElementById('calendarOverlay').style.display = 'none';
+        }
+
+        function confirmDateSelection() {
+            if (!selectedDateString) {
+                closeCalendar();
+                return;
+            }
+            if (activeDateBox === 'depart') {
+                document.getElementById('departVal').innerText = selectedDateString;
+            } else {
+                document.getElementById('returnVal').innerText = selectedDateString;
+            }
+            closeCalendar();
+            selectedDateString = ""; 
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderCalendarMonths();
         });
     </script>
-      
 </body>
 </html>
