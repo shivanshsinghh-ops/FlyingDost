@@ -77,6 +77,17 @@
         .ai-final-search { background: #ed1c24; color: white; border: none; padding: 0 40px; height: 75px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; border-radius: 0 8px 8px 0; }
         .ai-final-search:hover { background: #d11920; }
         /* --- AUTOCOMPLETE DROPDOWN --- */
+        /* --- PAX DROPDOWN STYLING --- */
+        .pax-dropdown { padding: 15px; width: 300px; right: 0; left: auto; cursor: default; }
+        .pax-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .pax-type { font-weight: 600; font-size: 14px; color: #111; }
+        .pax-desc { font-size: 11px; color: #888; }
+        .pax-controls { display: flex; align-items: center; gap: 15px; }
+        .pax-btn { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ddd; background: #fff; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; color: #ed1c24; transition: 0.2s; }
+        .pax-btn:hover { border-color: #ed1c24; background: #fff5f5; }
+        .pax-controls span { width: 15px; text-align: center; font-weight: 600; font-size: 14px; color: #111; }
+        .pax-done-btn { width: 100%; background: #ed1c24; color: #fff; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; margin-top: 5px; transition: 0.2s; }
+        .pax-done-btn:hover { background: #d11920; }
         .suggestions-box { position: absolute; top: 100%; left: 0; width: 350px; background: #ffffff; border-radius: 8px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); z-index: 2000; max-height: 350px; overflow-y: auto; display: none; margin-top: 10px; }
         .suggestion-item { padding: 15px 20px; cursor: pointer; display: flex; align-items: center; gap: 20px; border-bottom: 1px solid #f0f0f0; transition: background 0.2s ease; }
         .suggestion-item:last-child { border-bottom: none; }
@@ -185,7 +196,7 @@
                         <div id="fromSuggestions" class="suggestions-box"></div>
                     </div>
 
-                    <button class="ai-swap-btn"><i class="fa-solid fa-right-left"></i></button>
+                    <button class="ai-swap-btn" onclick="swapAirports()"><i class="fa-solid fa-right-left"></i></button>
 
                     <div class="search-unit to">
                         <div class="unit-label" data-i18n="dest">Destination</div>
@@ -196,7 +207,32 @@
                     <div class="search-unit date" onclick="openTargetedCalendar('depart')"><div class="unit-label" data-i18n="depart">Depart</div><div id="departVal" class="val">Select Date</div></div>
                     <div class="search-unit date" id="return-box" onclick="openTargetedCalendar('return')"><div class="unit-label" data-i18n="return">Return</div><div id="returnVal" class="val">Select Date</div></div>
                     
-                    <div class="search-unit pax"><div class="unit-label" data-i18n="pax">Passenger(s)</div><div id="paxVal" class="val">1 Adult</div></div>
+                    <div class="search-unit pax" onclick="togglePaxDropdown(event)">
+                        <div class="unit-label" data-i18n="pax">Passenger(s)</div>
+                        <div id="paxVal" class="val">1 Adult</div>
+                        
+                        <div id="paxDropdown" class="suggestions-box pax-dropdown" onclick="event.stopPropagation()">
+                            <div class="pax-row">
+                                <div><div class="pax-type">Adults</div><div class="pax-desc">> 12 years</div></div>
+                                <div class="pax-controls">
+                                    <button class="pax-btn" onclick="updatePax('adult', -1)">-</button><span id="adultCount">1</span><button class="pax-btn" onclick="updatePax('adult', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="pax-row">
+                                <div><div class="pax-type">Children</div><div class="pax-desc">2 - 12 years</div></div>
+                                <div class="pax-controls">
+                                    <button class="pax-btn" onclick="updatePax('child', -1)">-</button><span id="childCount">0</span><button class="pax-btn" onclick="updatePax('child', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="pax-row">
+                                <div><div class="pax-type">Infants</div><div class="pax-desc">< 2 years</div></div>
+                                <div class="pax-controls">
+                                    <button class="pax-btn" onclick="updatePax('infant', -1)">-</button><span id="infantCount">0</span><button class="pax-btn" onclick="updatePax('infant', 1)">+</button>
+                                </div>
+                            </div>
+                            <button class="pax-done-btn" onclick="closePaxDropdown(event)">Done</button>
+                        </div>
+                    </div>
                     <div class="search-unit class">
                         <div class="unit-label" data-i18n="class">Class</div>
                         <select id="classSelect"><option>Economy</option><option>Premium Economy</option><option>Business</option><option>First Class</option></select>
@@ -306,6 +342,51 @@
     </div>
 
     <script>
+        // --- 1. SWAP BUTTON LOGIC ---
+        function swapAirports() {
+            const fromInput = document.getElementById('fromInput');
+            const toInput = document.getElementById('toInput');
+            const temp = fromInput.value;
+            fromInput.value = toInput.value;
+            toInput.value = temp;
+        }
+
+        // --- 2. PASSENGER SELECTOR LOGIC ---
+        let paxCounts = { adult: 1, child: 0, infant: 0 };
+
+        function togglePaxDropdown(e) {
+            const drop = document.getElementById('paxDropdown');
+            drop.style.display = drop.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function closePaxDropdown(e) {
+            if (e) e.stopPropagation();
+            document.getElementById('paxDropdown').style.display = 'none';
+        }
+
+        function updatePax(type, change) {
+            const newVal = paxCounts[type] + change;
+            if (type === 'adult' && newVal < 1) return; // Must have at least 1 adult
+            if (newVal < 0) return; // No negative passengers
+            
+            paxCounts[type] = newVal;
+            document.getElementById(type + 'Count').innerText = paxCounts[type];
+            
+            const total = paxCounts.adult + paxCounts.child + paxCounts.infant;
+            document.getElementById('paxVal').innerText = total === 1 ? '1 Adult' : `${total} Passengers`;
+        }
+
+        // UPDATE EXISTING: Make sure clicking outside closes the Pax dropdown too
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-unit')) {
+                const fromBox = document.getElementById('fromSuggestions');
+                const toBox = document.getElementById('toSuggestions');
+                const paxBox = document.getElementById('paxDropdown'); // Added this
+                if (fromBox) fromBox.style.display = 'none';
+                if (toBox) toBox.style.display = 'none';
+                if (paxBox) paxBox.style.display = 'none'; // Added this
+            }
+        });
         // --- AUTOCOMPLETE LOGIC ---
         const airports = [
     // --- INDIA ---
